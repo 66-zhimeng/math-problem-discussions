@@ -1,0 +1,426 @@
+{
+ "J_best": 2.6339,
+ "probe_s": 2.0,
+ "rows": [
+  {
+   "block": "CT",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.7315,
+   "prunable": false
+  },
+  {
+   "block": "CT",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.7172,
+   "prunable": false
+  },
+  {
+   "block": "CT",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.7353,
+   "prunable": false
+  },
+  {
+   "block": "CT",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.7513,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在左",
+   "rot": 0,
+   "bound": 1.5461,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在左",
+   "rot": 90,
+   "bound": 1.5407,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在左",
+   "rot": 180,
+   "bound": 1.4311,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在左",
+   "rot": 270,
+   "bound": 1.4576,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在右",
+   "rot": 0,
+   "bound": 1.4259,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在右",
+   "rot": 90,
+   "bound": 1.3887,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在右",
+   "rot": 180,
+   "bound": 1.5581,
+   "prunable": false
+  },
+  {
+   "block": "CH1",
+   "variant": "冷却口在右",
+   "rot": 270,
+   "bound": 1.513,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在左",
+   "rot": 0,
+   "bound": 1.4868,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在左",
+   "rot": 90,
+   "bound": 1.4741,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在左",
+   "rot": 180,
+   "bound": 1.4254,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在左",
+   "rot": 270,
+   "bound": 1.4362,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在右",
+   "rot": 0,
+   "bound": 1.3719,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在右",
+   "rot": 90,
+   "bound": 1.3936,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在右",
+   "rot": 180,
+   "bound": 1.4688,
+   "prunable": false
+  },
+  {
+   "block": "CH2",
+   "variant": "冷却口在右",
+   "rot": 270,
+   "bound": 1.442,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在左",
+   "rot": 0,
+   "bound": 1.5356,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在左",
+   "rot": 90,
+   "bound": 1.5289,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在左",
+   "rot": 180,
+   "bound": 1.4473,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在左",
+   "rot": 270,
+   "bound": 1.4317,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在右",
+   "rot": 0,
+   "bound": 1.4309,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在右",
+   "rot": 90,
+   "bound": 1.4418,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在右",
+   "rot": 180,
+   "bound": 1.4909,
+   "prunable": false
+  },
+  {
+   "block": "CH3",
+   "variant": "冷却口在右",
+   "rot": 270,
+   "bound": 1.4917,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在左",
+   "rot": 0,
+   "bound": 1.5314,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在左",
+   "rot": 90,
+   "bound": 1.5409,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在左",
+   "rot": 180,
+   "bound": 1.4652,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在左",
+   "rot": 270,
+   "bound": 1.4747,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在右",
+   "rot": 0,
+   "bound": 1.4503,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在右",
+   "rot": 90,
+   "bound": 1.4793,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在右",
+   "rot": 180,
+   "bound": 1.4546,
+   "prunable": false
+  },
+  {
+   "block": "CH4",
+   "variant": "冷却口在右",
+   "rot": 270,
+   "bound": 1.4808,
+   "prunable": false
+  },
+  {
+   "block": "FS",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.4416,
+   "prunable": false
+  },
+  {
+   "block": "FS",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.4387,
+   "prunable": false
+  },
+  {
+   "block": "FS",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.4016,
+   "prunable": false
+  },
+  {
+   "block": "FS",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.4349,
+   "prunable": false
+  },
+  {
+   "block": "JS",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.457,
+   "prunable": false
+  },
+  {
+   "block": "JS",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.49,
+   "prunable": false
+  },
+  {
+   "block": "JS",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.4223,
+   "prunable": false
+  },
+  {
+   "block": "JS",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.5045,
+   "prunable": false
+  },
+  {
+   "block": "MU",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.3941,
+   "prunable": false
+  },
+  {
+   "block": "MU",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.4223,
+   "prunable": false
+  },
+  {
+   "block": "MU",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.3347,
+   "prunable": false
+  },
+  {
+   "block": "MU",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.3879,
+   "prunable": false
+  },
+  {
+   "block": "WT",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.4761,
+   "prunable": false
+  },
+  {
+   "block": "WT",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.4287,
+   "prunable": false
+  },
+  {
+   "block": "WT",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.384,
+   "prunable": false
+  },
+  {
+   "block": "WT",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.4305,
+   "prunable": false
+  },
+  {
+   "block": "HX",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.3614,
+   "prunable": false
+  },
+  {
+   "block": "HX",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.3683,
+   "prunable": false
+  },
+  {
+   "block": "HX",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.4798,
+   "prunable": false
+  },
+  {
+   "block": "HX",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.4594,
+   "prunable": false
+  },
+  {
+   "block": "TK",
+   "variant": "默认",
+   "rot": 0,
+   "bound": 1.3753,
+   "prunable": false
+  },
+  {
+   "block": "TK",
+   "variant": "默认",
+   "rot": 90,
+   "bound": 1.3674,
+   "prunable": false
+  },
+  {
+   "block": "TK",
+   "variant": "默认",
+   "rot": 180,
+   "bound": 1.3635,
+   "prunable": false
+  },
+  {
+   "block": "TK",
+   "variant": "默认",
+   "rot": 270,
+   "bound": 1.3442,
+   "prunable": false
+  }
+ ]
+}

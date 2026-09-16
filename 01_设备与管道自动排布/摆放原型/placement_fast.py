@@ -45,7 +45,7 @@ def coarsen(blocks, P, f):
     return cb, cP
 
 
-def solve(blocks, nets, P, weights, limit, hint=None, J_ub=None, trace=None, seed=0):
+def solve(blocks, nets, P, weights, limit, hint=None, J_ub=None, trace=None, seed=0, lb="v1"):
     m = cp_model.CpModel()
     n = len(blocks)
     d, lmin, k = P["delta"], P["lmin"], P["kappa"]
@@ -124,8 +124,48 @@ def solve(blocks, nets, P, weights, limit, hint=None, J_ub=None, trace=None, see
 
     # 管道下界（与 base 相同定义）
     L_terms, B_terms = [], []
+
+    def port_xy(i, pn, stub_len):
+        ex = X[i] + sum(bp * (p["ports"][pn][0] + stub_len * p["ports"][pn][2]) for p, bp in zip(blocks[i]["poses"], B[i]))
+        ey = Y[i] + sum(bp * (p["ports"][pn][1] + stub_len * p["ports"][pn][3]) for p, bp in zip(blocks[i]["poses"], B[i]))
+        return ex, ey
+
+    def abs_var(expr, bound):
+        v = m.NewIntVar(-bound, bound, ""); a = m.NewIntVar(0, bound, "")
+        m.Add(v == expr); m.AddAbsEquality(a, v)
+        return a
+
     for e in nets:
         terms = e["terms"]
+        if lb == "v2" and len(terms) == 2:
+            (i, pn), (j, qn) = terms
+            dz = abs(blocks[i]["poses"][0]["ports"][pn][4] - blocks[j]["poses"][0]["ports"][qn][4])
+            bound = 2 * Dmax + 4 * lmin
+            px, py = port_xy(i, pn, 0); qx, qy = port_xy(j, qn, 0)
+            spx, spy = port_xy(i, pn, lmin); sqx, sqy = port_xy(j, qn, lmin)
+            Le = m.NewIntVar(0, 2 * bound, "")
+            m.Add(Le >= abs_var(px - qx, bound) + abs_var(py - qy, bound) + dz)
+            nb = m.NewBoolVar("")                          # 直管直连
+            m.Add(Le >= 2 * lmin + abs_var(spx - sqx, bound) + abs_var(spy - sqy, bound) + dz).OnlyEnforceIf(nb.Not())
+            be = m.NewIntVar(0, 2, "")
+            for p, bp in zip(blocks[i]["poses"], B[i]):
+                for q, bq in zip(blocks[j]["poses"], B[j]):
+                    pp, qq = p["ports"][pn], q["ports"][qn]
+                    c = base.bend_lb(pp, qq)
+                    if c:
+                        m.AddBoolOr([nb.Not(), bp.Not(), bq.Not()])
+                        m.Add(be >= c * (bp + bq - 1))
+                    else:
+                        m.Add(be >= 2 * (bp + bq - 1) - 2 * nb)
+                        # 直连时：轴线对齐、正向间距 ≥ ℓ_min
+                        if pp[2] != 0:
+                            m.Add(py == qy).OnlyEnforceIf([nb, bp, bq])
+                            m.Add((qx - px) * pp[2] >= lmin).OnlyEnforceIf([nb, bp, bq])
+                        else:
+                            m.Add(px == qx).OnlyEnforceIf([nb, bp, bq])
+                            m.Add((qy - py) * pp[3] >= lmin).OnlyEnforceIf([nb, bp, bq])
+            L_terms.append(Le); B_terms.append(be)
+            continue
         stub = len(terms) >= 3
         zs = [blocks[i]["poses"][0]["ports"][pn][4] for i, pn in terms]
         const = (len(terms) * lmin if stub else 0) + (max(zs) - min(zs))
@@ -171,7 +211,9 @@ def solve(blocks, nets, P, weights, limit, hint=None, J_ub=None, trace=None, see
     class CB(cp_model.CpSolverSolutionCallback):
         def on_solution_callback(self):
             if trace is not None:
-                trace.append((time.time() - t0, self.ObjectiveValue(), self.BestObjectiveBound()))
+                snap = [{"x": self.Value(X[i]), "y": self.Value(Y[i]),
+                         "pose": next(kk for kk, bp in enumerate(B[i]) if self.Value(bp))} for i in range(n)]
+                trace.append((time.time() - t0, self.ObjectiveValue(), self.BestObjectiveBound(), snap))
 
     st = s.Solve(m, CB())
     if st not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
@@ -182,22 +224,22 @@ def solve(blocks, nets, P, weights, limit, hint=None, J_ub=None, trace=None, see
             "solution": sol, "model_L": s.Value(L), "model_B": s.Value(Bn)}
 
 
-def run(blocks, nets, P, weights, total, f, trace, seed=0):
+def run(blocks, nets, P, weights, total, f, trace, seed=0, lb="v1"):
     """粗网格预求解（总时间的 20%）→ 细网格求解（提示 + 上界）。trace 记录细网格求解的时间—目标曲线。"""
     t0 = time.time()
     hint = J_ub = None
     if f > 1:
         cb, cP = coarsen(blocks, P, f)
-        rc = solve(cb, nets, cP, weights, total * 0.2, seed=seed)
+        rc = solve(cb, nets, cP, weights, min(3.0, 0.05 * total), seed=seed, lb=lb)
         if rc:
             hint = [{"x": h["x"] * f, "y": h["y"] * f, "pose": h["pose"]} for h in rc["solution"]]
-            v = base.validate(blocks, nets, P, hint, weights)       # 放大后在细网格上必然可行
+            v = base.validate(blocks, nets, P, hint, weights, lb)   # 放大后在细网格上必然可行
             J_ub = v["J_full_weights"] + 1e-9
-            trace.append((time.time() - t0, J_ub, None))
+            trace.append((time.time() - t0, J_ub, None, hint))
     offset = time.time() - t0
     fine_trace = []
-    r = solve(blocks, nets, P, weights, total - offset, hint, J_ub, fine_trace, seed=seed)
-    trace.extend((t + offset, o, b) for t, o, b in fine_trace)
+    r = solve(blocks, nets, P, weights, total - offset, hint, J_ub, fine_trace, seed=seed, lb=lb)
+    trace.extend((t + offset, o, b, sn) for t, o, b, sn in fine_trace)
     return r
 
 
@@ -212,7 +254,7 @@ def main():
     gap = (r["objective"] - r["bound"]) / r["objective"] * 100
     print(f"状态={r['status']}  用时={el:.1f} s  J={r['objective']:.4f}  下界={r['bound']:.4f}  差距={gap:.2f}%")
     print(f"占地 {v['area_m2']} m²  管长下界 {v['L_lb_m']} m  弯头下界 {v['bends_lb']}")
-    print("时间—目标：", [(round(t, 1), round(o, 4)) for t, o, _ in trace])
+    print("时间—目标：", [(round(t, 1), round(o, 4)) for t, o, *_ in trace])
 
 
 if __name__ == "__main__":

@@ -109,6 +109,29 @@ def bend_lb(p, q):
     return 1
 
 
+def straight_ok(p, q, lmin):
+    """两端口能否用一根直管直连：同高、端口正对、轴线对齐、间距 ≥ ℓ_min。"""
+    if p[4] != q[4] or (p[2], p[3]) != (-q[2], -q[3]):
+        return False
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    lateral = dy if p[2] != 0 else dx
+    forward = dx * p[2] + dy * p[3]
+    return lateral == 0 and forward >= lmin
+
+
+def two_terminal_lb_v2(p, q, lmin):
+    """v2 下界。能直连：长度 = 间距，弯头 0。
+    否则至少一个弯头：两端各先沿法向直行 ≥ ℓ_min，
+      长度 ≥ max(|p−q|₁, 2ℓ_min + |s_p − s_q|₁)，s = 端口 + ℓ_min·u；
+      弯头 ≥ bend_lb；若 bend_lb 为 0（方向一致但未对齐或太近）则 ≥ 2。"""
+    manh = abs(p[0] - q[0]) + abs(p[1] - q[1]) + abs(p[4] - q[4])
+    if straight_ok(p, q, lmin):
+        return manh, 0
+    stub = 2 * lmin + abs(p[0] + lmin * p[2] - q[0] - lmin * q[2])         + abs(p[1] + lmin * p[3] - q[1] - lmin * q[3]) + abs(p[4] - q[4])
+    b = bend_lb(p, q)
+    return max(manh, stub), (b if b else 2)
+
+
 # ============================================================ CP-SAT 模型
 def build_and_solve(blocks, nets, P, weights, limit, label, trace=None, workers=8, seed=0):
     m = cp_model.CpModel()
@@ -243,7 +266,7 @@ def build_and_solve(blocks, nets, P, weights, limit, label, trace=None, workers=
 
 
 # ============================================================ 独立校验器
-def validate(blocks, nets, P, sol, weights):
+def validate(blocks, nets, P, sol, weights, lb="v1"):
     d, lmin, k = P["delta"], P["lmin"], P["kappa"]
     rects, zs = [], []
     for b, s_ in zip(blocks, sol):
@@ -291,12 +314,13 @@ def validate(blocks, nets, P, sol, weights):
         ps = [port(i, pn) for i, pn in e["terms"]]
         if len(ps) >= 3:
             pts = [(q[0] + lmin * q[2], q[1] + lmin * q[3], q[4]) for q in ps]
-            l = len(ps) * lmin
+            l = len(ps) * lmin + sum(max(t[a] for t in pts) - min(t[a] for t in pts) for a in range(3))
+            bnd = 0
+        elif lb == "v2":
+            l, bnd = two_terminal_lb_v2(ps[0], ps[1], lmin)
         else:
-            pts = [(q[0], q[1], q[4]) for q in ps]
-            l = 0
-        l += sum(max(t[a] for t in pts) - min(t[a] for t in pts) for a in range(3))
-        bnd = bend_lb(ps[0], ps[1]) if len(ps) == 2 else 0
+            l = sum(abs(ps[0][a] - ps[1][a]) for a in (0, 1, 4))
+            bnd = bend_lb(ps[0], ps[1])
         L += l; Bsum += bnd
         per_net.append({"net": e["id"], "L_lb_m": l * P["grid"] / 1000, "bends_lb": bnd})
     J = weights["area"] * A / P["A0"] + weights["length"] * L / P["L0"] + weights["bends"] * Bsum / P["B0"]
