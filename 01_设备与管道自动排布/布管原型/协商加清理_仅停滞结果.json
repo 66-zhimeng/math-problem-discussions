@@ -1,0 +1,225 @@
+[
+ {
+  "method": "B出管留空",
+  "seed": 0,
+  "old": {
+   "route_s": 249.8,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 215.5,
+   "iterations": 15,
+   "cleanup_s": 3.1,
+   "cleanup": [
+    {
+     "clash": "冷冻回水2 与 冷冻回水3：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷冻回水2"
+       ],
+       "steps": [
+        {
+         "net": "冷冻回水2",
+         "result": "找到（扩展 140760）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
+    {
+     "clash": "冷却泵出2 与 冷却回水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却泵出2"
+       ],
+       "steps": [
+        {
+         "net": "冷却泵出2",
+         "result": "找到（扩展 18911）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 18.4,
+    "H_m": 16.9,
+    "area_m2": 311.0,
+    "L_m": 395.2,
+    "bends": 154,
+    "height_changes": 52,
+    "J": 6.3232
+   }
+  },
+  "conflict_history": [
+   469,
+   265,
+   288,
+   229,
+   136,
+   90,
+   127,
+   84,
+   45,
+   22,
+   24,
+   23,
+   22,
+   23,
+   22
+  ]
+ },
+ {
+  "method": "B出管留空",
+  "seed": 1,
+  "old": {
+   "route_s": 265.3,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 256.3,
+   "iterations": 15,
+   "cleanup_s": 3.9,
+   "cleanup": [
+    {
+     "clash": "冷却回水 与 冷却供水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却回水"
+       ],
+       "steps": [
+        {
+         "net": "冷却回水",
+         "result": "找到（扩展 138838）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 22.7,
+    "H_m": 14.3,
+    "area_m2": 324.6,
+    "L_m": 366.8,
+    "bends": 154,
+    "height_changes": 55,
+    "J": 6.3659
+   }
+  },
+  "conflict_history": [
+   427,
+   290,
+   220,
+   175,
+   65,
+   70,
+   28,
+   23,
+   85,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10
+  ]
+ },
+ {
+  "method": "B出管留空",
+  "seed": 2,
+  "old": {
+   "route_s": 215.6,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 275.3,
+   "iterations": 22,
+   "cleanup_s": 2.2,
+   "cleanup": [
+    {
+     "clash": "冷冻泵出4 与 冷冻供水4：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷冻泵出4"
+       ],
+       "steps": [
+        {
+         "net": "冷冻泵出4",
+         "result": "找到（扩展 131443）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 16.3,
+    "H_m": 18.4,
+    "area_m2": 299.9,
+    "L_m": 478.5,
+    "bends": 181,
+    "height_changes": 54,
+    "J": 6.88
+   }
+  },
+  "conflict_history": [
+   752,
+   435,
+   284,
+   212,
+   189,
+   186,
+   58,
+   33,
+   33,
+   51,
+   34,
+   16,
+   12,
+   12,
+   9,
+   11,
+   8,
+   12,
+   9,
+   12,
+   11,
+   11
+  ]
+ }
+]

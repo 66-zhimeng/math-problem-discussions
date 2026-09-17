@@ -24,6 +24,9 @@
    "pitch_mm": 300,
    "margin_mm": 1500,
    "max_iters": 30,
+   "stall_iters": 5,
+   "cleanup_max_expansions": 300000,
+   "cleanup_trigger_nets": 4,
    "pres_fac_init": 0.5,
    "pres_fac_mult": 1.6,
    "hist_fac": 0.5,
@@ -32,7 +35,10 @@
    "route_workers": 12,
    "coarse_cell_mm": 300,
    "coarse_iters": 15,
-   "coarse_vertical_penalty_mm": 1000
+   "coarse_vertical_penalty_mm": 1000,
+   "guide_every_s": 5,
+   "guide_ema": 0.5,
+   "guide_w_max": 3
   },
   "blocking": {
    "auto_module_policy": "accept",

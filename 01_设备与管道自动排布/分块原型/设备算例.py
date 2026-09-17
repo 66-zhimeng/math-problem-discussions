@@ -82,6 +82,9 @@ PARAMS = {
         "pitch_mm": 300,                         # 布管轨道线基础间距
         "margin_mm": 1500,                       # 布管区域在设备外接矩形外的扩展
         "max_iters": 30,                         # 协商布线最多轮数
+        "stall_iters": 5,                        # 协商连续多少轮无改进（未布通数、冲突边数）即停止，转入清理
+        "cleanup_max_expansions": 300000,        # 清理：其他管网作硬障碍、单独重布冲突管网时的扩展上限（成功的重布实测 ≤ 14 万）
+        "cleanup_trigger_nets": 4,               # 协商中途冲突管网不多于此数时先试清理
         "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5,   # 协商代价系数
         "max_expansions": 500000,                # 单次 A* 最多扩展状态数
         "astar_weight": 1.5,                     # 启发式放大系数（1 = 单管最优；>1 更快但不保证最优）
@@ -89,6 +92,9 @@ PARAMS = {
         "coarse_cell_mm": 300,                   # 粗网格布管：平面格子尺寸（校准见 布管原型/粗网格校准.py）
         "coarse_iters": 15,                      # 粗网格布管：协商轮数上限
         "coarse_vertical_penalty_mm": 1000,      # 粗网格布管：每层竖向移动额外代价（粗略代表高度变化）
+        "guide_every_s": 5,                      # 布管引导摆放：每个退火进程每隔几秒做一次粗网格布管
+        "guide_ema": 0.5,                        # 布管引导摆放：管网长度权重向“粗网格长度/下界”更新的步长
+        "guide_w_max": 3,                        # 布管引导摆放：管网长度权重上限
     },
     "blocking": {
         "auto_module_policy": "accept",          # accept：自动候选直接使用；report_only：只报告，不合并

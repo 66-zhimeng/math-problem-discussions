@@ -21,6 +21,12 @@
 
 外层：模拟退火，多进程并行；每个冷却周期结束时从全局最好解重新加热。
 
+布管引导（可选，run(..., guide=...)）：每隔 every_s 秒对当前解调用 guide["fn"]（粗网格快速布管，约 1 s）：
+  - 路由目标 J_route = 校验器 J − 管长下界项 + 粗网格管长项；粗网格不可布 → J_route = inf。
+  - 各管网长度权重 w_e ← (1 − ema)·w_e + ema·clamp(粗网格长度 / 下界长度, 1, w_max)，
+    用于 LP 与快速下界（下界严重低估的管网，例如多端点总管，被拉得更近）。
+  - 进程间共享、重新加热、最终返回的“最好解”都改按 J_route 比较。
+
 运行：.venv/Scripts/python placement_sp.py [总秒数，默认 60] [进程数，默认 12] [种子，默认 0]
 """
 import math
@@ -81,6 +87,7 @@ class Problem:
             for i in mem:
                 self.group_of[i] = gi
         self.fixed = [b["fixed"] for b in blocks]
+        self.net_w = [1.0] * len(nets)                 # 各管网长度权重（布管引导时更新；否则恒为 1）
         # 可直连标记只对两端点管网有意义
         self.two = [e for e, net in enumerate(nets) if len(net["terms"]) == 2]
         zs = []
@@ -384,12 +391,12 @@ def quick_lb(pr, sk, st):
     for e, net in enumerate(pr.nets):
         t = net["terms"]
         if len(t) >= 3:
-            L += len(t) * pr.lmin + pr.dz[e]
+            L += pr.net_w[e] * (len(t) * pr.lmin + pr.dz[e])
         else:
             (i, pn), (j, qn) = t
             p = sk["poses"][i][0]["ports"][pn]; q = sk["poses"][j][0]["ports"][qn]
             c = base.bend_lb(p, q)
-            L += pr.dz[e]
+            L += pr.net_w[e] * pr.dz[e]
             if c:
                 B += c
             elif not st["straight"][e]:
@@ -458,9 +465,10 @@ def solve_lp(pr, sk, st):
     B = 0
     for e, net in enumerate(pr.nets):
         t = net["terms"]
+        cLe = cL * pr.net_w[e]
         if len(t) >= 3:
             for a, var in ((0, X), (1, Y)):
-                hi = new_var(cL, (None, None)); lo = new_var(-cL, (None, None))
+                hi = new_var(cLe, (None, None)); lo = new_var(-cLe, (None, None))
                 for i, pn in t:
                     pt = sk["poses"][i][0]["ports"][pn]
                     off = pt[a] + lmin * pt[2 + a]
@@ -470,7 +478,7 @@ def solve_lp(pr, sk, st):
         (i, pn), (j, qn) = t
         p = sk["poses"][i][0]["ports"][pn]; q = sk["poses"][j][0]["ports"][qn]
         c = base.bend_lb(p, q)
-        L = new_var(cL, (0, None))
+        L = new_var(cLe, (0, None))
         ax = abs_of([(1, X(i)), (-1, X(j))], p[0] - q[0])
         ay = abs_of([(1, Y(i)), (-1, Y(j))], p[1] - q[1])
         le([(1, ax), (1, ay), (-1, L)], -pr.dz[e])
@@ -522,8 +530,31 @@ def evaluate(pr, st, threshold=math.inf):
     except AssertionError:
         pr.stats["invalid"] += 1
         return math.inf, None
-    # 启用穿行容量时，搜索目标另加估计的绕行长度（校验器的 J 不含此项）
-    return v["J_full_weights"] + pr.w["length"] * sk["detour"] / pr.P["L0"], sol
+    # 启用穿行容量时，搜索目标另加估计的绕行长度；布管引导时另加各管网权重超出 1 的部分（校验器的 J 不含这两项）
+    extra = sum((w - 1.0) * x["L_lb_m"] for w, x in zip(pr.net_w, v["per_net"])) * 1000 / pr.P["grid"]
+    return v["J_full_weights"] + pr.w["length"] * (sk["detour"] + extra) / pr.P["L0"], sol
+
+
+GUIDE_REQUIRED = ["fn", "every_s", "ema", "w_max"]
+
+
+def route_score(pr, sol, guide):
+    """粗网格布管评估一个解：返回 (J_route, 布管结果)。"""
+    r = guide["fn"](sol)
+    if not r["ok"]:
+        return math.inf, r
+    v = base.validate(pr.blocks, pr.nets, pr.P, sol, pr.w, "v2")
+    L_route = r["L_m"] * 1000 / pr.P["grid"]
+    return v["J_full_weights"] + pr.w["length"] * (L_route - v["_L"]) / pr.P["L0"], {**r, "lb": v["per_net"]}
+
+
+def update_weights(pr, r, guide):
+    for e, x in enumerate(r["lb"]):
+        Lc = r["L_net_m"].get(x["net"])
+        if Lc is None or x["L_lb_m"] <= 0:
+            continue
+        target = min(guide["w_max"], max(1.0, Lc / x["L_lb_m"]))
+        pr.net_w[e] = (1 - guide["ema"]) * pr.net_w[e] + guide["ema"] * target
 
 
 # ============================================================ 状态与邻域
@@ -588,9 +619,13 @@ def decode(pr, arr):
 
 # ============================================================ 模拟退火（单进程）
 def anneal(args):
-    (path, weights, budget, t_start, seed, cycle, T0, T1, access, margins, shared) = args
+    (path, weights, budget, t_start, seed, cycle, T0, T1, access, margins, guide, shared) = args
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"], access, margins)
+    if guide is not None:
+        miss = [k for k in GUIDE_REQUIRED if k not in guide]
+        if miss:
+            raise KeyError(f"布管引导缺少参数：{miss}")
     pr.stats = dict.fromkeys(("evals", "infeasible_sp", "pruned", "infeasible_lp", "lp", "invalid", "fractional"), 0)
     rng = random.Random(seed)
     gJ, gArr, lock = shared
@@ -601,17 +636,45 @@ def anneal(args):
             break
         cur = random_state(pr, rng); Jc, solc = evaluate(pr, cur)
     best = (Jc, copy_state(cur), solc)
-    trace = [(time.time() - t_start, Jc, solc)]
+    trace = [(time.time() - t_start, Jc, solc)] if guide is None else []
     cyc0 = time.time()
+    rbest = (math.inf, None, None)                          # 布管引导：按 J_route 的最好解
+    guide_log = []
+    last_guide = -math.inf
+
+    def guide_tick():
+        nonlocal Jc, solc, rbest, best, last_guide
+        Jr, r = route_score(pr, solc, guide)
+        last_guide = time.time()
+        guide_log.append({"t": round(last_guide - t_start, 1), "J_route": Jr, "ok": r["ok"],
+                          "L_route_m": r.get("L_m"), "w_max_now": round(max(pr.net_w), 2)})
+        if Jr < rbest[0]:
+            rbest = (Jr, copy_state(cur), solc)
+            trace.append((last_guide - t_start, Jr, solc))
+            with lock:
+                if Jr < gJ.value:
+                    gJ.value = Jr
+                    gArr[:] = encode(cur)
+        if r["ok"]:
+            update_weights(pr, r, guide)
+            Jc, solc = evaluate(pr, cur)                     # 权重变了：按新目标重算当前解
+            best = (Jc, copy_state(cur), solc)
+
     while True:
         now = time.time()
         if now - t_start > budget:
             break
+        if guide is not None and solc is not None and now - last_guide >= guide["every_s"]:
+            guide_tick()
+            now = time.time()
         frac = (now - cyc0) / cycle
         if frac >= 1:                                       # 周期结束：从全局最好解重新加热
             with lock:
-                if gJ.value < Jc:
-                    cur = decode(pr, gArr[:]); Jc, solc = evaluate(pr, cur)
+                mine = rbest[0] if guide is not None else Jc
+                take = gJ.value < mine
+                arr = gArr[:] if take else None
+            if take:
+                cur = decode(pr, arr); Jc, solc = evaluate(pr, cur)
             cyc0 = now; frac = 0
         T = T0 * (T1 / T0) ** frac
         cand = neighbor(pr, cur, rng)
@@ -622,19 +685,26 @@ def anneal(args):
             cur, Jc, solc = cand, Jn, soln
             if Jc < best[0] - 1e-12:
                 best = (Jc, copy_state(cur), solc)
-                trace.append((time.time() - t_start, Jc, solc))
-                with lock:
-                    if Jc < gJ.value:
-                        gJ.value = Jc
-                        gArr[:] = encode(cur)
+                if guide is None:
+                    trace.append((time.time() - t_start, Jc, solc))
+                    with lock:
+                        if Jc < gJ.value:
+                            gJ.value = Jc
+                            gArr[:] = encode(cur)
+    if guide is not None:
+        return {"seed": seed, "best_J": rbest[0], "solution": rbest[2], "trace": trace, "stats": pr.stats,
+                "guide_log": guide_log, "net_w": [round(w, 2) for w in pr.net_w]}
     return {"seed": seed, "best_J": best[0], "solution": best[2], "trace": trace, "stats": pr.stats}
 
 
-def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None, margins=None):
+def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None, margins=None,
+        guide=None):
     """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。
     access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。
     margins = {"D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"} 时启用按侧出管留空（见 side_margins_factory）；
-      再加 "traffic": True, "heights_mm": {块 id: 高度}, "z_max_mm", "K" 时启用缝隙穿行容量（见 traffic_demand）。"""
+      再加 "traffic": True, "heights_mm": {块 id: 高度}, "z_max_mm", "K" 时启用缝隙穿行容量（见 traffic_demand）。
+    guide = {"fn": 解 → {"ok", "L_m", "L_net_m"}（须可跨进程序列化）, "every_s", "ema", "w_max"} 时启用布管引导，
+      返回的 J 为 J_route（见模块说明）。"""
     t_start = time.time()
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"])
@@ -643,7 +713,8 @@ def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=N
     mgr_lock = ctx.Lock()
     gJ = ctx.Value("d", math.inf, lock=False)
     gArr = ctx.Array("i", size, lock=False)
-    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, margins, (gJ, gArr, mgr_lock))
+    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, margins, guide,
+             (gJ, gArr, mgr_lock))
             for k in range(procs)]
     if procs == 1:
         outs = [anneal(jobs[0])]
@@ -657,7 +728,10 @@ def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=N
             bestJ, bestSol = J, sol
             curve.append((t, J))
     stats = {k: sum(o["stats"][k] for o in outs) for k in outs[0]["stats"]}
-    return {"J": bestJ, "solution": bestSol, "curve": curve, "stats": stats, "elapsed": time.time() - t_start}
+    out = {"J": bestJ, "solution": bestSol, "curve": curve, "stats": stats, "elapsed": time.time() - t_start}
+    if guide is not None:
+        out["guide"] = [{"seed": o["seed"], "log": o["guide_log"], "net_w": o["net_w"]} for o in outs]
+    return out
 
 
 _SHARED = None

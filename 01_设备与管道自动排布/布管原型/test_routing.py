@@ -7,7 +7,8 @@ import routing as rt
 
 RP = {"D_default_mm": 200, "c_rho": 1.5, "delta_ep_mm": 100, "delta_pp_mm": 100, "K": 1, "eps_z_mm": 1,
       "z_max_mm": 3000, "service_zone_height_mm": 2000, "pitch_mm": 300, "margin_mm": 1500, "max_iters": 10,
-      "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5, "max_expansions": 300000, "astar_weight": 1.0, "route_workers": 1}
+      "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5, "max_expansions": 300000, "astar_weight": 1.0, "route_workers": 1,
+      "stall_iters": 3, "cleanup_max_expansions": 300000, "cleanup_trigger_nets": 2}
 W = {"area": 1.0, "length": 1.0, "bends": 0.3, "height_changes": 0.3}
 SCALE = {"A0": 1e7, "L0": 1e4, "B0": 1, "C0": 1, "kappa": 2, "l_min_mm": 300}
 
@@ -130,6 +131,21 @@ def test_validator_detects_pipe_pipe_clearance():
            "n2": [{"start": ("A", "p2"), "end": ("port", ("B", "q2")), "points": [(1000, 600, 500), (4000, 600, 500)]}]}
     viol, _ = rt.check_routes(sc, bad)
     assert any("管–管净距不足" in v for v in viol)
+
+
+def test_cleanup_reroutes_clashing_net_with_others_fixed():
+    dev = {"A": box(0, 0, 1000, 1500, ports={"p": (1000, 300, 500, 1, 0, 0), "p2": (1000, 1100, 500, 1, 0, 0)}),
+           "B": box(5000, 0, 1000, 1500, ports={"q": (5000, 300, 500, -1, 0, 0), "q2": (5000, 1100, 500, -1, 0, 0)})}
+    nets = [{"id": "n1", "terms": [("A", "p"), ("B", "q")]}, {"id": "n2", "terms": [("A", "p2"), ("B", "q2")]}]
+    sc = scene(dev, nets, K=3)
+    detour = [(1000, 300, 500), (2000, 300, 500), (2000, 1100, 500), (4000, 1100, 500), (4000, 300, 500), (5000, 300, 500)]
+    bad = {"n1": [{"start": ("A", "p"), "end": ("port", ("B", "q")), "points": detour}],
+           "n2": [{"start": ("A", "p2"), "end": ("port", ("B", "q2")), "points": [(1000, 1100, 500), (5000, 1100, 500)]}]}
+    assert rt.clashes(sc, bad)
+    routes, records = rt.cleanup(rt.Grid(sc), sc, bad, log=lambda *_: None)
+    viol, _ = rt.check_routes(sc, routes)
+    assert viol == [] and records[0]["result"] == "已消除"
+    assert routes["n2"] == bad["n2"]                                   # 只重布了 n1
 
 
 def test_parallel_negotiation_matches_rules():

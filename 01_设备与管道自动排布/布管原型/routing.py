@@ -12,7 +12,9 @@
 多端点管网：先连最近的两个端点，其余端点依次连到已布的树上（在直管段内部垂直接入，或沿弯头一条腿的延长线接入并把弯头改为三通；
   三通两侧直管同样满足最小长度）。
 多根管：协商布线（PathFinder 变体；并行时共享拥堵地图 + 冲突感知调度，见 negotiate）。每根管的“占用晕”= 与其中心线 Chebyshev 距离 < D + δ_pp 的所有边；
-  其他管走进晕内的边就要付拥堵代价；每轮全部重布，冲突边累积历史代价，直到无冲突或到达轮数上限。
+  其他管走进晕内的边就要付拥堵代价；每轮全部重布，冲突边累积历史代价，直到无冲突、到达轮数上限，
+  或连续 stall_iters 轮没有改进。之后做清理（cleanup）：其他管网固定为硬障碍，只对仍冲突的管网单独重搜。
+  协商中途冲突管网 ≤ cleanup_trigger_nets 时先试清理（同一组冲突管网只试一次）：清干净即结束，否则继续协商。
 
 独立校验器 check_routes 只看折线几何，不依赖搜索内部数据。
 
@@ -26,6 +28,7 @@
   - astar_weight > 1 时为加权 A*：单根管代价最多为最优的 astar_weight 倍
 """
 import bisect
+import copy
 import heapq
 import math
 import time
@@ -37,7 +40,8 @@ DIRS = [(0, 1), (0, -1), (1, 1), (1, -1), (2, 1), (2, -1)]      # (轴, 符号)
 DIR_OF = {(1, 0, 0): 0, (-1, 0, 0): 1, (0, 1, 0): 2, (0, -1, 0): 3, (0, 0, 1): 4, (0, 0, -1): 5}
 REQUIRED = ["D_default_mm", "c_rho", "delta_ep_mm", "delta_pp_mm", "K", "eps_z_mm", "z_max_mm",
             "service_zone_height_mm", "pitch_mm", "margin_mm", "max_iters", "pres_fac_init", "pres_fac_mult",
-            "hist_fac", "max_expansions", "astar_weight", "route_workers"]
+            "hist_fac", "max_expansions", "astar_weight", "route_workers", "stall_iters", "cleanup_max_expansions",
+            "cleanup_trigger_nets"]
 
 
 def check_params(rp, weights):
@@ -667,6 +671,8 @@ def negotiate(sc, log=print, corridors=None):
     history = []
     commits = []                                                        # 提交日志：各次提交的晕
     todo = sorted(range(len(sc.nets)), key=lambda e: -len(sc.nets[e]["terms"]))
+    best_key, since_best = None, 0
+    tried, done_clean = set(), None                                     # 协商中途试清理：已试过的冲突管网集合
 
     def rip(e):
         old = (routes.pop(e, None), halos.pop(e, None), pedges.pop(e, None))
@@ -747,6 +753,24 @@ def negotiate(sc, log=print, corridors=None):
                 + "、".join(f"{x['net']} {x['time_s']}s{'(回退)' if x['fallback'] else ''}" for x in slow[:3]))
             if not conflicted and not retry:
                 break
+            if not retry and len(conflicted) <= rp["cleanup_trigger_nets"] and frozenset(conflicted) not in tried:
+                tried.add(frozenset(conflicted))
+                t_c = time.time()
+                cand, rec = cleanup(G, sc, {sc.nets[e]["id"]: br for e, br in routes.items()}, log)
+                ok_c = not clashes(sc, cand)
+                history[-1]["cleanup_try"] = {"nets": len(conflicted), "ok": ok_c, "time_s": round(time.time() - t_c, 1)}
+                log(f"  冲突管网 {len(conflicted)} 个，试清理 {time.time() - t_c:.1f} s：{'成功，结束' if ok_c else '未清干净，继续协商'}")
+                if ok_c:
+                    done_clean = (cand, rec, round(time.time() - t_c, 1))
+                    break
+            key = (len(retry), conflicts)
+            if best_key is None or key < best_key:
+                best_key, since_best = key, 0
+            else:
+                since_best += 1
+                if since_best >= rp["stall_iters"]:
+                    log(f"  连续 {since_best} 轮无改进，停止协商，转入清理")
+                    break
             todo = sorted(conflicted | retry, key=lambda e: -len(sc.nets[e]["terms"]))
             pres *= rp["pres_fac_mult"]
     finally:
@@ -755,7 +779,91 @@ def negotiate(sc, log=print, corridors=None):
             halo.release(); hist.release()
             for sh in shms:
                 sh.close(); sh.unlink()
-    return {sc.nets[e]["id"]: br for e, br in routes.items()}, history, G
+    if done_clean is not None:
+        out, records, tc = done_clean
+    else:
+        t_c = time.time()
+        out, records = cleanup(G, sc, {sc.nets[e]["id"]: br for e, br in routes.items()}, log)
+        tc = round(time.time() - t_c, 1)
+    history[-1]["cleanup"] = {"records": records, "time_s": tc}
+    return out, history, G
+
+
+# ============================================================ 清理：其他管网固定为硬障碍，单独重布冲突管网
+def clashes(sc, routes):
+    """独立校验器报出的冲突：[(管网, 对方管网或 None, 原文)]。"""
+    viol, _ = check_routes(sc, routes)
+    out = []
+    for v in viol:
+        if "管–管净距不足" in v:
+            a, b = v.split("：")[0].split(" 与 ")
+            out.append((a, b, v))
+        elif "净距不足" in v or "穿过" in v:
+            out.append((v.split("：")[0], None, v))
+    return out
+
+
+def route_fixed(G, sc, routes, nid):
+    """routes 中其他管网的占用晕设为硬障碍，不加拥堵代价，单独搜索 nid（扩展上限 cleanup_max_expansions）。
+    返回 (支路或 None, 说明)。说明区分“搜索空间耗尽（当前网格与其他管道下确实无路）”与“超过扩展上限”。"""
+    e = next(i for i, n in enumerate(sc.nets) if n["id"] == nid)
+    blocked = set()
+    for other, brs in routes.items():
+        if other != nid:
+            blocked |= halo_edges(G, sc, brs)
+    saved = [(n, a, G.eblocked[a][n]) for n, a in blocked]
+    for n, a in blocked:
+        G.eblocked[a][n] = True
+    stats = {"expansions": 0, "exhausted": 0}
+    rp = {**sc.rp, "max_expansions": sc.rp["cleanup_max_expansions"]}
+    sc_c = copy.copy(sc)
+    sc_c.rp = rp
+    try:
+        br, reason = route_net(G, sc_c, sc.nets[e], {"halo": _Zero(), "hist": _Zero(), "pres": 0.0, "stats": stats})
+    finally:
+        for n, a, v in saved:
+            G.eblocked[a][n] = v
+    if br is not None:
+        return br, f"找到（扩展 {stats['expansions']}）"
+    kind = "超过扩展上限，不能下结论" if stats["exhausted"] else "搜索空间耗尽：确实无路"
+    return None, f"{kind}（{reason}；扩展 {stats['expansions']}）"
+
+
+def cleanup(G, sc, routes, log=print):
+    """逐个处理冲突。管–管冲突 X 与 Y 依次尝试：只重布 X → 只重布 Y → 先 X 后 Y → 先 Y 后 X；
+    接受第一个“该冲突消失且总冲突数不增加”的方案（均以 check_routes 复核）。返回 (路线, 记录)。"""
+    records = []
+    for a, b, text in clashes(sc, routes):
+        now = clashes(sc, routes)
+        if not any((x, y) == (a, b) for x, y, _ in now):
+            records.append({"clash": text, "result": "已顺带消除"})
+            continue
+        plans = [[a]] + ([[b], [a, b], [b, a]] if b else [])
+        attempts, fixed = [], False
+        for order in plans:
+            trial = {k: v for k, v in routes.items() if k not in order}
+            steps = []
+            for nid in order:
+                br, msg = route_fixed(G, sc, trial, nid)
+                steps.append({"net": nid, "result": msg})
+                if br is None:
+                    break
+                trial[nid] = br
+            rec = {"reroute": order, "steps": steps}
+            attempts.append(rec)
+            if len(steps) < len(order) or steps[-1]["result"].startswith(("超过", "搜索空间")):
+                continue
+            after = clashes(sc, trial)
+            rec["clashes_after"] = len(after)
+            still = any((x, y) in ((a, b), (b, a)) if b else (x == a and y is None) for x, y, _ in after)
+            if not still and len(after) <= len(now):
+                routes, fixed = trial, True
+                break
+        records.append({"clash": text, "result": "已消除" if fixed else "未消除", "attempts": attempts})
+        log(f"  清理 {text}：{'已消除' if fixed else '未消除'}（" +
+            "；".join("重布 " + "→".join(r["reroute"]) + "：" + "，".join(s_["result"] for s_ in r["steps"])
+                     for r in attempts) + "）")
+    return routes, records
 
 
 # ============================================================ 独立校验器

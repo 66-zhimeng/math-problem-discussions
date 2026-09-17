@@ -2,7 +2,7 @@
  {
   "method": "B出管留空",
   "seed": 0,
-  "negotiate_s": 279.0,
+  "negotiate_s": null,
   "max_expansions": 3000000,
   "before": {
    "violations": [
@@ -22,8 +22,7 @@
       "steps": [
        {
         "net": "冷却泵出2",
-        "result": "找到（扩展 26381）",
-        "time_s": 0.7
+        "result": "找到（扩展 26381）"
        }
       ],
       "clashes_after": 0
@@ -45,12 +44,12 @@
     "J": 6.2345
    }
   },
-  "check_s": 0.8
+  "check_s": 0.7
  },
  {
   "method": "B出管留空",
   "seed": 1,
-  "negotiate_s": 208.9,
+  "negotiate_s": null,
   "max_expansions": 3000000,
   "before": {
    "violations": [],
@@ -71,12 +70,12 @@
     "J": 6.1143
    }
   },
-  "check_s": 0.0
+  "check_s": 0.1
  },
  {
   "method": "B出管留空",
   "seed": 2,
-  "negotiate_s": 270.2,
+  "negotiate_s": null,
   "max_expansions": 3000000,
   "before": {
    "violations": [
@@ -96,8 +95,7 @@
       "steps": [
        {
         "net": "旁通",
-        "result": "找到（扩展 2440）",
-        "time_s": 0.4
+        "result": "找到（扩展 2440）"
        }
       ],
       "clashes_after": 0
