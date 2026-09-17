@@ -1,0 +1,124 @@
+[
+ {
+  "method": "B出管留空",
+  "seed": 0,
+  "negotiate_s": 279.0,
+  "max_expansions": 3000000,
+  "before": {
+   "violations": [
+    "冷却泵出2 与 冷却回水：管–管净距不足"
+   ],
+   "clashes": 1
+  },
+  "records": [
+   {
+    "clash": "冷却泵出2 与 冷却回水：管–管净距不足",
+    "result": "已消除",
+    "attempts": [
+     {
+      "reroute": [
+       "冷却泵出2"
+      ],
+      "steps": [
+       {
+        "net": "冷却泵出2",
+        "result": "找到（扩展 26381）",
+        "time_s": 0.7
+       }
+      ],
+      "clashes_after": 0
+     }
+    ]
+   }
+  ],
+  "after": {
+   "violations": [],
+   "clashes": 0,
+   "all_ok": true,
+   "metrics": {
+    "W_m": 18.1,
+    "H_m": 16.1,
+    "area_m2": 291.4,
+    "L_m": 389.9,
+    "bends": 159,
+    "height_changes": 54,
+    "J": 6.2345
+   }
+  },
+  "check_s": 0.8
+ },
+ {
+  "method": "B出管留空",
+  "seed": 1,
+  "negotiate_s": 208.9,
+  "max_expansions": 3000000,
+  "before": {
+   "violations": [],
+   "clashes": 0
+  },
+  "records": [],
+  "after": {
+   "violations": [],
+   "clashes": 0,
+   "all_ok": true,
+   "metrics": {
+    "W_m": 22.7,
+    "H_m": 13.9,
+    "area_m2": 315.5,
+    "L_m": 360.0,
+    "bends": 146,
+    "height_changes": 50,
+    "J": 6.1143
+   }
+  },
+  "check_s": 0.0
+ },
+ {
+  "method": "B出管留空",
+  "seed": 2,
+  "negotiate_s": 270.2,
+  "max_expansions": 3000000,
+  "before": {
+   "violations": [
+    "旁通 与 供楼：管–管净距不足"
+   ],
+   "clashes": 1
+  },
+  "records": [
+   {
+    "clash": "旁通 与 供楼：管–管净距不足",
+    "result": "已消除",
+    "attempts": [
+     {
+      "reroute": [
+       "旁通"
+      ],
+      "steps": [
+       {
+        "net": "旁通",
+        "result": "找到（扩展 2440）",
+        "time_s": 0.4
+       }
+      ],
+      "clashes_after": 0
+     }
+    ]
+   }
+  ],
+  "after": {
+   "violations": [],
+   "clashes": 0,
+   "all_ok": true,
+   "metrics": {
+    "W_m": 16.3,
+    "H_m": 19.4,
+    "area_m2": 316.2,
+    "L_m": 465.1,
+    "bends": 180,
+    "height_changes": 56,
+    "J": 6.9728
+   }
+  },
+  "check_s": 0.5
+ }
+]
