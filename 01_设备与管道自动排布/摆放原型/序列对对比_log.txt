@@ -1,0 +1,14 @@
+{'method': 'fast', 'seed': 0, 'time_s': 60.1, 'first_solution_s': 3.05, 'J@5s': 2.8344, 'J@10s': 2.8015, 'J@20s': 2.7821, 'J@30s': 2.7813, 'J@60s': 2.7813, 'J_final': 2.7813, 'bound': 1.8576, 'status': 'FEASIBLE'}
+{'method': 'sp', 'seed': 0, 'time_s': 60.0, 'first_solution_s': 0.89, 'J@5s': 2.6352, 'J@10s': 2.5787, 'J@20s': 2.5185, 'J@30s': 2.5185, 'J@60s': 2.5111, 'J_final': 2.5111, 'stats': {'evals': 198151, 'infeasible_sp': 13324, 'pruned': 28230, 'infeasible_lp': 3002, 'lp': 153595, 'invalid': 2, 'fractional': 80}}
+{'method': 'sp_nocyc', 'seed': 0, 'time_s': 60.0, 'first_solution_s': 0.87, 'J@5s': 2.7628, 'J@10s': 2.6925, 'J@20s': 2.537, 'J@30s': 2.5217, 'J@60s': 2.5202, 'J_final': 2.5202, 'stats': {'evals': 195961, 'infeasible_sp': 13182, 'pruned': 26346, 'infeasible_lp': 3104, 'lp': 153329, 'invalid': 2, 'fractional': 49}}
+{'method': 'fast', 'seed': 1, 'time_s': 60.1, 'first_solution_s': 3.07, 'J@5s': 3.0283, 'J@10s': 2.6641, 'J@20s': 2.6592, 'J@30s': 2.5894, 'J@60s': 2.5869, 'J_final': 2.5869, 'bound': 1.8605, 'status': 'FEASIBLE'}
+{'method': 'sp', 'seed': 1, 'time_s': 60.0, 'first_solution_s': 0.84, 'J@5s': 2.6173, 'J@10s': 2.5873, 'J@20s': 2.5539, 'J@30s': 2.5539, 'J@60s': 2.5534, 'J_final': 2.5534, 'stats': {'evals': 203597, 'infeasible_sp': 13417, 'pruned': 28867, 'infeasible_lp': 5685, 'lp': 155628, 'invalid': 1, 'fractional': 58}}
+{'method': 'sp_nocyc', 'seed': 1, 'time_s': 60.0, 'first_solution_s': 0.85, 'J@5s': 2.7666, 'J@10s': 2.6787, 'J@20s': 2.571, 'J@30s': 2.5394, 'J@60s': 2.5323, 'J_final': 2.5323, 'stats': {'evals': 235795, 'infeasible_sp': 15493, 'pruned': 34950, 'infeasible_lp': 9707, 'lp': 175645, 'invalid': 5, 'fractional': 63}}
+{'method': 'fast', 'seed': 2, 'time_s': 60.1, 'first_solution_s': 3.04, 'J@5s': 2.8045, 'J@10s': 2.5859, 'J@20s': 2.5526, 'J@30s': 2.5443, 'J@60s': 2.5053, 'J_final': 2.5053, 'bound': 1.863, 'status': 'FEASIBLE'}
+{'method': 'sp', 'seed': 2, 'time_s': 60.0, 'first_solution_s': 0.84, 'J@5s': 2.6484, 'J@10s': 2.5747, 'J@20s': 2.56, 'J@30s': 2.5089, 'J@60s': 2.4645, 'J_final': 2.4645, 'stats': {'evals': 243927, 'infeasible_sp': 15887, 'pruned': 39899, 'infeasible_lp': 3642, 'lp': 184499, 'invalid': 1, 'fractional': 39}}
+{'method': 'sp_nocyc', 'seed': 2, 'time_s': 60.0, 'first_solution_s': 0.85, 'J@5s': 2.6481, 'J@10s': 2.5634, 'J@20s': 2.5299, 'J@30s': 2.5052, 'J@60s': 2.5044, 'J_final': 2.5044, 'stats': {'evals': 237600, 'infeasible_sp': 15484, 'pruned': 35844, 'infeasible_lp': 5032, 'lp': 181240, 'invalid': 3, 'fractional': 249}}
+
+中位数 / 最好（按 v2 定义评分）：
+fast {'J@5s': 2.8344, 'J@10s': 2.6641, 'J@20s': 2.6592, 'J@30s': 2.5894, 'J@60s': 2.5869, 'J_final': 2.5869} 最好 2.5053
+sp {'J@5s': 2.6352, 'J@10s': 2.5787, 'J@20s': 2.5539, 'J@30s': 2.5185, 'J@60s': 2.5111, 'J_final': 2.5111} 最好 2.4645
+sp_nocyc {'J@5s': 2.7628, 'J@10s': 2.6787, 'J@20s': 2.537, 'J@30s': 2.5217, 'J@60s': 2.5202, 'J_final': 2.5202} 最好 2.5044
