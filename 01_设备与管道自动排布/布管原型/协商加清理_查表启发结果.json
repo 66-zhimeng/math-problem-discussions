@@ -1,0 +1,266 @@
+[
+ {
+  "method": "B出管留空",
+  "seed": 0,
+  "old": {
+   "route_s": 249.8,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 95.1,
+   "iterations": 16,
+   "cleanup_s": 4.5,
+   "cleanup": [
+    {
+     "clash": "冷冻回水2 与 冷冻回水3：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷冻回水2"
+       ],
+       "steps": [
+        {
+         "net": "冷冻回水2",
+         "result": "找到（扩展 201539）"
+        }
+       ],
+       "clashes_after": 2
+      }
+     ]
+    },
+    {
+     "clash": "冷冻泵出1 与 冷冻回水3：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷冻泵出1"
+       ],
+       "steps": [
+        {
+         "net": "冷冻泵出1",
+         "result": "找到（扩展 170937）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
+    {
+     "clash": "冷却泵出2 与 冷却回水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却泵出2"
+       ],
+       "steps": [
+        {
+         "net": "冷却泵出2",
+         "result": "找到（扩展 12156）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 18.1,
+    "H_m": 16.4,
+    "area_m2": 296.8,
+    "L_m": 398.4,
+    "bends": 155,
+    "height_changes": 54,
+    "J": 6.2594
+   }
+  },
+  "conflict_history": [
+   562,
+   274,
+   293,
+   272,
+   142,
+   71,
+   90,
+   40,
+   47,
+   33,
+   32,
+   50,
+   32,
+   33,
+   49,
+   33
+  ]
+ },
+ {
+  "method": "B出管留空",
+  "seed": 1,
+  "old": {
+   "route_s": 265.3,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 70.4,
+   "iterations": 9,
+   "cleanup_s": 1.7,
+   "cleanup": [
+    {
+     "clash": "冷却回水 与 冷却供水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却回水"
+       ],
+       "steps": [
+        {
+         "net": "冷却回水",
+         "result": "找到（扩展 68852）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
+    {
+     "clash": "回楼 与 冷冻供水3：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "回楼"
+       ],
+       "steps": [
+        {
+         "net": "回楼",
+         "result": "找到（扩展 25103）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 22.7,
+    "H_m": 13.9,
+    "area_m2": 315.5,
+    "L_m": 363.5,
+    "bends": 149,
+    "height_changes": 52,
+    "J": 6.1867
+   }
+  },
+  "conflict_history": [
+   298,
+   250,
+   172,
+   205,
+   175,
+   84,
+   38,
+   41,
+   23
+  ]
+ },
+ {
+  "method": "B出管留空",
+  "seed": 2,
+  "old": {
+   "route_s": 215.6,
+   "iterations": 30,
+   "routed": 25,
+   "clash_pairs": 1,
+   "all_ok": false
+  },
+  "new": {
+   "route_s": 90.8,
+   "iterations": 14,
+   "cleanup_s": 1.7,
+   "cleanup": [
+    {
+     "clash": "冷冻泵出4 与 冷却泵出4：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷冻泵出4"
+       ],
+       "steps": [
+        {
+         "net": "冷冻泵出4",
+         "result": "找到（扩展 84621）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
+    {
+     "clash": "旁通 与 供楼：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "旁通"
+       ],
+       "steps": [
+        {
+         "net": "旁通",
+         "result": "找到（扩展 2947）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
+   "routed": 25,
+   "nets": 25,
+   "violations": [],
+   "all_ok": true,
+   "metrics": {
+    "W_m": 16.3,
+    "H_m": 19.4,
+    "area_m2": 316.2,
+    "L_m": 462.0,
+    "bends": 172,
+    "height_changes": 57,
+    "J": 6.8778
+   }
+  },
+  "conflict_history": [
+   696,
+   585,
+   237,
+   244,
+   138,
+   112,
+   110,
+   96,
+   100,
+   98,
+   99,
+   44,
+   44,
+   33
+  ]
+ }
+]

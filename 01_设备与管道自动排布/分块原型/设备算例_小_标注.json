@@ -27,6 +27,7 @@
    "stall_iters": 5,
    "cleanup_max_expansions": 300000,
    "cleanup_trigger_nets": 4,
+   "freeze_after_exhausted": 2,
    "pres_fac_init": 0.5,
    "pres_fac_mult": 1.6,
    "hist_fac": 0.5,

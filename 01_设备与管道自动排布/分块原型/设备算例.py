@@ -85,6 +85,7 @@ PARAMS = {
         "stall_iters": 5,                        # 协商连续多少轮无改进（未布通数、冲突边数）即停止，转入清理
         "cleanup_max_expansions": 300000,        # 清理：其他管网作硬障碍、单独重布冲突管网时的扩展上限（成功的重布实测 ≤ 14 万）
         "cleanup_trigger_nets": 4,               # 协商中途冲突管网不多于此数时先试清理
+        "freeze_after_exhausted": 2,             # 管网连续几次搜到扩展上限后，协商中不再重搜（留给清理）
         "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5,   # 协商代价系数
         "max_expansions": 500000,                # 单次 A* 最多扩展状态数
         "astar_weight": 1.5,                     # 启发式放大系数（1 = 单管最优；>1 更快但不保证最优）

@@ -14,6 +14,7 @@
 多根管：协商布线（PathFinder 变体；并行时共享拥堵地图 + 冲突感知调度，见 negotiate）。每根管的“占用晕”= 与其中心线 Chebyshev 距离 < D + δ_pp 的所有边；
   其他管走进晕内的边就要付拥堵代价；每轮全部重布，冲突边累积历史代价，直到无冲突、到达轮数上限，
   或连续 stall_iters 轮没有改进。之后做清理（cleanup）：其他管网固定为硬障碍，只对仍冲突的管网单独重搜。
+  某管网连续 freeze_after_exhausted 次搜到扩展上限（保留旧路径）后不再重搜，其冲突留给清理。
   协商中途冲突管网 ≤ cleanup_trigger_nets 时先试清理（同一组冲突管网只试一次）：清干净即结束，否则继续协商。
 
 独立校验器 check_routes 只看折线几何，不依赖搜索内部数据。
@@ -41,7 +42,7 @@ DIR_OF = {(1, 0, 0): 0, (-1, 0, 0): 1, (0, 1, 0): 2, (0, -1, 0): 3, (0, 0, 1): 4
 REQUIRED = ["D_default_mm", "c_rho", "delta_ep_mm", "delta_pp_mm", "K", "eps_z_mm", "z_max_mm",
             "service_zone_height_mm", "pitch_mm", "margin_mm", "max_iters", "pres_fac_init", "pres_fac_mult",
             "hist_fac", "max_expansions", "astar_weight", "route_workers", "stall_iters", "cleanup_max_expansions",
-            "cleanup_trigger_nets"]
+            "cleanup_trigger_nets", "freeze_after_exhausted"]
 
 
 def check_params(rp, weights):
@@ -104,6 +105,7 @@ class Grid:
                 for a, v in enumerate((x, y, z)):
                     cs[a].update((v, v - sc.r_pp, v + sc.r_pp))
         self.c = [sorted(v for v in cs[a] if lim[a][0] - 1e-9 <= v <= lim[a][1] + 1e-9) for a in range(3)]
+        self.carr = [np.asarray(v, dtype=float) for v in self.c]
         self.n = [len(v) for v in self.c]
         self.sc = sc
         nx_, ny_, nz_ = self.n
@@ -200,6 +202,18 @@ def port_exemptions(G, sc, terms):
     return nodes, edges
 
 
+def tree_heuristic(G, segs, cL):
+    """全部网格节点到树上最近直管段的曼哈顿距离 × cL（按节点编号展平的列表）。
+    每段是轴对齐线段，距离 = 各轴到区间 [lo, hi] 的间隙之和，三轴可分离，用 numpy 广播一次算完。"""
+    C = [np.asarray(G.c[a], dtype=float) for a in range(3)]
+    best = None
+    for p, q, _kp, _kq in segs:
+        g = [np.maximum(0.0, np.maximum(min(p[a], q[a]) - C[a], C[a] - max(p[a], q[a]))) for a in range(3)]
+        d = g[0][:, None, None] + g[1][None, :, None] + g[2][None, None, :]
+        best = d if best is None else np.minimum(best, d)
+    return (best.ravel() * cL).tolist()
+
+
 def astar(G, sc, start, target, ctx):
     """start = (dev, port)；target = ("port", (dev, port)) 或 ("tree", tree)。
     返回 (折线点列表, 结束信息) 或 None。"""
@@ -226,8 +240,9 @@ def astar(G, sc, start, target, ctx):
         tpt = (tx, ty, tz)
         ta, ts = DIRS[t_dir]
 
-        def h(p, d):
+        def h(p, d, n):
             """管长曼哈顿距离 + 至少还需的弯头数（可采纳）。"""
+            p = G.pt(n)
             base_ = cL * (abs(p[0] - tpt[0]) + abs(p[1] - tpt[1]) + abs(p[2] - tpt[2]))
             a, s_ = DIRS[d]
             if a == ta:
@@ -244,12 +259,11 @@ def astar(G, sc, start, target, ctx):
     else:
         tree = target[1]
         tree_nodes = tree["nodes"]
-        seg_boxes = [([min(p_[a], q_[a]) for a in range(3)], [max(p_[a], q_[a]) for a in range(3)])
-                     for p_, q_, _kp, _kq in tree["segs"]]
+        hl = tree_heuristic(G, tree["segs"], cL)
 
-        def h(p, d):
-            """到树上最近直管段的曼哈顿距离（可采纳；比到整棵树包围盒的距离紧得多）。"""
-            return cL * min(sum(max(0, lo[a] - p[a], p[a] - hi[a]) for a in range(3)) for lo, hi in seg_boxes)
+        def h(p, d, n):
+            """到树上最近直管段的曼哈顿距离（可采纳）；按节点查表，表由 tree_heuristic 一次算出。"""
+            return hl[n]
 
     # 状态：(节点, 方向, 上个管件是端口, 高度变化次数, 已有水平段) → [(run, g)]
     best = {}
@@ -269,7 +283,7 @@ def astar(G, sc, start, target, ctx):
         else:
             best[key] = [(run, g)]
         states.append((n, d, lp, vr, hh, run, g, parent, goal))
-        heapq.heappush(heap, (g + (0 if goal else hw * h(G.pt(n), d)), next(tie), len(states) - 1))
+        heapq.heappush(heap, (g + (0 if goal else hw * h(None, d, n)), next(tie), len(states) - 1))
 
     push(s, d0, 1, 0, 1 if DIRS[d0][0] != 2 else 0, 0, 0.0, -1, None)
     exp = 0
@@ -470,32 +484,36 @@ def tree_segments(branches, stats=None):
 
 
 # ============================================================ 占用晕
-def halo_edges(G, sc, branches):
-    r = sc.r_pp
-    out = set()
+def halo_codes(G, sc, branches):
+    """占用晕：与管道中心线（轴对齐盒）各轴距离都 < r_pp 的全部边，返回边编码 节点×3+轴 的有序数组。
+    条件在三个轴上可分离：垂直于边的轴看节点坐标，沿边的轴看边区间，各得一个布尔掩码，取笛卡尔积。"""
+    import numpy as np
+    r = sc.r_pp - 1e-9
+    C = G.carr
+    ny, nz = G.n[1], G.n[2]
+    parts = []
     for br in branches:
         for p, q in segments_of(br["points"]):
             lo = [min(p[a], q[a]) for a in range(3)]
             hi = [max(p[a], q[a]) for a in range(3)]
-            rng = []
+            pm = [(C[b] - hi[b] < r) & (lo[b] - C[b] < r) for b in range(3)]
             for a in range(3):
-                c = G.c[a]
-                rng.append((max(0, bisect.bisect_right(c, lo[a] - r) - 1), min(G.n[a], bisect.bisect_left(c, hi[a] + r) + 1)))
-            for i in range(*rng[0]):
-                for j in range(*rng[1]):
-                    for k in range(*rng[2]):
-                        base_pt = (G.c[0][i], G.c[1][j], G.c[2][k])
-                        n = (i * G.n[1] + j) * G.n[2] + k
-                        ijk = (i, j, k)
-                        for a in range(3):
-                            if ijk[a] + 1 >= G.n[a]:
-                                continue
-                            e_lo = list(base_pt); e_hi = list(base_pt)
-                            e_hi[a] = G.c[a][ijk[a] + 1]
-                            gap = max(max(0.0, e_lo[b] - hi[b], lo[b] - e_hi[b]) for b in range(3))
-                            if gap < r - 1e-9:
-                                out.add((n, a))
-    return out
+                em = np.zeros(G.n[a], dtype=bool)
+                em[:-1] = (C[a][:-1] - hi[a] < r) & (lo[a] - C[a][1:] < r)
+                m = list(pm)
+                m[a] = em
+                I, J, K = (np.flatnonzero(x) for x in m)
+                if I.size and J.size and K.size:
+                    ids = (I[:, None, None] * ny + J[None, :, None]) * nz + K[None, None, :]
+                    parts.append(ids.ravel() * 3 + a)
+    if not parts:
+        return np.zeros(0, dtype=np.int64)
+    return np.unique(np.concatenate(parts))
+
+
+def halo_edges(G, sc, branches):
+    """同 halo_codes，返回 {(节点, 轴)}。"""
+    return {(int(c) // 3, int(c) % 3) for c in halo_codes(G, sc, branches)}
 
 
 def path_edges(G, branches):
@@ -622,7 +640,7 @@ def _route_one(G, sc, halo, hist, e, pres, never_routed, corr=None, corr_penalty
             "free_fail": free_fail, **stats}
     if br is None:
         return e, None, reason, None, None, info
-    return (e, br, None, [n * 3 + ax for n, ax in halo_edges(G, sc, br)],
+    return (e, br, None, halo_codes(G, sc, br).tolist(),
             [n * 3 + ax for n, ax in path_edges(G, br)], info)
 
 
@@ -672,6 +690,7 @@ def negotiate(sc, log=print, corridors=None):
     commits = []                                                        # 提交日志：各次提交的晕
     todo = sorted(range(len(sc.nets)), key=lambda e: -len(sc.nets[e]["terms"]))
     best_key, since_best = None, 0
+    stuck = {}                                                          # 连续“搜到扩展上限、保留旧路径”的次数
     tried, done_clean = set(), None                                     # 协商中途试清理：已试过的冲突管网集合
 
     def rip(e):
@@ -689,6 +708,7 @@ def negotiate(sc, log=print, corridors=None):
     def finish(out, old, times, counters):
         e, br, reason, hl, pe, info = out
         times.append(info)
+        stuck[e] = stuck.get(e, 0) + 1 if (br is None and old[0] is not None and info["exhausted"]) else 0
         if br is not None:
             put(e, br, hl, pe); why.pop(e, None); ever.add(e)
         elif info["free_fail"]:
@@ -702,7 +722,10 @@ def negotiate(sc, log=print, corridors=None):
         for it in range(rp["max_iters"]):
             t_it = time.time()
             times, counters = [], {"kept": 0, "requeued": 0, "max_parallel": 0}
-            queue = [e for e in todo if e not in hard]
+            queue = [e for e in todo if e not in hard and stuck.get(e, 0) < rp["freeze_after_exhausted"]]
+            if not queue:
+                log("  待重布的管网都已冻结（多次搜到扩展上限），停止协商，转入清理")
+                break
             if ex is None:
                 for e in queue:
                     old = rip(e)
@@ -807,10 +830,8 @@ def route_fixed(G, sc, routes, nid):
     """routes 中其他管网的占用晕设为硬障碍，不加拥堵代价，单独搜索 nid（扩展上限 cleanup_max_expansions）。
     返回 (支路或 None, 说明)。说明区分“搜索空间耗尽（当前网格与其他管道下确实无路）”与“超过扩展上限”。"""
     e = next(i for i, n in enumerate(sc.nets) if n["id"] == nid)
-    blocked = set()
-    for other, brs in routes.items():
-        if other != nid:
-            blocked |= halo_edges(G, sc, brs)
+    codes = [halo_codes(G, sc, brs) for other, brs in routes.items() if other != nid]
+    blocked = [(c // 3, c % 3) for c in (np.unique(np.concatenate(codes)).tolist() if codes else [])]
     saved = [(n, a, G.eblocked[a][n]) for n, a in blocked]
     for n, a in blocked:
         G.eblocked[a][n] = True
