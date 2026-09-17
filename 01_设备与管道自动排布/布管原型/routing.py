@@ -9,7 +9,7 @@
   - 直管长度：两端管件中心之间 ≥ ρ_a + ρ_b + ℓ_min（端口 ρ = 0，弯头、三通 ρ = c_ρ·D）
   - 高度变化：两个水平段之间的一段连续竖直管计 1 次；> K 剪枝（hard）
   - 代价 = w_L·长度/L₀ + w_B·弯头/B₀ + w_C·高度变化/C₀，另加拥堵代价
-多端点管网：先连最近的两个端点，其余端点依次连到已布的树上（在直管段内部、垂直接入处放三通，
+多端点管网：先连最近的两个端点，其余端点依次连到已布的树上（在直管段内部垂直接入，或沿弯头一条腿的延长线接入并把弯头改为三通；
   三通两侧直管同样满足最小长度）。
 多根管：协商布线（PathFinder 变体；并行时共享拥堵地图 + 冲突感知调度，见 negotiate）。每根管的“占用晕”= 与其中心线 Chebyshev 距离 < D + δ_pp 的所有边；
   其他管走进晕内的边就要付拥堵代价；每轮全部重布，冲突边累积历史代价，直到无冲突或到达轮数上限。
@@ -237,8 +237,12 @@ def astar(G, sc, start, target, ctx):
     else:
         tree = target[1]
         tree_nodes = tree["nodes"]
-        bb = tree["bbox"]
-        h = lambda p, d: cL * sum(max(0, bb[0][a] - p[a], p[a] - bb[1][a]) for a in range(3))
+        seg_boxes = [([min(p_[a], q_[a]) for a in range(3)], [max(p_[a], q_[a]) for a in range(3)])
+                     for p_, q_, _kp, _kq in tree["segs"]]
+
+        def h(p, d):
+            """到树上最近直管段的曼哈顿距离（可采纳；比到整棵树包围盒的距离紧得多）。"""
+            return cL * min(sum(max(0, lo[a] - p[a], p[a] - hi[a]) for a in range(3)) for lo, hi in seg_boxes)
 
     # 状态：(节点, 方向, 上个管件是端口, 高度变化次数, 已有水平段) → [(run, g)]
     best = {}
@@ -313,13 +317,20 @@ def astar(G, sc, start, target, ctx):
                     else:
                         continue
             elif nb in tree_nodes:
-                seg_axis, dA, kA, dB, kB, seg_id = tree_nodes[nb]
-                ok = (a != seg_axis and nrun >= (0 if nlp else rho) + rho + lmin - 1e-9
-                      and dA >= (0 if kA == "port" else rho) + rho + lmin - 1e-9
-                      and dB >= (0 if kB == "port" else rho) + rho + lmin - 1e-9)
+                info_ = tree_nodes[nb]
+                run_ok = nrun >= (0 if nlp else rho) + rho + lmin - 1e-9
+                if info_[0] == "mid":
+                    _k, seg_axis, dA, kA, dB, kB = info_
+                    ok = (run_ok and a != seg_axis
+                          and dA >= (0 if kA == "port" else rho) + rho + lmin - 1e-9
+                          and dB >= (0 if kB == "port" else rho) + rho + lmin - 1e-9)
+                elif info_[0] == "corner":
+                    ok = run_ok and DIRS[nd] in info_[1]
+                else:
+                    ok = False
                 if not ok:
                     continue
-                goal_info = ("tee", seg_id)
+                goal_info = ("tee", None)
             push(nb, nd, nlp, nvr, nhh, nrun, ng, sid, goal_info)
     ctx["stats"]["expansions"] += exp
     return None
@@ -360,49 +371,89 @@ def axis_of(p, q):
     return diff[0]
 
 
-def build_tree(G, branches):
-    """由已布支路生成可接三通的树：{节点: (段轴, 到端A距离, 端A类型, 到端B距离, 端B类型, 段号)}。"""
+def build_tree(G, branches, rho, lmin):
+    """由已布支路生成可接三通的位置：
+      {节点: ("mid", 段轴, 到端A距离, 端A类型, 到端B距离, 端B类型)}  直管段内部，支路须垂直接入
+      {节点: ("corner", {(轴, 符号), ...})}                           弯头处，支路沿某条腿的延长线接入
+      {节点: ("end",)}                                                 端口、已有三通：不能接
+    另返回合法接入点个数。"""
     segs = tree_segments(branches)
-    nodes, pts = {}, []
-    for sid, (p, q, kp, kq) in enumerate(segs):
+    nodes, valid = {}, 0
+    ends = {}
+    for p, q, kp, kq in segs:
+        a = axis_of(p, q)
+        for v, other, k in ((p, q, kp), (q, p, kq)):
+            ends.setdefault(v, []).append((a, 1 if other[a] > v[a] else -1, k))
+    for p, q, kp, kq in segs:
         a = axis_of(p, q)
         lo, hi = sorted((p[a], q[a]))
         c = G.c[a]
         for i in range(bisect.bisect_left(c, lo - 1e-9), bisect.bisect_right(c, hi + 1e-9)):
             v = c[i]
             pt = list(p); pt[a] = v
-            n = G.node(tuple(pt))
+            pt = tuple(pt)
+            n = G.node(pt)
+            if pt in ends or n in nodes:
+                continue
             dp, dq = abs(v - p[a]), abs(v - q[a])
-            if dp < 1e-9 or dq < 1e-9:
-                nodes[n] = (a, -1, "x", -1, "x", sid)              # 段端点：不能接三通
-            elif n not in nodes:
-                nodes[n] = (a, dp, kp, dq, kq, sid)
-        pts += [p, q]
+            nodes[n] = ("mid", a, dp, kp, dq, kq)
+            if dp >= (0 if kp == "port" else rho) + rho + lmin - 1e-9 and \
+                    dq >= (0 if kq == "port" else rho) + rho + lmin - 1e-9:
+                valid += 1
+    for v, lst in ends.items():
+        n = G.node(v)
+        if len(lst) == 2 and all(k == "elbow" for _, _, k in lst):
+            # 支路沿腿 (轴, 指向腿的符号) 的延长线进入：移动方向 = (轴, 符号)
+            nodes[n] = ("corner", {(ax, sg) for ax, sg, _ in lst})
+            valid += 1
+        else:
+            nodes[n] = ("end",)
+    pts = [v for v in ends]
     bbox = ([min(t[a] for t in pts) for a in range(3)], [max(t[a] for t in pts) for a in range(3)])
-    return {"nodes": nodes, "bbox": bbox, "segs": segs}
+    return {"nodes": nodes, "bbox": bbox, "segs": segs, "valid": valid}
 
 
-def tree_segments(branches):
-    """所有支路 → 直管段列表 (p, q, p 端类型, q 端类型)，三通处拆段。"""
+def tree_segments(branches, stats=None):
+    """所有支路 → 直管段列表 (p, q, p 端类型, q 端类型)，三通处拆段。
+    三通两种：接在直管段内部（支路须垂直）；接在弯头处（支路与一条腿共线，弯头改为三通，
+    stats["elbow_tees"] 计数，校验时从弯头数中扣除）。"""
     segs = []
     for br in branches:
         pts = br["points"]
-        for i in range(len(pts) - 1):
+        nb = len(pts) - 1
+        for i in range(nb):
             kp = "port" if i == 0 else "elbow"
-            kq = ("port" if br["end"][0] == "port" else "tee") if i == len(pts) - 2 else "elbow"
-            new = (pts[i], pts[i + 1], kp, kq)
-            segs.append(new)
-        if br["end"][0] == "tee":
-            t = pts[-1]
-            for k, (p, q, kp_, kq_) in enumerate(segs[:-(len(pts) - 1)]):
-                a = axis_of(p, q)
-                if all(abs(t[b] - p[b]) < 1e-9 for b in range(3) if b != a) and \
-                        min(p[a], q[a]) + 1e-9 < t[a] < max(p[a], q[a]) - 1e-9:
-                    segs[k] = (p, t, kp_, "tee")
-                    segs.insert(k + 1, (t, q, "tee", kq_))
-                    break
-            else:
-                raise ValueError(f"三通点 {t} 不在已有直管段内部")
+            kq = ("port" if br["end"][0] == "port" else "tee") if i == nb - 1 else "elbow"
+            segs.append((pts[i], pts[i + 1], kp, kq))
+        if br["end"][0] != "tee":
+            continue
+        t, prev = pts[-1], pts[-2]
+        ab = axis_of(prev, t)
+        old = segs[:-nb]
+        for k, (p, q, kp_, kq_) in enumerate(old):
+            a = axis_of(p, q)
+            if all(abs(t[c] - p[c]) < 1e-9 for c in range(3) if c != a) and \
+                    min(p[a], q[a]) + 1e-9 < t[a] < max(p[a], q[a]) - 1e-9:
+                if ab == a:
+                    raise ValueError(f"三通点 {t}：支路与主管共线接入直管段内部")
+                segs[k] = (p, t, kp_, "tee")
+                segs.insert(k + 1, (t, q, "tee", kq_))
+                break
+        else:
+            at = [k for k, (p, q, kp_, kq_) in enumerate(old)
+                  if (p == t and kp_ == "elbow") or (q == t and kq_ == "elbow")]
+            if len(at) != 2:
+                raise ValueError(f"三通点 {t} 既不在已有直管段内部，也不是弯头")
+            legs = [old[k] for k in at]
+            body = [(axis_of(p, q), q if p == t else p) for p, q, _, _ in legs]
+            # 支路须与某条腿共线且从腿的对侧进入
+            if not any(ax == ab and (other[ax] - t[ax]) * (t[ax] - prev[ax]) > 0 for ax, other in body):
+                raise ValueError(f"三通点 {t}：支路未沿弯头某条腿的延长线接入")
+            for k in at:
+                p, q, kp_, kq_ = segs[k]
+                segs[k] = (p, q, "tee" if p == t else kp_, "tee" if q == t else kq_)
+            if stats is not None:
+                stats["elbow_tees"] = stats.get("elbow_tees", 0) + 1
     return segs
 
 
@@ -489,7 +540,9 @@ def route_net(G, sc, net, ctx):
     branches = [{"start": a, "points": r[0], "end": ("port", b)}]
     rest = [t for t in terms if t not in (a, b)]
     while rest:
-        tree = build_tree(G, branches)
+        tree = build_tree(G, branches, sc.rho, sc.lmin)
+        if tree["valid"] == 0:
+            return None, "已布管道上没有可接三通的位置"
         bb = tree["bbox"]
         rest.sort(key=lambda t: sum(max(0, bb[0][k] - P[t][k], P[t][k] - bb[1][k]) for k in range(3)))
         t = rest.pop(0)
@@ -726,11 +779,13 @@ def check_routes(sc, routes):
             layers += nl
         if seen != terms:
             viol.append(f"{nid}：未连接全部端点")
+        tstats = {}
         try:
-            segs = tree_segments(brs)
+            segs = tree_segments(brs, tstats)
         except ValueError as ex:
             viol.append(f"{nid}：{ex}")
             segs = []
+        bends -= tstats.get("elbow_tees", 0)                             # 弯头处接三通：不再是 90° 弯头
         for p, q, kp, kq in segs:
             need = (0 if kp == "port" else rho) + (0 if kq == "port" else rho) + lmin
             ln = abs(q[axis_of(p, q)] - p[axis_of(p, q)])

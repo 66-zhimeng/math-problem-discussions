@@ -140,3 +140,28 @@ def test_parallel_negotiation_matches_rules():
     routes, hist = route_one(sc)
     viol, _ = rt.check_routes(sc, routes)
     assert set(routes) == {"n1", "n2"} and viol == []
+
+
+def test_validator_accepts_tee_at_elbow_and_discounts_bend():
+    dev = {"A": box(0, 0, 1000, 1000, ports={"p": (1000, 500, 500, 1, 0, 0)}),
+           "B": box(3000, 3000, 1000, 1000, ports={"q": (3500, 3000, 500, 0, -1, 0)}),
+           "C": box(6000, 0, 1000, 1000, ports={"r": (6000, 500, 500, -1, 0, 0)})}
+    sc = scene(dev, [{"id": "t", "terms": [("A", "p"), ("B", "q"), ("C", "r")]}])
+    main = {"start": ("A", "p"), "end": ("port", ("B", "q")),
+            "points": [(1000, 500, 500), (3500, 500, 500), (3500, 3000, 500)]}      # 弯头在 (3500, 500)
+    branch = {"start": ("C", "r"), "end": ("tee", None),
+              "points": [(6000, 500, 500), (3500, 500, 500)]}                        # 沿 A 侧腿的延长线接入
+    viol, m = rt.check_routes(sc, {"t": [main, branch]})
+    assert viol == [] and m["bends"] == 0
+
+
+def test_validator_rejects_collinear_tee_inside_segment():
+    dev = {"A": box(0, 0, 1000, 1000, ports={"p": (1000, 500, 500, 1, 0, 0)}),
+           "B": box(5000, 0, 1000, 1000, ports={"q": (5000, 500, 500, -1, 0, 0)}),
+           "C": box(2500, 3000, 1000, 1000, ports={"r": (3000, 3000, 500, 0, -1, 0)})}
+    sc = scene(dev, [{"id": "t", "terms": [("A", "p"), ("B", "q"), ("C", "r")]}])
+    main = {"start": ("A", "p"), "end": ("port", ("B", "q")), "points": [(1000, 500, 500), (5000, 500, 500)]}
+    bad = {"start": ("C", "r"), "end": ("tee", None),
+           "points": [(3000, 3000, 500), (3000, 1500, 500), (2000, 1500, 500), (2000, 500, 500), (3000, 500, 500)]}
+    viol, _ = rt.check_routes(sc, {"t": [main, bad]})
+    assert any("共线" in v for v in viol)

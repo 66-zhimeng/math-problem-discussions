@@ -37,9 +37,10 @@ import placement_cpsat as base
 
 # ============================================================ 预处理
 class Problem:
-    def __init__(self, blocks, nets, P, weights, access=None):
+    def __init__(self, blocks, nets, P, weights, access=None, margins=None):
         self.blocks, self.nets, self.P, self.w = blocks, nets, P, weights
         self.access = access_rects_factory(P, access) if access else None
+        self.margins = side_margins_factory(P, margins) if margins else None
         self.n = len(blocks)
         self.d, self.lmin, self.k = P["delta"], P["lmin"], P["kappa"]
         # 姿态索引：(内部排法, 旋转) → pose 下标
@@ -89,7 +90,8 @@ def access_rects_factory(P, access):
         if key not in cache:
             raw, pipe = [], []
             for x, y, ux, uy, _z in p["ports"].values():
-                for depth, side, out in ((L + dep, hw + dep, raw), (L, hw, pipe)):
+                # 管段方形截面在末端也外伸 D/2（与布管校验同口径）
+                for depth, side, out in ((L + hw + dep, hw + dep, raw), (L + hw, hw, pipe)):
                     ax, ay = x + ux * depth, y + uy * depth
                     if ux:
                         out.append((min(x, ax), y - side, max(x, ax), y + side))
@@ -98,6 +100,36 @@ def access_rects_factory(P, access):
             cache[key] = (raw, pipe)
         return cache[key]
     return rects
+
+
+def side_margins_factory(P, cfg):
+    """按侧出管留空（网格单位）：某侧有 k 个端口时，
+       m = ℓ_min + ρ + (k−1)·(D + δ_pp) + D/2 + δ_ep，向上取整到网格；无端口为 0。
+    含义：管道离开端口直行到转弯点，再沿该侧并排走 k 条车道，最外侧与相邻设备保持 δ_ep。
+    相邻两块之间的缝隙 ≥ 两侧留空之和，因此正面相对的端口需求会叠加。"""
+    grid = P["grid"]
+    need = ["D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"]
+    miss = [k for k in need if k not in cfg]
+    if miss:
+        raise KeyError(f"出管留空缺少参数：{miss}")
+    lmin_mm = P["lmin"] * grid
+    rho = cfg["c_rho"] * cfg["D_mm"]
+    cache = {}
+
+    def margins(p):
+        key = id(p)
+        if key not in cache:
+            cnt = {"L": 0, "R": 0, "B": 0, "T": 0}
+            for _x, _y, ux, uy, _z in p["ports"].values():
+                cnt["L" if ux < 0 else "R" if ux > 0 else "B" if uy < 0 else "T"] += 1
+            m = {}
+            for side, k in cnt.items():
+                mm = 0 if k == 0 else (lmin_mm + rho + (k - 1) * (cfg["D_mm"] + cfg["delta_pp_mm"])
+                                       + cfg["D_mm"] / 2 + cfg["delta_ep_mm"])
+                m[side] = -(-int(math.ceil(mm)) // grid)
+            cache[key] = (m["L"], m["R"], m["B"], m["T"])
+        return cache[key]
+    return margins
 
 
 def extents(p, zones_inside):
@@ -145,6 +177,9 @@ def skeleton(pr, st):
         ab = [_bounds([(r[0], r[1], r[2] - r[0], r[3] - r[1]) for r in a[1]]) for a in acc]
     else:
         ext_raw = ext
+    if pr.margins:
+        mg = [pr.margins(p) for p in ps]                                # (左, 右, 下, 上)
+        zb_m = [_bounds(p["zones"]) for p in ps]
     cons = []
     for i in range(n):
         for j in range(n):
@@ -157,6 +192,12 @@ def skeleton(pr, st):
                         g = max(g, ab[i][1] - zb[j][0])
                     if zb[i] and ab[j]:
                         g = max(g, zb[i][1] - ab[j][0])
+                if pr.margins:                              # 出管留空：两侧叠加；留空不压对方检修区
+                    g = max(g, ps[i]["W"] + mg[i][1] + mg[j][0])
+                    if zb_m[j]:
+                        g = max(g, ps[i]["W"] + mg[i][1] - zb_m[j][0])
+                    if zb_m[i]:
+                        g = max(g, zb_m[i][1] + mg[j][0])
                 cons.append((i, j, 0, g))
             else:                                           # i 在 j 下
                 g = max(ps[i]["H"] + pr.d, ext_raw[i][3], ps[i]["H"] - ext_raw[j][2])
@@ -165,8 +206,16 @@ def skeleton(pr, st):
                         g = max(g, ab[i][3] - zb[j][2])
                     if zb[i] and ab[j]:
                         g = max(g, zb[i][3] - ab[j][2])
+                if pr.margins:
+                    g = max(g, ps[i]["H"] + mg[i][3] + mg[j][2])
+                    if zb_m[j]:
+                        g = max(g, ps[i]["H"] + mg[i][3] - zb_m[j][2])
+                    if zb_m[i]:
+                        g = max(g, zb_m[i][3] + mg[j][2])
                 cons.append((i, j, 1, g))
     lo = [[(-e[0] if inside else 0) for e in ext], [(-e[2] if inside else 0) for e in ext]]
+    if pr.margins:                                          # 外圈出管留空也在占地矩形内
+        lo = [[max(lo[0][i], mg[i][0]) for i in range(n)], [max(lo[1][i], mg[i][2]) for i in range(n)]]
     pos = [[0] * n, [0] * n]
     preds = [[[] for _ in range(n)], [[] for _ in range(n)]]
     for i, j, a, g in cons:
@@ -185,10 +234,14 @@ def skeleton(pr, st):
             pos[a][j] = v
     right = [(e[1] if inside else p["W"]) for e, p in zip(ext, ps)]
     top = [(e[3] if inside else p["H"]) for e, p in zip(ext, ps)]
+    if pr.margins:
+        right = [max(r_, p["W"] + m_[1]) for r_, p, m_ in zip(right, ps, mg)]
+        top = [max(t_, p["H"] + m_[3]) for t_, p, m_ in zip(top, ps, mg)]
     Wx = max(pos[0][i] + right[i] for i in range(n))
     Hy = max(pos[1][i] + top[i] for i in range(n))
     W, H = max(Wx, -(-Hy // pr.k)), max(Hy, -(-Wx // pr.k))
-    return {"poses": poses, "ext": ext, "cons": cons, "W": W, "H": H, "pos": pos, "right": right, "top": top}
+    return {"poses": poses, "ext": ext, "cons": cons, "W": W, "H": H, "pos": pos, "right": right, "top": top,
+            "lo": lo}
 
 
 def quick_lb(pr, sk, st):
@@ -242,8 +295,7 @@ def solve_lp(pr, sk, st):
     cost = [0.0] * nv
     bounds = [(0, None)] * nv
     for i in range(n):
-        if inside:
-            bounds[X(i)] = (-sk["ext"][i][0], None); bounds[Y(i)] = (-sk["ext"][i][2], None)
+        bounds[X(i)] = (sk["lo"][0][i], None); bounds[Y(i)] = (sk["lo"][1][i], None)
         if pr.fixed[i] is not None:
             bounds[X(i)] = (pr.fixed[i][0], pr.fixed[i][0]); bounds[Y(i)] = (pr.fixed[i][1], pr.fixed[i][1])
     for i, j, a, g in sk["cons"]:
@@ -403,9 +455,9 @@ def decode(pr, arr):
 
 # ============================================================ 模拟退火（单进程）
 def anneal(args):
-    (path, weights, budget, t_start, seed, cycle, T0, T1, access, shared) = args
+    (path, weights, budget, t_start, seed, cycle, T0, T1, access, margins, shared) = args
     blocks, nets, P = base.load(path)
-    pr = Problem(blocks, nets, P, weights or P["w"], access)
+    pr = Problem(blocks, nets, P, weights or P["w"], access, margins)
     pr.stats = dict.fromkeys(("evals", "infeasible_sp", "pruned", "infeasible_lp", "lp", "invalid", "fractional"), 0)
     rng = random.Random(seed)
     gJ, gArr, lock = shared
@@ -445,9 +497,10 @@ def anneal(args):
     return {"seed": seed, "best_J": best[0], "solution": best[2], "trace": trace, "stats": pr.stats}
 
 
-def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None):
+def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None, margins=None):
     """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。
-    access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。"""
+    access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。
+    margins = {"D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"} 时启用按侧出管留空（见 side_margins_factory）。"""
     t_start = time.time()
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"])
@@ -456,7 +509,7 @@ def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=N
     mgr_lock = ctx.Lock()
     gJ = ctx.Value("d", math.inf, lock=False)
     gArr = ctx.Array("i", size, lock=False)
-    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, (gJ, gArr, mgr_lock))
+    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, margins, (gJ, gArr, mgr_lock))
             for k in range(procs)]
     if procs == 1:
         outs = [anneal(jobs[0])]

@@ -1,0 +1,3335 @@
+[
+ {
+  "method": "A接入区",
+  "seed": 0,
+  "placement_s": 60.0,
+  "route_s": 534.8,
+  "iterations": 30,
+  "routed": 22,
+  "nets": 25,
+  "failed": {
+   "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+   "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+   "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+  },
+  "clash_pairs": 2,
+  "other_violations": [],
+  "final_conflict_edges": 37,
+  "all_ok": false,
+  "device_area_m2": 218.9,
+  "J_lb": 2.9483,
+  "routed_metrics": {
+   "W_m": 16.7,
+   "H_m": 17.1,
+   "area_m2": 285.6,
+   "L_m": 378.5,
+   "bends": 168,
+   "height_changes": 54,
+   "J": 6.256
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 249,
+    "conflicted_nets": 19,
+    "time_s": 11.6,
+    "search_time_sum_s": 38.0,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 2,
+    "rerouted": 19,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 326,
+    "conflicted_nets": 21,
+    "time_s": 10.7,
+    "search_time_sum_s": 20.7,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 3,
+    "rerouted": 21,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 176,
+    "conflicted_nets": 17,
+    "time_s": 11.0,
+    "search_time_sum_s": 22.4,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 4,
+    "rerouted": 17,
+    "kept_old": 0,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 156,
+    "conflicted_nets": 13,
+    "time_s": 25.7,
+    "search_time_sum_s": 23.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 5,
+    "rerouted": 13,
+    "kept_old": 0,
+    "requeued": 5,
+    "max_parallel": 12,
+    "conflict_edges": 83,
+    "conflicted_nets": 10,
+    "time_s": 10.8,
+    "search_time_sum_s": 13.8,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 6,
+    "rerouted": 10,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 10,
+    "conflict_edges": 83,
+    "conflicted_nets": 8,
+    "time_s": 20.1,
+    "search_time_sum_s": 16.5,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 7,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 8,
+    "conflict_edges": 75,
+    "conflicted_nets": 8,
+    "time_s": 16.8,
+    "search_time_sum_s": 13.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 8,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 8,
+    "conflict_edges": 65,
+    "conflicted_nets": 8,
+    "time_s": 17.3,
+    "search_time_sum_s": 14.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 9,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 8,
+    "conflict_edges": 55,
+    "conflicted_nets": 7,
+    "time_s": 16.1,
+    "search_time_sum_s": 13.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 10,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 7,
+    "conflict_edges": 57,
+    "conflicted_nets": 7,
+    "time_s": 17.0,
+    "search_time_sum_s": 13.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 11,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 7,
+    "conflict_edges": 57,
+    "conflicted_nets": 7,
+    "time_s": 17.8,
+    "search_time_sum_s": 14.5,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 12,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 7,
+    "conflict_edges": 57,
+    "conflicted_nets": 7,
+    "time_s": 16.3,
+    "search_time_sum_s": 13.9,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 13,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 7,
+    "conflict_edges": 57,
+    "conflicted_nets": 7,
+    "time_s": 16.7,
+    "search_time_sum_s": 14.2,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 14,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 7,
+    "conflict_edges": 57,
+    "conflicted_nets": 7,
+    "time_s": 17.0,
+    "search_time_sum_s": 14.3,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 15,
+    "rerouted": 7,
+    "kept_old": 0,
+    "requeued": 3,
+    "max_parallel": 7,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 19.6,
+    "search_time_sum_s": 13.1,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 16,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 18.5,
+    "search_time_sum_s": 11.2,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 17,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 36,
+    "conflicted_nets": 4,
+    "time_s": 18.7,
+    "search_time_sum_s": 11.4,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 18,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 19.9,
+    "search_time_sum_s": 12.1,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 19,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 35,
+    "conflicted_nets": 4,
+    "time_s": 19.0,
+    "search_time_sum_s": 11.6,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 20,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 38,
+    "conflicted_nets": 4,
+    "time_s": 20.1,
+    "search_time_sum_s": 12.7,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 21,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 18.5,
+    "search_time_sum_s": 12.0,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 22,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 18.5,
+    "search_time_sum_s": 12.2,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 23,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 36,
+    "conflicted_nets": 4,
+    "time_s": 19.6,
+    "search_time_sum_s": 12.8,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 24,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 35,
+    "conflicted_nets": 4,
+    "time_s": 19.0,
+    "search_time_sum_s": 12.7,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 25,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 19.6,
+    "search_time_sum_s": 13.3,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 26,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 19.8,
+    "search_time_sum_s": 13.7,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 27,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 36,
+    "conflicted_nets": 4,
+    "time_s": 19.1,
+    "search_time_sum_s": 13.1,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 28,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 38,
+    "conflicted_nets": 4,
+    "time_s": 20.2,
+    "search_time_sum_s": 14.0,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 29,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 36,
+    "conflicted_nets": 4,
+    "time_s": 19.1,
+    "search_time_sum_s": 13.0,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 30,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 19.7,
+    "search_time_sum_s": 13.4,
+    "failed": {
+     "冷冻泵出3": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水2": "搜索未找到路径（或超过扩展上限）"
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    74,
+    106,
+    90
+   ],
+   "CH1_冷冻泵": [
+    58,
+    124,
+    270
+   ],
+   "CH1_冷却泵": [
+    73,
+    144,
+    0
+   ],
+   "CH2_主机": [
+    66,
+    34,
+    0
+   ],
+   "CH2_冷冻泵": [
+    0,
+    36,
+    270
+   ],
+   "CH2_冷却泵": [
+    128,
+    58,
+    180
+   ],
+   "CH3_主机": [
+    6,
+    74,
+    90
+   ],
+   "CH3_冷冻泵": [
+    36,
+    76,
+    180
+   ],
+   "CH3_冷却泵": [
+    32,
+    94,
+    90
+   ],
+   "CH4_主机": [
+    128,
+    74,
+    90
+   ],
+   "CH4_冷冻泵": [
+    58,
+    106,
+    90
+   ],
+   "CH4_冷却泵": [
+    136,
+    112,
+    270
+   ],
+   "CT1": [
+    0,
+    112,
+    180
+   ],
+   "CT2": [
+    104,
+    0,
+    90
+   ],
+   "CT3": [
+    70,
+    58,
+    180
+   ],
+   "CT4": [
+    18,
+    0,
+    90
+   ],
+   "FS": [
+    11,
+    58,
+    180
+   ],
+   "JS": [
+    54,
+    58,
+    270
+   ],
+   "HX": [
+    66,
+    4,
+    0
+   ],
+   "MU": [
+    100,
+    106,
+    270
+   ],
+   "WT": [
+    100,
+    130,
+    270
+   ],
+   "TK": [
+    123,
+    130,
+    270
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "B出管留空",
+  "seed": 0,
+  "placement_s": 60.0,
+  "route_s": 249.8,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 1,
+  "other_violations": [],
+  "final_conflict_edges": 12,
+  "all_ok": false,
+  "device_area_m2": 254.6,
+  "J_lb": 3.3254,
+  "routed_metrics": {
+   "W_m": 18.1,
+   "H_m": 15.7,
+   "area_m2": 284.2,
+   "L_m": 393.7,
+   "bends": 157,
+   "height_changes": 54,
+   "J": 6.167
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 17,
+    "max_parallel": 12,
+    "conflict_edges": 496,
+    "conflicted_nets": 23,
+    "time_s": 8.8,
+    "search_time_sum_s": 18.9,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 23,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 265,
+    "conflicted_nets": 21,
+    "time_s": 14.4,
+    "search_time_sum_s": 23.6,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 21,
+    "kept_old": 1,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 288,
+    "conflicted_nets": 21,
+    "time_s": 16.5,
+    "search_time_sum_s": 25.1,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 21,
+    "kept_old": 1,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 234,
+    "conflicted_nets": 18,
+    "time_s": 12.2,
+    "search_time_sum_s": 26.2,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 18,
+    "kept_old": 0,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 97,
+    "conflicted_nets": 10,
+    "time_s": 14.8,
+    "search_time_sum_s": 20.1,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 10,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 10,
+    "conflict_edges": 70,
+    "conflicted_nets": 8,
+    "time_s": 12.7,
+    "search_time_sum_s": 18.6,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 47,
+    "conflicted_nets": 7,
+    "time_s": 12.7,
+    "search_time_sum_s": 13.1,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 7,
+    "conflict_edges": 40,
+    "conflicted_nets": 6,
+    "time_s": 9.6,
+    "search_time_sum_s": 10.1,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 6,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 8.5,
+    "search_time_sum_s": 8.0,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 7.6,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 24,
+    "conflicted_nets": 4,
+    "time_s": 6.0,
+    "search_time_sum_s": 7.5,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 6.1,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 6.1,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 6.1,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 25,
+    "conflicted_nets": 4,
+    "time_s": 8.2,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 8.4,
+    "search_time_sum_s": 7.9,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 24,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 7.8,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 6.0,
+    "search_time_sum_s": 7.9,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 7.9,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 34,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 8.1,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 34,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 8.2,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 6.4,
+    "search_time_sum_s": 8.0,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 8.2,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 8.4,
+    "search_time_sum_s": 8.1,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 24,
+    "conflicted_nets": 4,
+    "time_s": 6.2,
+    "search_time_sum_s": 8.3,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 8.2,
+    "search_time_sum_s": 8.3,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 6.2,
+    "search_time_sum_s": 5.3,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 6.5,
+    "search_time_sum_s": 3.1,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 6.2,
+    "search_time_sum_s": 3.1,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    29,
+    0,
+    0
+   ],
+   "CH1_冷冻泵": [
+    0,
+    26,
+    90
+   ],
+   "CH1_冷却泵": [
+    52,
+    24,
+    180
+   ],
+   "CH2_主机": [
+    133,
+    2,
+    0
+   ],
+   "CH2_冷冻泵": [
+    44,
+    40,
+    270
+   ],
+   "CH2_冷却泵": [
+    110,
+    82,
+    270
+   ],
+   "CH3_主机": [
+    81,
+    58,
+    0
+   ],
+   "CH3_冷冻泵": [
+    52,
+    58,
+    0
+   ],
+   "CH3_冷却泵": [
+    132,
+    132,
+    90
+   ],
+   "CH4_主机": [
+    67,
+    84,
+    0
+   ],
+   "CH4_冷冻泵": [
+    60,
+    40,
+    90
+   ],
+   "CH4_冷却泵": [
+    58,
+    108,
+    270
+   ],
+   "CT1": [
+    122,
+    26,
+    0
+   ],
+   "CT2": [
+    0,
+    108,
+    180
+   ],
+   "CT3": [
+    132,
+    74,
+    270
+   ],
+   "CT4": [
+    74,
+    108,
+    180
+   ],
+   "FS": [
+    78,
+    40,
+    0
+   ],
+   "JS": [
+    28,
+    26,
+    270
+   ],
+   "HX": [
+    81,
+    0,
+    0
+   ],
+   "MU": [
+    16,
+    77,
+    90
+   ],
+   "WT": [
+    148,
+    132,
+    0
+   ],
+   "TK": [
+    36,
+    80,
+    270
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "A接入区",
+  "seed": 1,
+  "placement_s": 60.0,
+  "route_s": 122.5,
+  "iterations": 28,
+  "routed": 22,
+  "nets": 25,
+  "failed": {
+   "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+   "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+   "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+  },
+  "clash_pairs": 0,
+  "other_violations": [],
+  "final_conflict_edges": 0,
+  "all_ok": false,
+  "device_area_m2": 212.2,
+  "J_lb": 2.8347,
+  "routed_metrics": {
+   "W_m": 14.6,
+   "H_m": 17.2,
+   "area_m2": 251.1,
+   "L_m": 272.1,
+   "bends": 144,
+   "height_changes": 47,
+   "J": 5.2351
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 310,
+    "conflicted_nets": 17,
+    "time_s": 12.8,
+    "search_time_sum_s": 33.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 2,
+    "rerouted": 17,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 206,
+    "conflicted_nets": 17,
+    "time_s": 7.3,
+    "search_time_sum_s": 18.1,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 3,
+    "rerouted": 17,
+    "kept_old": 1,
+    "requeued": 13,
+    "max_parallel": 12,
+    "conflict_edges": 271,
+    "conflicted_nets": 16,
+    "time_s": 8.1,
+    "search_time_sum_s": 20.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 4,
+    "rerouted": 16,
+    "kept_old": 2,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 221,
+    "conflicted_nets": 17,
+    "time_s": 8.8,
+    "search_time_sum_s": 20.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 5,
+    "rerouted": 17,
+    "kept_old": 2,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 79,
+    "conflicted_nets": 8,
+    "time_s": 7.6,
+    "search_time_sum_s": 22.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 6,
+    "rerouted": 8,
+    "kept_old": 2,
+    "requeued": 3,
+    "max_parallel": 8,
+    "conflict_edges": 27,
+    "conflicted_nets": 6,
+    "time_s": 6.9,
+    "search_time_sum_s": 10.6,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 7,
+    "rerouted": 6,
+    "kept_old": 2,
+    "requeued": 1,
+    "max_parallel": 6,
+    "conflict_edges": 28,
+    "conflicted_nets": 6,
+    "time_s": 4.1,
+    "search_time_sum_s": 7.9,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 8,
+    "rerouted": 6,
+    "kept_old": 2,
+    "requeued": 1,
+    "max_parallel": 6,
+    "conflict_edges": 39,
+    "conflicted_nets": 6,
+    "time_s": 4.1,
+    "search_time_sum_s": 9.0,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 9,
+    "rerouted": 6,
+    "kept_old": 3,
+    "requeued": 1,
+    "max_parallel": 6,
+    "conflict_edges": 27,
+    "conflicted_nets": 6,
+    "time_s": 4.1,
+    "search_time_sum_s": 10.5,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 10,
+    "rerouted": 6,
+    "kept_old": 2,
+    "requeued": 1,
+    "max_parallel": 6,
+    "conflict_edges": 53,
+    "conflicted_nets": 4,
+    "time_s": 3.9,
+    "search_time_sum_s": 6.5,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 11,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 3.8,
+    "search_time_sum_s": 6.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 12,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 18,
+    "conflicted_nets": 4,
+    "time_s": 3.9,
+    "search_time_sum_s": 6.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 13,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 32,
+    "conflicted_nets": 4,
+    "time_s": 3.9,
+    "search_time_sum_s": 6.3,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 14,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 23,
+    "conflicted_nets": 4,
+    "time_s": 4.0,
+    "search_time_sum_s": 6.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 15,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 19,
+    "conflicted_nets": 4,
+    "time_s": 3.9,
+    "search_time_sum_s": 6.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 16,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 3.9,
+    "search_time_sum_s": 6.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 17,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 19,
+    "conflicted_nets": 4,
+    "time_s": 4.0,
+    "search_time_sum_s": 6.3,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 18,
+    "rerouted": 4,
+    "kept_old": 2,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 31,
+    "conflicted_nets": 4,
+    "time_s": 4.0,
+    "search_time_sum_s": 6.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 19,
+    "rerouted": 4,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 4,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 3.0,
+    "search_time_sum_s": 5.6,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 20,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 7,
+    "conflicted_nets": 2,
+    "time_s": 1.6,
+    "search_time_sum_s": 2.3,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 21,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 1.7,
+    "search_time_sum_s": 2.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 22,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 43,
+    "conflicted_nets": 2,
+    "time_s": 1.7,
+    "search_time_sum_s": 2.4,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 23,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 7,
+    "conflicted_nets": 2,
+    "time_s": 1.5,
+    "search_time_sum_s": 2.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 24,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 6.7,
+    "search_time_sum_s": 4.0,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 25,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 9,
+    "conflicted_nets": 2,
+    "time_s": 1.5,
+    "search_time_sum_s": 2.3,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 26,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 9,
+    "conflicted_nets": 2,
+    "time_s": 1.5,
+    "search_time_sum_s": 2.2,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 27,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 29,
+    "conflicted_nets": 2,
+    "time_s": 1.7,
+    "search_time_sum_s": 2.5,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 28,
+    "rerouted": 2,
+    "kept_old": 1,
+    "requeued": 0,
+    "max_parallel": 2,
+    "conflict_edges": 0,
+    "conflicted_nets": 0,
+    "time_s": 1.5,
+    "search_time_sum_s": 2.3,
+    "failed": {
+     "冷却回水": "支路 CH1_主机.CW_out 未接上（或超过扩展上限）",
+     "冷冻泵出2": "搜索未找到路径（或超过扩展上限）",
+     "冷冻供水1": "搜索未找到路径（或超过扩展上限）"
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    0,
+    40,
+    90
+   ],
+   "CH1_冷冻泵": [
+    0,
+    22,
+    270
+   ],
+   "CH1_冷却泵": [
+    5,
+    78,
+    270
+   ],
+   "CH2_主机": [
+    21,
+    78,
+    90
+   ],
+   "CH2_冷冻泵": [
+    60,
+    42,
+    180
+   ],
+   "CH2_冷却泵": [
+    16,
+    22,
+    90
+   ],
+   "CH3_主机": [
+    40,
+    0,
+    0
+   ],
+   "CH3_冷冻泵": [
+    73,
+    63,
+    270
+   ],
+   "CH3_冷却泵": [
+    78,
+    0,
+    180
+   ],
+   "CH4_主机": [
+    47,
+    78,
+    90
+   ],
+   "CH4_冷冻泵": [
+    56,
+    60,
+    90
+   ],
+   "CH4_冷却泵": [
+    3,
+    98,
+    0
+   ],
+   "CT1": [
+    96,
+    58,
+    270
+   ],
+   "CT2": [
+    0,
+    116,
+    0
+   ],
+   "CT3": [
+    58,
+    116,
+    0
+   ],
+   "CT4": [
+    96,
+    0,
+    270
+   ],
+   "FS": [
+    32,
+    24,
+    180
+   ],
+   "JS": [
+    78,
+    20,
+    270
+   ],
+   "HX": [
+    26,
+    40,
+    90
+   ],
+   "MU": [
+    116,
+    144,
+    180
+   ],
+   "WT": [
+    73,
+    81,
+    270
+   ],
+   "TK": [
+    116,
+    116,
+    90
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "B出管留空",
+  "seed": 1,
+  "placement_s": 60.0,
+  "route_s": 265.3,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 1,
+  "other_violations": [],
+  "final_conflict_edges": 11,
+  "all_ok": false,
+  "device_area_m2": 262.9,
+  "J_lb": 3.3102,
+  "routed_metrics": {
+   "W_m": 22.7,
+   "H_m": 13.9,
+   "area_m2": 315.5,
+   "L_m": 365.1,
+   "bends": 152,
+   "height_changes": 54,
+   "J": 6.2524
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 427,
+    "conflicted_nets": 19,
+    "time_s": 18.3,
+    "search_time_sum_s": 23.7,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 19,
+    "kept_old": 0,
+    "requeued": 14,
+    "max_parallel": 12,
+    "conflict_edges": 290,
+    "conflicted_nets": 20,
+    "time_s": 17.7,
+    "search_time_sum_s": 23.0,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 20,
+    "kept_old": 1,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 220,
+    "conflicted_nets": 15,
+    "time_s": 16.9,
+    "search_time_sum_s": 24.4,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 15,
+    "kept_old": 0,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 210,
+    "conflicted_nets": 11,
+    "time_s": 18.4,
+    "search_time_sum_s": 20.6,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 11,
+    "kept_old": 0,
+    "requeued": 5,
+    "max_parallel": 11,
+    "conflict_edges": 98,
+    "conflicted_nets": 9,
+    "time_s": 16.5,
+    "search_time_sum_s": 22.1,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 9,
+    "kept_old": 0,
+    "requeued": 4,
+    "max_parallel": 9,
+    "conflict_edges": 54,
+    "conflicted_nets": 6,
+    "time_s": 12.2,
+    "search_time_sum_s": 13.6,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 6,
+    "kept_old": 0,
+    "requeued": 4,
+    "max_parallel": 6,
+    "conflict_edges": 29,
+    "conflicted_nets": 3,
+    "time_s": 12.6,
+    "search_time_sum_s": 13.5,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 3,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 3,
+    "conflict_edges": 21,
+    "conflicted_nets": 2,
+    "time_s": 8.5,
+    "search_time_sum_s": 7.8,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 29,
+    "conflicted_nets": 2,
+    "time_s": 8.7,
+    "search_time_sum_s": 7.2,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.6,
+    "search_time_sum_s": 6.1,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.9,
+    "search_time_sum_s": 4.4,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.4,
+    "search_time_sum_s": 4.0,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.5,
+    "search_time_sum_s": 4.0,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.6,
+    "search_time_sum_s": 6.1,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 7.5,
+    "search_time_sum_s": 6.0,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.7,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.7,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.5,
+    "search_time_sum_s": 6.0,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.9,
+    "search_time_sum_s": 4.3,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.7,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.8,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.6,
+    "search_time_sum_s": 6.0,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.5,
+    "search_time_sum_s": 6.0,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.6,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.7,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.5,
+    "search_time_sum_s": 6.0,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.9,
+    "search_time_sum_s": 4.4,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.7,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 5.6,
+    "search_time_sum_s": 4.2,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 11,
+    "conflicted_nets": 2,
+    "time_s": 7.5,
+    "search_time_sum_s": 6.1,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    11,
+    90,
+    180
+   ],
+   "CH1_冷冻泵": [
+    60,
+    92,
+    180
+   ],
+   "CH1_冷却泵": [
+    8,
+    116,
+    180
+   ],
+   "CH2_主机": [
+    63,
+    108,
+    180
+   ],
+   "CH2_冷冻泵": [
+    86,
+    92,
+    0
+   ],
+   "CH2_冷却泵": [
+    34,
+    116,
+    0
+   ],
+   "CH3_主机": [
+    34,
+    2,
+    0
+   ],
+   "CH3_冷冻泵": [
+    34,
+    42,
+    180
+   ],
+   "CH3_冷却泵": [
+    35,
+    26,
+    0
+   ],
+   "CH4_主机": [
+    100,
+    1,
+    0
+   ],
+   "CH4_冷冻泵": [
+    75,
+    8,
+    270
+   ],
+   "CH4_冷却泵": [
+    141,
+    8,
+    270
+   ],
+   "CT1": [
+    160,
+    8,
+    180
+   ],
+   "CT2": [
+    104,
+    84,
+    180
+   ],
+   "CT3": [
+    112,
+    26,
+    270
+   ],
+   "CT4": [
+    162,
+    84,
+    180
+   ],
+   "FS": [
+    9,
+    62,
+    180
+   ],
+   "JS": [
+    61,
+    46,
+    0
+   ],
+   "HX": [
+    63,
+    62,
+    180
+   ],
+   "MU": [
+    168,
+    56,
+    180
+   ],
+   "WT": [
+    8,
+    26,
+    270
+   ],
+   "TK": [
+    191,
+    56,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "A接入区",
+  "seed": 2,
+  "placement_s": 60.0,
+  "route_s": 218.4,
+  "iterations": 30,
+  "routed": 23,
+  "nets": 25,
+  "failed": {
+   "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+   "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+  },
+  "clash_pairs": 9,
+  "other_violations": [],
+  "final_conflict_edges": 118,
+  "all_ok": false,
+  "device_area_m2": 214.8,
+  "J_lb": 2.7678,
+  "routed_metrics": {
+   "W_m": 14.6,
+   "H_m": 17.7,
+   "area_m2": 258.4,
+   "L_m": 255.3,
+   "bends": 140,
+   "height_changes": 46,
+   "J": 5.173
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 516,
+    "conflicted_nets": 21,
+    "time_s": 7.4,
+    "search_time_sum_s": 19.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 2,
+    "rerouted": 21,
+    "kept_old": 0,
+    "requeued": 14,
+    "max_parallel": 12,
+    "conflict_edges": 259,
+    "conflicted_nets": 19,
+    "time_s": 10.6,
+    "search_time_sum_s": 19.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 3,
+    "rerouted": 19,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 315,
+    "conflicted_nets": 19,
+    "time_s": 10.2,
+    "search_time_sum_s": 21.4,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 4,
+    "rerouted": 19,
+    "kept_old": 1,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 188,
+    "conflicted_nets": 16,
+    "time_s": 10.4,
+    "search_time_sum_s": 27.8,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 5,
+    "rerouted": 16,
+    "kept_old": 4,
+    "requeued": 7,
+    "max_parallel": 12,
+    "conflict_edges": 250,
+    "conflicted_nets": 16,
+    "time_s": 9.4,
+    "search_time_sum_s": 27.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 6,
+    "rerouted": 16,
+    "kept_old": 4,
+    "requeued": 7,
+    "max_parallel": 12,
+    "conflict_edges": 152,
+    "conflicted_nets": 15,
+    "time_s": 9.2,
+    "search_time_sum_s": 28.8,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 7,
+    "rerouted": 15,
+    "kept_old": 3,
+    "requeued": 6,
+    "max_parallel": 12,
+    "conflict_edges": 118,
+    "conflicted_nets": 12,
+    "time_s": 6.5,
+    "search_time_sum_s": 24.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 8,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 133,
+    "conflicted_nets": 12,
+    "time_s": 4.6,
+    "search_time_sum_s": 21.9,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 9,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 121,
+    "conflicted_nets": 12,
+    "time_s": 4.5,
+    "search_time_sum_s": 21.8,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 10,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 151,
+    "conflicted_nets": 12,
+    "time_s": 4.6,
+    "search_time_sum_s": 22.9,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 11,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 121,
+    "conflicted_nets": 12,
+    "time_s": 4.6,
+    "search_time_sum_s": 22.4,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 12,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 122,
+    "conflicted_nets": 12,
+    "time_s": 4.6,
+    "search_time_sum_s": 23.6,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 13,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 4,
+    "max_parallel": 12,
+    "conflict_edges": 120,
+    "conflicted_nets": 12,
+    "time_s": 4.6,
+    "search_time_sum_s": 23.2,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 14,
+    "rerouted": 12,
+    "kept_old": 4,
+    "requeued": 6,
+    "max_parallel": 12,
+    "conflict_edges": 120,
+    "conflicted_nets": 12,
+    "time_s": 7.2,
+    "search_time_sum_s": 24.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 15,
+    "rerouted": 12,
+    "kept_old": 3,
+    "requeued": 5,
+    "max_parallel": 12,
+    "conflict_edges": 117,
+    "conflicted_nets": 11,
+    "time_s": 4.5,
+    "search_time_sum_s": 21.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 16,
+    "rerouted": 11,
+    "kept_old": 3,
+    "requeued": 6,
+    "max_parallel": 11,
+    "conflict_edges": 108,
+    "conflicted_nets": 10,
+    "time_s": 7.5,
+    "search_time_sum_s": 19.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 17,
+    "rerouted": 10,
+    "kept_old": 3,
+    "requeued": 6,
+    "max_parallel": 10,
+    "conflict_edges": 109,
+    "conflicted_nets": 10,
+    "time_s": 7.8,
+    "search_time_sum_s": 21.2,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 18,
+    "rerouted": 10,
+    "kept_old": 3,
+    "requeued": 6,
+    "max_parallel": 10,
+    "conflict_edges": 108,
+    "conflicted_nets": 10,
+    "time_s": 8.0,
+    "search_time_sum_s": 19.9,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 19,
+    "rerouted": 10,
+    "kept_old": 5,
+    "requeued": 6,
+    "max_parallel": 10,
+    "conflict_edges": 128,
+    "conflicted_nets": 10,
+    "time_s": 8.4,
+    "search_time_sum_s": 27.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 20,
+    "rerouted": 10,
+    "kept_old": 4,
+    "requeued": 6,
+    "max_parallel": 10,
+    "conflict_edges": 114,
+    "conflicted_nets": 10,
+    "time_s": 8.8,
+    "search_time_sum_s": 25.1,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 21,
+    "rerouted": 10,
+    "kept_old": 5,
+    "requeued": 4,
+    "max_parallel": 10,
+    "conflict_edges": 105,
+    "conflicted_nets": 10,
+    "time_s": 7.2,
+    "search_time_sum_s": 30.7,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 22,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 5,
+    "max_parallel": 10,
+    "conflict_edges": 107,
+    "conflicted_nets": 10,
+    "time_s": 9.3,
+    "search_time_sum_s": 32.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 23,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 4,
+    "max_parallel": 10,
+    "conflict_edges": 105,
+    "conflicted_nets": 10,
+    "time_s": 7.8,
+    "search_time_sum_s": 33.2,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 24,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 5,
+    "max_parallel": 10,
+    "conflict_edges": 97,
+    "conflicted_nets": 10,
+    "time_s": 8.1,
+    "search_time_sum_s": 32.9,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 25,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 5,
+    "max_parallel": 10,
+    "conflict_edges": 99,
+    "conflicted_nets": 10,
+    "time_s": 8.6,
+    "search_time_sum_s": 33.9,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 26,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 3,
+    "max_parallel": 10,
+    "conflict_edges": 129,
+    "conflicted_nets": 10,
+    "time_s": 8.5,
+    "search_time_sum_s": 37.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 27,
+    "rerouted": 10,
+    "kept_old": 6,
+    "requeued": 3,
+    "max_parallel": 10,
+    "conflict_edges": 127,
+    "conflicted_nets": 10,
+    "time_s": 9.0,
+    "search_time_sum_s": 36.8,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 28,
+    "rerouted": 10,
+    "kept_old": 7,
+    "requeued": 1,
+    "max_parallel": 10,
+    "conflict_edges": 127,
+    "conflicted_nets": 10,
+    "time_s": 5.0,
+    "search_time_sum_s": 36.1,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 29,
+    "rerouted": 10,
+    "kept_old": 7,
+    "requeued": 1,
+    "max_parallel": 10,
+    "conflict_edges": 116,
+    "conflicted_nets": 10,
+    "time_s": 5.0,
+    "search_time_sum_s": 36.3,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   },
+   {
+    "iter": 30,
+    "rerouted": 10,
+    "kept_old": 7,
+    "requeued": 1,
+    "max_parallel": 10,
+    "conflict_edges": 118,
+    "conflicted_nets": 10,
+    "time_s": 5.0,
+    "search_time_sum_s": 36.4,
+    "failed": {
+     "冷却供水": "支路 CH1_冷却泵.in 未接上（或超过扩展上限）",
+     "冷冻供水3": "搜索未找到路径（或超过扩展上限）"
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    112,
+    56,
+    90
+   ],
+   "CH1_冷冻泵": [
+    98,
+    18,
+    90
+   ],
+   "CH1_冷却泵": [
+    120,
+    94,
+    0
+   ],
+   "CH2_主机": [
+    86,
+    58,
+    90
+   ],
+   "CH2_冷冻泵": [
+    94,
+    40,
+    90
+   ],
+   "CH2_冷却泵": [
+    86,
+    96,
+    90
+   ],
+   "CH3_主机": [
+    114,
+    18,
+    90
+   ],
+   "CH3_冷冻泵": [
+    114,
+    0,
+    0
+   ],
+   "CH3_冷却泵": [
+    102,
+    96,
+    0
+   ],
+   "CH4_主机": [
+    58,
+    58,
+    90
+   ],
+   "CH4_冷冻泵": [
+    78,
+    40,
+    90
+   ],
+   "CH4_冷却泵": [
+    65,
+    124,
+    270
+   ],
+   "CT1": [
+    0,
+    76,
+    180
+   ],
+   "CT2": [
+    81,
+    124,
+    180
+   ],
+   "CT3": [
+    0,
+    18,
+    90
+   ],
+   "CT4": [
+    0,
+    124,
+    180
+   ],
+   "FS": [
+    28,
+    2,
+    180
+   ],
+   "JS": [
+    71,
+    1,
+    180
+   ],
+   "HX": [
+    48,
+    18,
+    90
+   ],
+   "MU": [
+    78,
+    17,
+    270
+   ],
+   "WT": [
+    58,
+    142,
+    270
+   ],
+   "TK": [
+    58,
+    96,
+    270
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "B出管留空",
+  "seed": 2,
+  "placement_s": 60.0,
+  "route_s": 215.6,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 1,
+  "other_violations": [],
+  "final_conflict_edges": 10,
+  "all_ok": false,
+  "device_area_m2": 258.4,
+  "J_lb": 3.5197,
+  "routed_metrics": {
+   "W_m": 16.3,
+   "H_m": 19.4,
+   "area_m2": 316.2,
+   "L_m": 467.0,
+   "bends": 175,
+   "height_changes": 56,
+   "J": 6.9195
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 19,
+    "max_parallel": 12,
+    "conflict_edges": 752,
+    "conflicted_nets": 25,
+    "time_s": 20.8,
+    "search_time_sum_s": 36.3,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 14,
+    "max_parallel": 12,
+    "conflict_edges": 426,
+    "conflicted_nets": 25,
+    "time_s": 25.0,
+    "search_time_sum_s": 41.8,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 19,
+    "max_parallel": 12,
+    "conflict_edges": 435,
+    "conflicted_nets": 23,
+    "time_s": 21.5,
+    "search_time_sum_s": 37.9,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 23,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 221,
+    "conflicted_nets": 19,
+    "time_s": 23.0,
+    "search_time_sum_s": 47.7,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 19,
+    "kept_old": 2,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 206,
+    "conflicted_nets": 15,
+    "time_s": 18.5,
+    "search_time_sum_s": 35.9,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 15,
+    "kept_old": 0,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 136,
+    "conflicted_nets": 12,
+    "time_s": 25.4,
+    "search_time_sum_s": 23.1,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 12,
+    "kept_old": 0,
+    "requeued": 7,
+    "max_parallel": 12,
+    "conflict_edges": 133,
+    "conflicted_nets": 8,
+    "time_s": 17.7,
+    "search_time_sum_s": 26.4,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 207,
+    "conflicted_nets": 6,
+    "time_s": 15.3,
+    "search_time_sum_s": 11.4,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 6,
+    "conflict_edges": 165,
+    "conflicted_nets": 6,
+    "time_s": 17.1,
+    "search_time_sum_s": 12.9,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 6,
+    "kept_old": 0,
+    "requeued": 4,
+    "max_parallel": 6,
+    "conflict_edges": 35,
+    "conflicted_nets": 4,
+    "time_s": 12.8,
+    "search_time_sum_s": 9.7,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 37,
+    "conflicted_nets": 4,
+    "time_s": 1.0,
+    "search_time_sum_s": 0.6,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 33,
+    "conflicted_nets": 4,
+    "time_s": 1.2,
+    "search_time_sum_s": 0.8,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 34,
+    "conflicted_nets": 4,
+    "time_s": 1.0,
+    "search_time_sum_s": 0.6,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 30,
+    "conflicted_nets": 4,
+    "time_s": 1.0,
+    "search_time_sum_s": 0.9,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 33,
+    "conflicted_nets": 4,
+    "time_s": 1.8,
+    "search_time_sum_s": 1.4,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 32,
+    "conflicted_nets": 4,
+    "time_s": 1.8,
+    "search_time_sum_s": 1.8,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 30,
+    "conflicted_nets": 4,
+    "time_s": 1.0,
+    "search_time_sum_s": 0.7,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 28,
+    "conflicted_nets": 4,
+    "time_s": 1.2,
+    "search_time_sum_s": 1.2,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 34,
+    "conflicted_nets": 4,
+    "time_s": 1.1,
+    "search_time_sum_s": 0.7,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 31,
+    "conflicted_nets": 4,
+    "time_s": 0.9,
+    "search_time_sum_s": 0.7,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 28,
+    "conflicted_nets": 4,
+    "time_s": 1.1,
+    "search_time_sum_s": 1.4,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 4,
+    "conflict_edges": 22,
+    "conflicted_nets": 4,
+    "time_s": 1.3,
+    "search_time_sum_s": 1.2,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 4,
+    "conflict_edges": 9,
+    "conflicted_nets": 2,
+    "time_s": 0.8,
+    "search_time_sum_s": 1.6,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 10,
+    "conflicted_nets": 2,
+    "time_s": 0.2,
+    "search_time_sum_s": 0.1,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 9,
+    "conflicted_nets": 2,
+    "time_s": 0.5,
+    "search_time_sum_s": 0.4,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 0.2,
+    "search_time_sum_s": 0.0,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 10,
+    "conflicted_nets": 2,
+    "time_s": 0.2,
+    "search_time_sum_s": 0.1,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 9,
+    "conflicted_nets": 2,
+    "time_s": 0.5,
+    "search_time_sum_s": 0.3,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 12,
+    "conflicted_nets": 2,
+    "time_s": 0.2,
+    "search_time_sum_s": 0.1,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 2,
+    "kept_old": 0,
+    "requeued": 1,
+    "max_parallel": 2,
+    "conflict_edges": 10,
+    "conflicted_nets": 2,
+    "time_s": 0.2,
+    "search_time_sum_s": 0.1,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    116,
+    137,
+    180
+   ],
+   "CH1_冷冻泵": [
+    112,
+    82,
+    0
+   ],
+   "CH1_冷却泵": [
+    112,
+    163,
+    0
+   ],
+   "CH2_主机": [
+    6,
+    29,
+    270
+   ],
+   "CH2_冷冻泵": [
+    58,
+    81,
+    180
+   ],
+   "CH2_冷却泵": [
+    26,
+    7,
+    180
+   ],
+   "CH3_主机": [
+    89,
+    56,
+    180
+   ],
+   "CH3_冷冻泵": [
+    112,
+    98,
+    180
+   ],
+   "CH3_冷却泵": [
+    84,
+    82,
+    0
+   ],
+   "CH4_主机": [
+    58,
+    122,
+    90
+   ],
+   "CH4_冷冻泵": [
+    86,
+    98,
+    180
+   ],
+   "CH4_冷却泵": [
+    58,
+    97,
+    0
+   ],
+   "CT1": [
+    0,
+    81,
+    180
+   ],
+   "CT2": [
+    0,
+    137,
+    0
+   ],
+   "CT3": [
+    80,
+    8,
+    0
+   ],
+   "CT4": [
+    30,
+    23,
+    270
+   ],
+   "FS": [
+    138,
+    39,
+    90
+   ],
+   "JS": [
+    138,
+    90,
+    90
+   ],
+   "HX": [
+    84,
+    145,
+    270
+   ],
+   "MU": [
+    118,
+    114,
+    270
+   ],
+   "WT": [
+    52,
+    0,
+    0
+   ],
+   "TK": [
+    84,
+    114,
+    270
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ }
+]
