@@ -194,4 +194,22 @@ def coarse_route(sc, log=None):
     return {"ok": not failed and int(over.sum()) == 0, "failed": failed, "overflow_cells": int(over.sum()),
             "overflow_nets": sorted(nets[e]["id"] for e, p in paths.items() if any(over[c] for c in p)),
             "length_m_rough": round(length, 1), "iters": len(history), "history": history,
-            "grid": [G.nx, G.ny, G.nz], "time_s": round(time.time() - t0, 2)}
+            "grid": [G.nx, G.ny, G.nz], "time_s": round(time.time() - t0, 2),
+            "paths": {nets[e]["id"]: sorted(int(c) for c in p) for e, p in paths.items()},
+            "spec": {"x0": G.x0, "y0": G.y0, "c": G.c, "nx": G.nx, "ny": G.ny, "nz": G.nz,
+                     "zs": [float(z) for z in G.zs]}}
+
+
+def dilate(spec, cells, r):
+    """走廊：粗网格路径格点向外扩 r 格（平面与层都扩）。"""
+    nx, ny, nz = spec["nx"], spec["ny"], spec["nz"]
+    out = set()
+    for cid in cells:
+        i, j, k = cid // (ny * nz), (cid // nz) % ny, cid % nz
+        for di in range(-r, r + 1):
+            for dj in range(-r, r + 1):
+                for dk in range(-r, r + 1):
+                    a, b, c = i + di, j + dj, k + dk
+                    if 0 <= a < nx and 0 <= b < ny and 0 <= c < nz:
+                        out.add((a * ny + b) * nz + c)
+    return out

@@ -208,6 +208,9 @@ def astar(G, sc, start, target, ctx):
     ex_nodes, ex_edges = ctx["ex_nodes"], ctx["ex_edges"]
     blocked, eblocked = G.blocked, G.eblocked
     hw = sc.rp["astar_weight"]                                      # > 1：加权 A*，更快但不保证单管最优
+    corr = ctx.get("corr")
+    if corr is not None:
+        cmap, cny, cnz, cpen = G.corr_map, G.corr_ny, G.corr_nz, ctx["corr_penalty"]
 
     sx, sy, sz, sux, suy, suz = sc.port(*start)
     s = G.node((sx, sy, sz))
@@ -308,7 +311,12 @@ def astar(G, sc, start, target, ctx):
             if a != 2:
                 nhh = 1
             ei = lower * 3 + a                                         # 边下标：共享占用 / 历史代价表
-            ng += cL * ln * (1 + hist[ei]) * (1 + pres * halo[ei])
+            step_cost = cL * ln * (1 + hist[ei]) * (1 + pres * halo[ei])
+            if corr is not None:                                       # 走廊引导：走出粗网格走廊的边加价
+                ci, cj, ck = G.ijk(nb)
+                if (cmap[0][ci] * cny + cmap[1][cj]) * cnz + cmap[2][ck] not in corr:
+                    step_cost *= cpen
+            ng += step_cost
             goal_info = None
             if target[0] == "port":
                 if nb == t:
@@ -557,10 +565,22 @@ def route_net(G, sc, net, ctx):
 _W = {}
 
 
-def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name):
+def attach_corridor_map(G, spec):
+    """精细网格各轴坐标 → 粗网格格点下标（z 取最近层）。"""
+    import numpy as np
+    cx = [min(spec["nx"] - 1, max(0, int((x - spec["x0"]) // spec["c"]))) for x in G.c[0]]
+    cy = [min(spec["ny"] - 1, max(0, int((y - spec["y0"]) // spec["c"]))) for y in G.c[1]]
+    zs = np.array(spec["zs"])
+    cz = [int(np.argmin(np.abs(zs - z))) for z in G.c[2]]
+    G.corr_map, G.corr_ny, G.corr_nz = (cx, cy, cz), spec["ny"], spec["nz"]
+
+
+def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name, corr_spec=None):
     from multiprocessing import shared_memory
     sc = Scene(devices, nets, rp, weights, scale)
     _W["sc"], _W["G"] = sc, Grid(sc)
+    if corr_spec is not None:
+        attach_corridor_map(_W["G"], corr_spec)
     _W["shm"] = (shared_memory.SharedMemory(name=halo_name), shared_memory.SharedMemory(name=hist_name))
     _W["halo"] = _W["shm"][0].buf.cast("i")
     _W["hist"] = _W["shm"][1].buf.cast("f")
@@ -579,18 +599,20 @@ class _Zero:
         return 0
 
 
-def _route_one(G, sc, halo, hist, e, pres, never_routed):
+def _route_one(G, sc, halo, hist, e, pres, never_routed, corr=None, corr_penalty=None):
     """带拥堵代价搜索（A* 中实时读取共享占用表）；失败且该管网从未布通过时，再做一次无拥堵搜索。
     info["free_fail"] = 无拥堵搜索也失败（或端口被堵）：该布局下布不通，之后不再重试。"""
     t0 = time.time()
     stats = {"expansions": 0, "exhausted": 0}
-    br, reason = route_net(G, sc, sc.nets[e], {"halo": halo, "hist": hist, "pres": pres, "stats": stats})
+    cctx = {"corr": corr, "corr_penalty": corr_penalty}
+    br, reason = route_net(G, sc, sc.nets[e], {"halo": halo, "hist": hist, "pres": pres, "stats": stats, **cctx})
     fallback = free_fail = False
     if br is None and reason.startswith("端口正前方"):
         free_fail = True
     elif br is None and never_routed:
         fallback = True
-        br, reason = route_net(G, sc, sc.nets[e], {"halo": _Zero(), "hist": _Zero(), "pres": 0.0, "stats": stats})
+        br, reason = route_net(G, sc, sc.nets[e], {"halo": _Zero(), "hist": _Zero(), "pres": 0.0, "stats": stats,
+                                                   "corr": None})
         free_fail = br is None
     info = {"net": sc.nets[e]["id"], "time_s": round(time.time() - t0, 2), "fallback": fallback,
             "free_fail": free_fail, **stats}
@@ -600,7 +622,7 @@ def _route_one(G, sc, halo, hist, e, pres, never_routed):
             [n * 3 + ax for n, ax in path_edges(G, br)], info)
 
 
-def negotiate(sc, log=print):
+def negotiate(sc, log=print, corridors=None):
     """有交流的并行协商布线（PathFinder 变体 + 乐观并发）。
     共享状态：每条边的占用计数（各管网“晕”的叠加）与历史拥堵代价，放在共享内存里；
       只有主进程写，工作进程在 A* 中实时读——一根管一提交，之后的搜索立即看到。
@@ -609,7 +631,9 @@ def negotiate(sc, log=print):
       （每轮每个管网最多重搜 max_requeue 次，超过则照常提交，冲突交给下一轮协商）。
     每轮：第 1 轮布全部管网，之后只重布有冲突或未布通的管网；轮末冲突边累积历史代价。
     带拥堵代价搜索失败时保留上一轮路径；无拥堵也布不通的管网记为该布局下不可布，不再重试。
-    route_workers = 1 时串行（无并发冲突，逻辑相同）。"""
+    route_workers = 1 时串行（无并发冲突，逻辑相同）。
+    corridors = {"spec": 粗网格规格, "cells": {管网 id: 走廊格点集合}, "penalty": 走出走廊的边代价倍数}
+      时启用走廊引导（软约束；见 coarse_route.coarse_route / dilate）。"""
     G = Grid(sc)
     rp = sc.rp
     workers = rp["route_workers"]
@@ -625,12 +649,18 @@ def negotiate(sc, log=print):
             sh.buf[:size * 4] = bytes(size * 4)
         halo, hist = shms[0].buf.cast("i"), shms[1].buf.cast("f")
         ex = ProcessPoolExecutor(workers, mp_context=mp.get_context("spawn"), initializer=_worker_init,
-                                 initargs=(sc.dev, sc.nets, rp, sc.w, sc.scale, shms[0].name, shms[1].name))
+                                 initargs=(sc.dev, sc.nets, rp, sc.w, sc.scale, shms[0].name, shms[1].name,
+                                           corridors["spec"] if corridors else None))
         list(ex.map(_worker_ready, range(workers * 4)))                 # 预先启动全部工作进程
     else:
         from array import array
         halo, hist = array("i", bytes(size * 4)), array("f", bytes(size * 4))
     max_requeue = 2
+    ccells, cpen = {}, None
+    if corridors:
+        attach_corridor_map(G, corridors["spec"])
+        ccells = {e: frozenset(corridors["cells"][n["id"]]) for e, n in enumerate(sc.nets) if n["id"] in corridors["cells"]}
+        cpen = corridors["penalty"]
     routes, halos, pedges, why, hard = {}, {}, {}, {}, {}
     ever = set()
     pres = rp["pres_fac_init"]
@@ -670,14 +700,15 @@ def negotiate(sc, log=print):
             if ex is None:
                 for e in queue:
                     old = rip(e)
-                    finish(_route_one(G, sc, halo, hist, e, pres, e not in ever), old, times, counters)
+                    finish(_route_one(G, sc, halo, hist, e, pres, e not in ever, ccells.get(e), cpen),
+                           old, times, counters)
             else:
                 inflight, requeues = {}, {}
                 while queue or inflight:
                     while queue and len(inflight) < workers:
                         e = queue.pop(0)
                         old = rip(e) if e not in requeues else requeues[e][1]
-                        fut = ex.submit(_worker_route, (e, pres, e not in ever))
+                        fut = ex.submit(_worker_route, (e, pres, e not in ever, ccells.get(e), cpen))
                         inflight[fut] = (e, old, len(commits))
                     counters["max_parallel"] = max(counters["max_parallel"], len(inflight))
                     done, _ = wait(inflight, return_when=FIRST_COMPLETED)
