@@ -165,3 +165,29 @@ def test_validator_rejects_collinear_tee_inside_segment():
            "points": [(3000, 3000, 500), (3000, 1500, 500), (2000, 1500, 500), (2000, 500, 500), (3000, 500, 500)]}
     viol, _ = rt.check_routes(sc, {"t": [main, bad]})
     assert any("共线" in v for v in viol)
+
+
+# ---------------- 粗网格快速布管
+import coarse_route as cr  # noqa: E402
+
+CRP = {"coarse_cell_mm": 300, "coarse_iters": 10, "coarse_vertical_penalty_mm": 1000}
+
+
+def test_coarse_routes_simple_pair():
+    sc = scene(two_facing(gap=3000, dy=2000), [{"id": "n", "terms": [("A", "p"), ("B", "q")]}], **CRP)
+    r = cr.coarse_route(sc)
+    assert r["ok"] and r["failed"] == {}
+
+
+def test_coarse_reports_blocked_port():
+    dev = two_facing(gap=4000)
+    dev["Z"] = box(3000, 0, 500, 1000, zones=[(1000, 0, 1200, 1000)])
+    sc = scene(dev, [{"id": "n", "terms": [("A", "p"), ("B", "q")]}], **CRP)
+    r = cr.coarse_route(sc)
+    assert not r["ok"] and r["failed"]["n"].startswith("端口被堵")
+
+
+def test_coarse_missing_param_raises():
+    sc = scene(two_facing(), [{"id": "n", "terms": [("A", "p"), ("B", "q")]}])
+    with pytest.raises(KeyError, match="coarse_cell_mm"):
+        cr.coarse_route(sc)

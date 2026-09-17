@@ -86,6 +86,9 @@ PARAMS = {
         "max_expansions": 500000,                # 单次 A* 最多扩展状态数
         "astar_weight": 1.5,                     # 启发式放大系数（1 = 单管最优；>1 更快但不保证最优）
         "route_workers": 12,                     # 每轮内并行布管的进程数（1 = 串行）
+        "coarse_cell_mm": 300,                   # 粗网格布管：平面格子尺寸（校准见 布管原型/粗网格校准.py）
+        "coarse_iters": 15,                      # 粗网格布管：协商轮数上限
+        "coarse_vertical_penalty_mm": 1000,      # 粗网格布管：每层竖向移动额外代价（粗略代表高度变化）
     },
     "blocking": {
         "auto_module_policy": "accept",          # accept：自动候选直接使用；report_only：只报告，不合并

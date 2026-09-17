@@ -29,7 +29,10 @@
    "hist_fac": 0.5,
    "max_expansions": 500000,
    "astar_weight": 1.5,
-   "route_workers": 12
+   "route_workers": 12,
+   "coarse_cell_mm": 300,
+   "coarse_iters": 15,
+   "coarse_vertical_penalty_mm": 1000
   },
   "blocking": {
    "auto_module_policy": "accept",
