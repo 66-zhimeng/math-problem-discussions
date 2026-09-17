@@ -1,0 +1,634 @@
+{
+ "E1": {
+  "标注": {
+   "modules": [
+    [
+     "制冷链",
+     "标注",
+     4
+    ],
+    [
+     "冷却塔组",
+     "标注",
+     1
+    ]
+   ],
+   "groups": [
+    [
+     [
+      "CH1_主机",
+      "CH1_冷冻泵",
+      "CH1_冷却泵"
+     ],
+     [
+      "CH2_主机",
+      "CH2_冷冻泵",
+      "CH2_冷却泵"
+     ],
+     [
+      "CH3_主机",
+      "CH3_冷冻泵",
+      "CH3_冷却泵"
+     ],
+     [
+      "CH4_主机",
+      "CH4_冷冻泵",
+      "CH4_冷却泵"
+     ]
+    ],
+    [
+     [
+      "CT1",
+      "CT2",
+      "CT3",
+      "CT4"
+     ]
+    ]
+   ],
+   "blocking": {
+    "devices": 23,
+    "blocks": 12,
+    "module_blocks": 5,
+    "nets_in": 25,
+    "nets_out": 17,
+    "internal_nets": 8,
+    "layouts": [
+     {
+      "template": "制冷链",
+      "source": "标注",
+      "instances": 4,
+      "members": 3,
+      "variants": {
+       "给定排法": [
+        3000,
+        3400,
+        "给定"
+       ]
+      },
+      "layout_from": "给定",
+      "time_s": 0.0
+     },
+     {
+      "template": "冷却塔组",
+      "source": "标注",
+      "instances": 1,
+      "members": 4,
+      "variants": {
+       "宽高比1–1.5": [
+        10800,
+        8800,
+        "OPTIMAL"
+       ],
+       "宽高比1.5–3": [
+        18400,
+        5000,
+        "OPTIMAL"
+       ],
+       "宽高比3–30": [
+        22400,
+        4000,
+        "OPTIMAL"
+       ]
+      },
+      "layout_from": "CP-SAT 求解",
+      "time_s": 0.05
+     }
+    ],
+    "time_s": 0.05,
+    "detect_s": 0.0001
+   },
+   "placement_30s": {
+    "J": 2.4093,
+    "area_m2": 204.1,
+    "W_m": 10.8,
+    "H_m": 18.9,
+    "L_lb_m": 135.3,
+    "bends_lb": 27,
+    "blocks": 12,
+    "nets": 17,
+    "evals": 106026
+   }
+  },
+  "自动识别": {
+   "modules": [
+    [
+     "阵列_冷却塔×4",
+     "自动-并联阵列",
+     1
+    ],
+    [
+     "链_冷冻泵+冷水主机+冷却泵",
+     "自动-链式",
+     4
+    ]
+   ],
+   "groups": [
+    [
+     [
+      "CH1_主机",
+      "CH1_冷冻泵",
+      "CH1_冷却泵"
+     ],
+     [
+      "CH2_主机",
+      "CH2_冷冻泵",
+      "CH2_冷却泵"
+     ],
+     [
+      "CH3_主机",
+      "CH3_冷冻泵",
+      "CH3_冷却泵"
+     ],
+     [
+      "CH4_主机",
+      "CH4_冷冻泵",
+      "CH4_冷却泵"
+     ]
+    ],
+    [
+     [
+      "CT1",
+      "CT2",
+      "CT3",
+      "CT4"
+     ]
+    ]
+   ],
+   "blocking": {
+    "devices": 23,
+    "blocks": 12,
+    "module_blocks": 5,
+    "nets_in": 25,
+    "nets_out": 17,
+    "internal_nets": 8,
+    "layouts": [
+     {
+      "template": "阵列_冷却塔×4",
+      "source": "自动-并联阵列",
+      "instances": 1,
+      "members": 4,
+      "variants": {
+       "宽高比1–1.5": [
+        10800,
+        8800,
+        "OPTIMAL"
+       ],
+       "宽高比1.5–3": [
+        18400,
+        5000,
+        "OPTIMAL"
+       ],
+       "宽高比3–30": [
+        22400,
+        4000,
+        "OPTIMAL"
+       ]
+      },
+      "layout_from": "CP-SAT 求解",
+      "time_s": 0.05
+     },
+     {
+      "template": "链_冷冻泵+冷水主机+冷却泵",
+      "source": "自动-链式",
+      "instances": 4,
+      "members": 3,
+      "variants": {
+       "宽高比1–1.5": [
+        3400,
+        3000,
+        "OPTIMAL"
+       ],
+       "宽高比1.5–3": [
+        6200,
+        1600,
+        "OPTIMAL"
+       ],
+       "宽高比3–30": [
+        6600,
+        1600,
+        "OPTIMAL"
+       ]
+      },
+      "layout_from": "CP-SAT 求解",
+      "time_s": 0.25
+     }
+    ],
+    "time_s": 0.3,
+    "detect_s": 0.0002
+   },
+   "placement_30s": {
+    "J": 2.5481,
+    "area_m2": 219.5,
+    "W_m": 11.2,
+    "H_m": 19.6,
+    "L_lb_m": 144.0,
+    "bends_lb": 27,
+    "blocks": 12,
+    "nets": 17,
+    "evals": 109315
+   }
+  },
+  "same_grouping": true
+ },
+ "E2": {
+  "detection": {
+   "truth_instances": 80,
+   "auto_instances": 82,
+   "matched": 80,
+   "recall_pct": 100.0,
+   "precision_pct": 97.6,
+   "missed": [],
+   "extra": [
+    [
+     "链_分水器+集水器+板换+定压补水+软化水箱",
+     2
+    ]
+   ]
+  },
+  "blocking": {
+   "devices": 548,
+   "blocks": 140,
+   "module_blocks": 82,
+   "nets_in": 232,
+   "nets_out": 164,
+   "internal_nets": 68,
+   "layouts": [
+    {
+     "template": "阵列_冷却塔×4",
+     "source": "自动-并联阵列",
+     "instances": 2,
+     "members": 4,
+     "variants": {
+      "宽高比1–1.5": [
+       10800,
+       8800,
+       "OPTIMAL"
+      ],
+      "宽高比1.5–3": [
+       18400,
+       5000,
+       "OPTIMAL"
+      ],
+      "宽高比3–30": [
+       22400,
+       4000,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 0.06
+    },
+    {
+     "template": "阵列_空调箱×10",
+     "source": "自动-并联阵列",
+     "instances": 7,
+     "members": 10,
+     "variants": {
+      "宽高比1–1.5": [
+       6400,
+       5100,
+       "FEASIBLE"
+      ],
+      "宽高比1.5–3": [
+       8200,
+       3800,
+       "OPTIMAL"
+      ],
+      "宽高比3–30": [
+       22200,
+       1000,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 4.66
+    },
+    {
+     "template": "阵列_空调箱×12",
+     "source": "自动-并联阵列",
+     "instances": 7,
+     "members": 12,
+     "variants": {
+      "宽高比1–1.5": [
+       6100,
+       6400,
+       "FEASIBLE"
+      ],
+      "宽高比1.5–3": [
+       10000,
+       3800,
+       "OPTIMAL"
+      ],
+      "宽高比3–30": [
+       26800,
+       1000,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 5.4
+    },
+    {
+     "template": "阵列_空调箱×14",
+     "source": "自动-并联阵列",
+     "instances": 7,
+     "members": 14,
+     "variants": {
+      "宽高比1–1.5": [
+       8400,
+       5600,
+       "FEASIBLE"
+      ],
+      "宽高比1.5–3": [
+       8700,
+       5600,
+       "FEASIBLE"
+      ],
+      "宽高比3–30": [
+       31400,
+       1100,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 8.71
+    },
+    {
+     "template": "阵列_空调箱×16",
+     "source": "自动-并联阵列",
+     "instances": 7,
+     "members": 16,
+     "variants": {
+      "宽高比1–1.5": [
+       7900,
+       6900,
+       "FEASIBLE"
+      ],
+      "宽高比1.5–3": [
+       10000,
+       5600,
+       "FEASIBLE"
+      ],
+      "宽高比3–30": [
+       28000,
+       1500,
+       "FEASIBLE"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 9.07
+    },
+    {
+     "template": "链_区域循环泵+区域换热器",
+     "source": "自动-链式",
+     "instances": 42,
+     "members": 2,
+     "variants": {
+      "宽高比1–1.5": [
+       2800,
+       2000,
+       "OPTIMAL"
+      ],
+      "宽高比1.5–3": [
+       3800,
+       1200,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 0.07
+    },
+    {
+     "template": "链_冷冻泵+冷水主机+冷却泵",
+     "source": "自动-链式",
+     "instances": 8,
+     "members": 3,
+     "variants": {
+      "宽高比1–1.5": [
+       3400,
+       3000,
+       "OPTIMAL"
+      ],
+      "宽高比1.5–3": [
+       6200,
+       1600,
+       "OPTIMAL"
+      ],
+      "宽高比3–30": [
+       6600,
+       1600,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 0.22
+    },
+    {
+     "template": "链_分水器+集水器+板换+定压补水+软化水箱",
+     "source": "自动-链式",
+     "instances": 2,
+     "members": 5,
+     "variants": {
+      "宽高比1–1.5": [
+       6400,
+       5100,
+       "OPTIMAL"
+      ],
+      "宽高比1.5–3": [
+       7400,
+       4000,
+       "OPTIMAL"
+      ],
+      "宽高比3–30": [
+       12100,
+       2400,
+       "OPTIMAL"
+      ]
+     },
+     "layout_from": "CP-SAT 求解",
+     "time_s": 5.25
+    }
+   ],
+   "time_s": 33.43,
+   "detect_s": 0.0056
+  },
+  "clusters": {
+   "25": {
+    "clusters": 30,
+    "sizes": [
+     7,
+     7,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "cut_nets": 4,
+    "cut_nets_pct": 2.4,
+    "cut_weight_pct": 15.0,
+    "time_s": 0.008,
+    "purity_pct": 100.0,
+    "random_cut_nets_pct_median": 97.6,
+    "random_purity_pct_median": 53.9
+   },
+   "10": {
+    "clusters": 30,
+    "sizes": [
+     7,
+     7,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "cut_nets": 4,
+    "cut_nets_pct": 2.4,
+    "cut_weight_pct": 15.0,
+    "time_s": 0.007,
+    "purity_pct": 100.0,
+    "random_cut_nets_pct_median": 97.6,
+    "random_purity_pct_median": 53.9
+   },
+   "5": {
+    "clusters": 40,
+    "sizes": [
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     5,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     4,
+     2,
+     2,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "cut_nets": 24,
+    "cut_nets_pct": 14.6,
+    "cut_weight_pct": 29.7,
+    "time_s": 0.009,
+    "purity_pct": 100.0,
+    "random_cut_nets_pct_median": 98.2,
+    "random_purity_pct_median": 59.7
+   }
+  },
+  "subproblems": {
+   "冷站簇": {
+    "units": [
+     "AWT",
+     "链_冷冻泵+冷水主机+冷却泵_1",
+     "链_冷冻泵+冷水主机+冷却泵_2",
+     "链_冷冻泵+冷水主机+冷却泵_3",
+     "链_冷冻泵+冷水主机+冷却泵_4",
+     "链_分水器+集水器+板换+定压补水+软化水箱_1",
+     "阵列_冷却塔×4_1"
+    ],
+    "J": 2.5306,
+    "area_m2": 206.3,
+    "W_m": 19.1,
+    "H_m": 10.8,
+    "L_lb_m": 111.0,
+    "bends_lb": 16,
+    "blocks": 7,
+    "nets": 10,
+    "evals": 86253
+   },
+   "区域簇": {
+    "units": [
+     "Z11_分水器",
+     "Z11_集水器",
+     "链_区域循环泵+区域换热器_2",
+     "链_区域循环泵+区域换热器_3",
+     "阵列_空调箱×16_1"
+    ],
+    "J": 2.6142,
+    "area_m2": 88.9,
+    "W_m": 7.0,
+    "H_m": 12.7,
+    "L_lb_m": 50.0,
+    "bends_lb": 8,
+    "blocks": 5,
+    "nets": 6,
+    "evals": 114870
+   }
+  }
+ }
+}

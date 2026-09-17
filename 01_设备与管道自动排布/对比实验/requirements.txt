@@ -2,3 +2,5 @@ numpy
 scipy
 z3-solver
 ortools
+networkx
+pytest

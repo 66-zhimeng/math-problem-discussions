@@ -32,7 +32,6 @@ from ortools.sat.python import cp_model
 
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = Path(__file__).parent
-TIME_LIMIT = float(sys.argv[1]) if len(sys.argv) > 1 else 60.0
 
 
 # ============================================================ 读取算例、展开姿态
@@ -49,29 +48,34 @@ def rot_dir(ux, uy, r):
     return {0: (ux, uy), 90: (-uy, ux), 180: (-ux, -uy), 270: (uy, -ux)}[r]
 
 
+def make_pose(v, r, grid, vname):
+    """一个内部排法 v（mm）旋转 r 度后的姿态（网格单位）。"""
+    w, h = g(v["size"][0], grid), g(v["size"][1], grid)
+    W, H = (w, h) if r in (0, 180) else (h, w)
+    ports = {}
+    for pn, p in v["ports"].items():
+        px, py = rot_point(g(p["pos"][0], grid), g(p["pos"][1], grid), w, h, r)
+        ux, uy = rot_dir(p["dir"][0], p["dir"][1], r)
+        ports[pn] = (px, py, ux, uy, g(p["z"], grid))
+    zones = []
+    for zx, zy, zw, zh in v["service_zones"]:
+        ax, ay = rot_point(g(zx, grid), g(zy, grid), w, h, r)
+        bx, by = rot_point(g(zx + zw, grid), g(zy + zh, grid), w, h, r)
+        zones.append((min(ax, bx), min(ay, by), abs(bx - ax), abs(by - ay)))
+    return {"variant": vname, "rot": r, "W": W, "H": H, "ports": ports, "zones": zones}
+
+
 def load(path):
-    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    return load_data(json.loads(Path(path).read_text(encoding="utf-8")))
+
+
+def load_data(data):
     P = data["params"]
     grid = P["grid_mm"]
     blocks = []
     for b in data["blocks"]:
         variants = data["templates"][b["template"]]["variants"] if "template" in b else b["variants"]
-        poses = []
-        for vname, v in variants.items():
-            w, h = g(v["size"][0], grid), g(v["size"][1], grid)
-            for r in b["rotations"]:
-                W, H = (w, h) if r in (0, 180) else (h, w)
-                ports = {}
-                for pn, p in v["ports"].items():
-                    px, py = rot_point(g(p["pos"][0], grid), g(p["pos"][1], grid), w, h, r)
-                    ux, uy = rot_dir(p["dir"][0], p["dir"][1], r)
-                    ports[pn] = (px, py, ux, uy, g(p["z"], grid))
-                zones = []
-                for zx, zy, zw, zh in v["service_zones"]:
-                    ax, ay = rot_point(g(zx, grid), g(zy, grid), w, h, r)
-                    bx, by = rot_point(g(zx + zw, grid), g(zy + zh, grid), w, h, r)
-                    zones.append((min(ax, bx), min(ay, by), abs(bx - ax), abs(by - ay)))
-                poses.append({"variant": vname, "rot": r, "W": W, "H": H, "ports": ports, "zones": zones})
+        poses = [make_pose(v, r, grid, vname) for vname, v in variants.items() for r in b["rotations"]]
         fixed = tuple(g(c, grid) for c in b["fixed"]) if "fixed" in b else None
         blocks.append({"id": b["id"], "name": b["name"], "poses": poses, "fixed": fixed,
                        "copy_group": b.get("copy_group"),
@@ -338,7 +342,8 @@ def plot(blocks, nets, P, results, path):
     from matplotlib.patches import Rectangle
 
     plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "DejaVu Sans"]
-    fig, axes = plt.subplots(1, len(results), figsize=(8 * len(results), 8))
+    fig, axes = plt.subplots(1, len(results), figsize=(8 * len(results), 8), squeeze=False)
+    axes = axes[0]
     colors = plt.cm.tab20.colors
     for ax, r in zip(axes, results):
         sol = r["solution"]
@@ -373,6 +378,7 @@ def plot(blocks, nets, P, results, path):
 
 # ============================================================ 主程序
 def main():
+    TIME_LIMIT = float(sys.argv[1]) if len(sys.argv) > 1 else 60.0
     blocks, nets, P = load(HERE / "算例.json")
     print(f"块 {len(blocks)} 个，姿态共 {sum(len(b['poses']) for b in blocks)} 个，管网 {len(nets)} 个；"
           f"A₀={P['A0']}，L₀={P['L0']:.1f}，B₀={P['B0']}（网格单位 100 mm）")
