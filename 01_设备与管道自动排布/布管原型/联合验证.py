@@ -4,10 +4,12 @@
 方法（摆放同为 placement_sp 序列对 + LP，12 进程，预算相同；布管参数完全相同）：
   A 接入区：端口前方 ℓ_min 不压其他设备与检修区（上一版做法）
   B 出管留空：每台设备每侧按端口数预留 ℓ_min + ρ + (k−1)(D+δ_pp) + D/2 + δ_ep，缝隙为两侧之和
+  C 出管留空 + 缝隙穿行容量：按管网粗略走向估计穿过缝隙或越过设备上方的管道，
+    设备上方层数用完后计入相邻缝隙需求；搜索目标另加估计绕行长度（见 placement_sp.traffic_demand）
 评价：布管后用独立校验器 check_routes 统计是否全部布通、冲突、含管道占地、实际管长、弯头、高度变化、J。
 
-运行：.venv/Scripts/python 联合验证.py [摆放秒数，默认 60] [种子数，默认 3]
-输出：联合验证结果.json、联合验证_{方法}_种子{s}.png、日志重定向到 联合验证_log.txt
+运行：.venv/Scripts/python 联合验证.py [摆放秒数，默认 60] [种子数，默认 3] [方法字母，默认 AB，例如 C]
+输出：联合验证结果[_方法].json、联合验证_{方法}_种子{s}.png、日志重定向到 联合验证_log.txt
 """
 import json
 import sys
@@ -34,7 +36,13 @@ def main():
     access = {"D_mm": rp["D_default_mm"], "delta_ep_mm": rp["delta_ep_mm"]}
     margins = {"D_mm": rp["D_default_mm"], "delta_pp_mm": rp["delta_pp_mm"], "delta_ep_mm": rp["delta_ep_mm"],
                "c_rho": rp["c_rho"]}
-    methods = {"A接入区": {"access": access}, "B出管留空": {"margins": margins}}
+    heights = {did: inst["types"][dv["type"]]["height"] for did, dv in inst["devs"].items()}
+    traffic = {**margins, "traffic": True, "heights_mm": heights, "z_max_mm": rp["z_max_mm"], "K": rp["K"]}
+    allm = {"A": ("A接入区", {"access": access}), "B": ("B出管留空", {"margins": margins}),
+            "C": ("C出管留空+穿行", {"margins": traffic})}
+    pick = sys.argv[3] if len(sys.argv) > 3 else "AB"
+    methods = dict(allm[c] for c in pick)
+    out_json = HERE / ("联合验证结果.json" if pick == "AB" else f"联合验证结果_{pick}.json")
     results = []
     for seed in seeds:
         for name, kw in methods.items():
@@ -74,7 +82,7 @@ def main():
                             "routed_metrics": {k: v for k, v in met.items() if k != "per_net"},
                             "history": [{k: v for k, v in h.items() if k != "net_times"} for h in hist],
                             "placement": {k: list(v) for k, v in placed.items()}})
-            (HERE / "联合验证结果.json").write_text(json.dumps(results, ensure_ascii=False, indent=1),
+            out_json.write_text(json.dumps(results, ensure_ascii=False, indent=1),
                                                encoding="utf-8")
     print("\n汇总：")
     for x in results:

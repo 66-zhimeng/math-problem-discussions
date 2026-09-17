@@ -1,0 +1,1514 @@
+[
+ {
+  "method": "C出管留空+穿行",
+  "seed": 0,
+  "placement_s": 60.0,
+  "route_s": 789.7,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 3,
+  "other_violations": [],
+  "final_conflict_edges": 34,
+  "all_ok": false,
+  "device_area_m2": 275.4,
+  "J_lb": 3.4998,
+  "routed_metrics": {
+   "W_m": 17.6,
+   "H_m": 18.5,
+   "area_m2": 325.6,
+   "L_m": 410.3,
+   "bends": 172,
+   "height_changes": 56,
+   "J": 6.7561
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 492,
+    "conflicted_nets": 22,
+    "time_s": 25.9,
+    "search_time_sum_s": 43.7,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 22,
+    "kept_old": 2,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 294,
+    "conflicted_nets": 20,
+    "time_s": 26.6,
+    "search_time_sum_s": 34.8,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 20,
+    "kept_old": 1,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 213,
+    "conflicted_nets": 20,
+    "time_s": 37.2,
+    "search_time_sum_s": 37.1,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 20,
+    "kept_old": 2,
+    "requeued": 12,
+    "max_parallel": 12,
+    "conflict_edges": 220,
+    "conflicted_nets": 18,
+    "time_s": 36.9,
+    "search_time_sum_s": 42.1,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 18,
+    "kept_old": 2,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 184,
+    "conflicted_nets": 14,
+    "time_s": 26.9,
+    "search_time_sum_s": 36.4,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 14,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 77,
+    "conflicted_nets": 9,
+    "time_s": 33.9,
+    "search_time_sum_s": 33.8,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 9,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 9,
+    "conflict_edges": 38,
+    "conflicted_nets": 8,
+    "time_s": 29.4,
+    "search_time_sum_s": 18.6,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 41,
+    "conflicted_nets": 8,
+    "time_s": 22.0,
+    "search_time_sum_s": 20.2,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 51,
+    "conflicted_nets": 9,
+    "time_s": 21.9,
+    "search_time_sum_s": 19.4,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 9,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 9,
+    "conflict_edges": 38,
+    "conflicted_nets": 8,
+    "time_s": 19.4,
+    "search_time_sum_s": 17.5,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 40,
+    "conflicted_nets": 8,
+    "time_s": 21.3,
+    "search_time_sum_s": 19.1,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 8,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 8,
+    "conflict_edges": 29,
+    "conflicted_nets": 6,
+    "time_s": 19.7,
+    "search_time_sum_s": 17.9,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 28,
+    "conflicted_nets": 6,
+    "time_s": 22.0,
+    "search_time_sum_s": 19.1,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 30,
+    "conflicted_nets": 6,
+    "time_s": 21.8,
+    "search_time_sum_s": 18.9,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 29,
+    "conflicted_nets": 6,
+    "time_s": 19.3,
+    "search_time_sum_s": 16.5,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 32,
+    "conflicted_nets": 6,
+    "time_s": 21.8,
+    "search_time_sum_s": 19.0,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 28,
+    "conflicted_nets": 6,
+    "time_s": 22.0,
+    "search_time_sum_s": 19.2,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 31,
+    "conflicted_nets": 6,
+    "time_s": 19.4,
+    "search_time_sum_s": 16.7,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 28,
+    "conflicted_nets": 6,
+    "time_s": 22.0,
+    "search_time_sum_s": 19.3,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 6,
+    "conflict_edges": 36,
+    "conflicted_nets": 5,
+    "time_s": 29.7,
+    "search_time_sum_s": 21.9,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 41,
+    "conflicted_nets": 5,
+    "time_s": 26.9,
+    "search_time_sum_s": 19.2,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 44,
+    "conflicted_nets": 5,
+    "time_s": 27.1,
+    "search_time_sum_s": 19.7,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 47,
+    "conflicted_nets": 6,
+    "time_s": 28.1,
+    "search_time_sum_s": 20.7,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 35,
+    "conflicted_nets": 5,
+    "time_s": 32.1,
+    "search_time_sum_s": 23.9,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 29.5,
+    "search_time_sum_s": 22.0,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 28.8,
+    "search_time_sum_s": 20.6,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 35,
+    "conflicted_nets": 5,
+    "time_s": 25.9,
+    "search_time_sum_s": 18.5,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 33,
+    "conflicted_nets": 5,
+    "time_s": 28.7,
+    "search_time_sum_s": 20.8,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 33,
+    "conflicted_nets": 5,
+    "time_s": 29.6,
+    "search_time_sum_s": 22.4,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 32.4,
+    "search_time_sum_s": 24.7,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    118,
+    97,
+    90
+   ],
+   "CH1_冷冻泵": [
+    58,
+    95,
+    90
+   ],
+   "CH1_冷却泵": [
+    100,
+    138,
+    0
+   ],
+   "CH2_主机": [
+    51,
+    154,
+    180
+   ],
+   "CH2_冷冻泵": [
+    74,
+    90,
+    90
+   ],
+   "CH2_冷却泵": [
+    58,
+    136,
+    90
+   ],
+   "CH3_主机": [
+    144,
+    105,
+    90
+   ],
+   "CH3_冷冻泵": [
+    152,
+    86,
+    180
+   ],
+   "CH3_冷却泵": [
+    126,
+    138,
+    0
+   ],
+   "CH4_主机": [
+    103,
+    154,
+    180
+   ],
+   "CH4_冷冻泵": [
+    150,
+    154,
+    90
+   ],
+   "CH4_冷却泵": [
+    74,
+    138,
+    0
+   ],
+   "CT1": [
+    61,
+    8,
+    0
+   ],
+   "CT2": [
+    0,
+    26,
+    180
+   ],
+   "CT3": [
+    122,
+    0,
+    270
+   ],
+   "CT4": [
+    0,
+    106,
+    0
+   ],
+   "FS": [
+    126,
+    70,
+    0
+   ],
+   "JS": [
+    102,
+    64,
+    270
+   ],
+   "HX": [
+    77,
+    108,
+    180
+   ],
+   "MU": [
+    59,
+    70,
+    0
+   ],
+   "WT": [
+    28,
+    3,
+    0
+   ],
+   "TK": [
+    23,
+    74,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "C出管留空+穿行",
+  "seed": 1,
+  "placement_s": 60.0,
+  "route_s": 299.6,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 2,
+  "other_violations": [],
+  "final_conflict_edges": 30,
+  "all_ok": false,
+  "device_area_m2": 266.6,
+  "J_lb": 3.3761,
+  "routed_metrics": {
+   "W_m": 15.1,
+   "H_m": 20.8,
+   "area_m2": 314.1,
+   "L_m": 390.2,
+   "bends": 155,
+   "height_changes": 56,
+   "J": 6.3901
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 309,
+    "conflicted_nets": 20,
+    "time_s": 24.7,
+    "search_time_sum_s": 34.4,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 20,
+    "kept_old": 0,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 364,
+    "conflicted_nets": 22,
+    "time_s": 25.1,
+    "search_time_sum_s": 29.9,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 22,
+    "kept_old": 2,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 191,
+    "conflicted_nets": 17,
+    "time_s": 9.5,
+    "search_time_sum_s": 31.4,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 17,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 154,
+    "conflicted_nets": 17,
+    "time_s": 30.6,
+    "search_time_sum_s": 34.3,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 17,
+    "kept_old": 1,
+    "requeued": 7,
+    "max_parallel": 12,
+    "conflict_edges": 104,
+    "conflicted_nets": 12,
+    "time_s": 20.8,
+    "search_time_sum_s": 30.4,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 12,
+    "kept_old": 2,
+    "requeued": 3,
+    "max_parallel": 12,
+    "conflict_edges": 77,
+    "conflicted_nets": 9,
+    "time_s": 17.7,
+    "search_time_sum_s": 26.8,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 9,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 9,
+    "conflict_edges": 48,
+    "conflicted_nets": 6,
+    "time_s": 22.3,
+    "search_time_sum_s": 28.1,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 39,
+    "conflicted_nets": 5,
+    "time_s": 22.2,
+    "search_time_sum_s": 20.3,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.2,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 40,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 8.0,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 36,
+    "conflicted_nets": 5,
+    "time_s": 5.4,
+    "search_time_sum_s": 7.4,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.7,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.4,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 39,
+    "conflicted_nets": 5,
+    "time_s": 5.3,
+    "search_time_sum_s": 7.8,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 41,
+    "conflicted_nets": 5,
+    "time_s": 5.6,
+    "search_time_sum_s": 7.2,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.3,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 35,
+    "conflicted_nets": 5,
+    "time_s": 5.7,
+    "search_time_sum_s": 7.4,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.0,
+    "search_time_sum_s": 7.2,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.7,
+    "search_time_sum_s": 7.6,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.4,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 42,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.6,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 35,
+    "conflicted_nets": 5,
+    "time_s": 5.7,
+    "search_time_sum_s": 8.2,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.6,
+    "search_time_sum_s": 7.4,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 34,
+    "conflicted_nets": 5,
+    "time_s": 5.5,
+    "search_time_sum_s": 7.5,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 5.4,
+    "search_time_sum_s": 7.6,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 39,
+    "conflicted_nets": 5,
+    "time_s": 5.0,
+    "search_time_sum_s": 8.0,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 26,
+    "conflicted_nets": 3,
+    "time_s": 7.5,
+    "search_time_sum_s": 7.6,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 3,
+    "kept_old": 1,
+    "requeued": 1,
+    "max_parallel": 3,
+    "conflict_edges": 28,
+    "conflicted_nets": 3,
+    "time_s": 5.3,
+    "search_time_sum_s": 6.7,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 3,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 3,
+    "conflict_edges": 23,
+    "conflicted_nets": 3,
+    "time_s": 7.2,
+    "search_time_sum_s": 6.7,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 3,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 3,
+    "conflict_edges": 30,
+    "conflicted_nets": 3,
+    "time_s": 7.2,
+    "search_time_sum_s": 6.6,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    58,
+    159,
+    90
+   ],
+   "CH1_冷冻泵": [
+    55,
+    130,
+    90
+   ],
+   "CH1_冷却泵": [
+    71,
+    130,
+    270
+   ],
+   "CH2_主机": [
+    120,
+    61,
+    90
+   ],
+   "CH2_冷冻泵": [
+    111,
+    110,
+    270
+   ],
+   "CH2_冷却泵": [
+    128,
+    110,
+    270
+   ],
+   "CH3_主机": [
+    0,
+    36,
+    270
+   ],
+   "CH3_冷冻泵": [
+    31,
+    128,
+    180
+   ],
+   "CH3_冷却泵": [
+    24,
+    20,
+    90
+   ],
+   "CH4_主机": [
+    94,
+    61,
+    90
+   ],
+   "CH4_冷冻泵": [
+    71,
+    94,
+    270
+   ],
+   "CH4_冷却泵": [
+    93,
+    102,
+    0
+   ],
+   "CT1": [
+    0,
+    156,
+    0
+   ],
+   "CT2": [
+    40,
+    0,
+    270
+   ],
+   "CT3": [
+    96,
+    0,
+    90
+   ],
+   "CT4": [
+    84,
+    156,
+    0
+   ],
+   "FS": [
+    28,
+    58,
+    180
+   ],
+   "JS": [
+    28,
+    94,
+    180
+   ],
+   "HX": [
+    0,
+    88,
+    270
+   ],
+   "MU": [
+    93,
+    128,
+    180
+   ],
+   "WT": [
+    71,
+    58,
+    90
+   ],
+   "TK": [
+    116,
+    128,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "C出管留空+穿行",
+  "seed": 2,
+  "placement_s": 60.0,
+  "route_s": 272.0,
+  "iterations": 30,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 3,
+  "other_violations": [],
+  "final_conflict_edges": 47,
+  "all_ok": false,
+  "device_area_m2": 278.4,
+  "J_lb": 3.4421,
+  "routed_metrics": {
+   "W_m": 17.2,
+   "H_m": 18.1,
+   "area_m2": 311.3,
+   "L_m": 369.3,
+   "bends": 154,
+   "height_changes": 59,
+   "J": 6.3181
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 345,
+    "conflicted_nets": 20,
+    "time_s": 9.1,
+    "search_time_sum_s": 16.1,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 20,
+    "kept_old": 0,
+    "requeued": 14,
+    "max_parallel": 12,
+    "conflict_edges": 197,
+    "conflicted_nets": 19,
+    "time_s": 9.0,
+    "search_time_sum_s": 16.4,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 19,
+    "kept_old": 0,
+    "requeued": 13,
+    "max_parallel": 12,
+    "conflict_edges": 238,
+    "conflicted_nets": 20,
+    "time_s": 9.0,
+    "search_time_sum_s": 17.6,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 20,
+    "kept_old": 0,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 90,
+    "conflicted_nets": 10,
+    "time_s": 9.3,
+    "search_time_sum_s": 17.6,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 10,
+    "kept_old": 0,
+    "requeued": 8,
+    "max_parallel": 10,
+    "conflict_edges": 90,
+    "conflicted_nets": 11,
+    "time_s": 11.1,
+    "search_time_sum_s": 13.5,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 11,
+    "kept_old": 1,
+    "requeued": 7,
+    "max_parallel": 11,
+    "conflict_edges": 47,
+    "conflicted_nets": 7,
+    "time_s": 10.7,
+    "search_time_sum_s": 15.0,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 45,
+    "conflicted_nets": 7,
+    "time_s": 9.6,
+    "search_time_sum_s": 10.8,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 47,
+    "conflicted_nets": 7,
+    "time_s": 9.4,
+    "search_time_sum_s": 10.8,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 41,
+    "conflicted_nets": 7,
+    "time_s": 9.3,
+    "search_time_sum_s": 10.6,
+    "failed": {}
+   },
+   {
+    "iter": 10,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 35,
+    "conflicted_nets": 7,
+    "time_s": 12.7,
+    "search_time_sum_s": 13.6,
+    "failed": {}
+   },
+   {
+    "iter": 11,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 31,
+    "conflicted_nets": 7,
+    "time_s": 12.0,
+    "search_time_sum_s": 13.0,
+    "failed": {}
+   },
+   {
+    "iter": 12,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 5,
+    "max_parallel": 7,
+    "conflict_edges": 58,
+    "conflicted_nets": 7,
+    "time_s": 9.3,
+    "search_time_sum_s": 9.8,
+    "failed": {}
+   },
+   {
+    "iter": 13,
+    "rerouted": 7,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 7,
+    "conflict_edges": 62,
+    "conflicted_nets": 5,
+    "time_s": 8.5,
+    "search_time_sum_s": 12.2,
+    "failed": {}
+   },
+   {
+    "iter": 14,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 60,
+    "conflicted_nets": 6,
+    "time_s": 8.6,
+    "search_time_sum_s": 10.8,
+    "failed": {}
+   },
+   {
+    "iter": 15,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 68,
+    "conflicted_nets": 6,
+    "time_s": 8.7,
+    "search_time_sum_s": 11.0,
+    "failed": {}
+   },
+   {
+    "iter": 16,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 56,
+    "conflicted_nets": 5,
+    "time_s": 8.5,
+    "search_time_sum_s": 11.1,
+    "failed": {}
+   },
+   {
+    "iter": 17,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 52,
+    "conflicted_nets": 5,
+    "time_s": 7.8,
+    "search_time_sum_s": 9.1,
+    "failed": {}
+   },
+   {
+    "iter": 18,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 43,
+    "conflicted_nets": 5,
+    "time_s": 8.0,
+    "search_time_sum_s": 9.2,
+    "failed": {}
+   },
+   {
+    "iter": 19,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 70,
+    "conflicted_nets": 6,
+    "time_s": 8.5,
+    "search_time_sum_s": 10.3,
+    "failed": {}
+   },
+   {
+    "iter": 20,
+    "rerouted": 6,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 6,
+    "conflict_edges": 58,
+    "conflicted_nets": 5,
+    "time_s": 9.1,
+    "search_time_sum_s": 11.8,
+    "failed": {}
+   },
+   {
+    "iter": 21,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 4,
+    "max_parallel": 5,
+    "conflict_edges": 53,
+    "conflicted_nets": 5,
+    "time_s": 8.5,
+    "search_time_sum_s": 11.1,
+    "failed": {}
+   },
+   {
+    "iter": 22,
+    "rerouted": 5,
+    "kept_old": 0,
+    "requeued": 4,
+    "max_parallel": 5,
+    "conflict_edges": 18,
+    "conflicted_nets": 4,
+    "time_s": 8.0,
+    "search_time_sum_s": 8.2,
+    "failed": {}
+   },
+   {
+    "iter": 23,
+    "rerouted": 4,
+    "kept_old": 0,
+    "requeued": 3,
+    "max_parallel": 4,
+    "conflict_edges": 29,
+    "conflicted_nets": 5,
+    "time_s": 6.9,
+    "search_time_sum_s": 6.7,
+    "failed": {}
+   },
+   {
+    "iter": 24,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 32,
+    "conflicted_nets": 5,
+    "time_s": 7.2,
+    "search_time_sum_s": 9.8,
+    "failed": {}
+   },
+   {
+    "iter": 25,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 27,
+    "conflicted_nets": 5,
+    "time_s": 6.4,
+    "search_time_sum_s": 9.4,
+    "failed": {}
+   },
+   {
+    "iter": 26,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 28,
+    "conflicted_nets": 5,
+    "time_s": 6.0,
+    "search_time_sum_s": 9.9,
+    "failed": {}
+   },
+   {
+    "iter": 27,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 30,
+    "conflicted_nets": 5,
+    "time_s": 9.9,
+    "search_time_sum_s": 12.5,
+    "failed": {}
+   },
+   {
+    "iter": 28,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 31,
+    "conflicted_nets": 5,
+    "time_s": 10.2,
+    "search_time_sum_s": 14.3,
+    "failed": {}
+   },
+   {
+    "iter": 29,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 28,
+    "conflicted_nets": 5,
+    "time_s": 8.9,
+    "search_time_sum_s": 13.3,
+    "failed": {}
+   },
+   {
+    "iter": 30,
+    "rerouted": 5,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 5,
+    "conflict_edges": 47,
+    "conflicted_nets": 5,
+    "time_s": 10.6,
+    "search_time_sum_s": 14.3,
+    "failed": {}
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    67,
+    84,
+    180
+   ],
+   "CH1_冷冻泵": [
+    134,
+    60,
+    90
+   ],
+   "CH1_冷却泵": [
+    64,
+    110,
+    180
+   ],
+   "CH2_主机": [
+    108,
+    63,
+    90
+   ],
+   "CH2_冷冻泵": [
+    134,
+    34,
+    90
+   ],
+   "CH2_冷却泵": [
+    134,
+    86,
+    90
+   ],
+   "CH3_主机": [
+    82,
+    129,
+    90
+   ],
+   "CH3_冷冻泵": [
+    150,
+    86,
+    90
+   ],
+   "CH3_冷却泵": [
+    90,
+    110,
+    180
+   ],
+   "CH4_主机": [
+    108,
+    11,
+    90
+   ],
+   "CH4_冷冻泵": [
+    150,
+    17,
+    180
+   ],
+   "CH4_冷却泵": [
+    90,
+    10,
+    0
+   ],
+   "CT1": [
+    1,
+    134,
+    0
+   ],
+   "CT2": [
+    108,
+    134,
+    0
+   ],
+   "CT3": [
+    8,
+    18,
+    270
+   ],
+   "CT4": [
+    8,
+    76,
+    270
+   ],
+   "FS": [
+    65,
+    26,
+    180
+   ],
+   "JS": [
+    150,
+    33,
+    90
+   ],
+   "HX": [
+    67,
+    54,
+    180
+   ],
+   "MU": [
+    144,
+    112,
+    0
+   ],
+   "WT": [
+    59,
+    126,
+    90
+   ],
+   "TK": [
+    108,
+    106,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ }
+]

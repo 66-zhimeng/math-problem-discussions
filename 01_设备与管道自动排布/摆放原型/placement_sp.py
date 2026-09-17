@@ -41,6 +41,27 @@ class Problem:
         self.blocks, self.nets, self.P, self.w = blocks, nets, P, weights
         self.access = access_rects_factory(P, access) if access else None
         self.margins = side_margins_factory(P, margins) if margins else None
+        self.traffic = None
+        if margins and margins.get("traffic"):
+            need = ["heights_mm", "z_max_mm", "K"]
+            miss = [k for k in need if k not in margins]
+            if miss:
+                raise KeyError(f"缝隙穿行容量缺少参数：{miss}")
+            g = P["grid"]
+            D, dep, dpp = margins["D_mm"], margins["delta_ep_mm"], margins["delta_pp_mm"]
+
+            def levels(h):
+                """设备上方可放的管道层数：管中心可在 [h + δ_ep + D/2, z_max − D/2]，层距 D + δ_pp。
+                越过设备要升降各一次，K < 2 时不能越过。"""
+                lo_c, hi_c = h + dep + D / 2, margins["z_max_mm"] - D / 2
+                if margins["K"] < 2 or hi_c < lo_c:
+                    return 0
+                return int((hi_c - lo_c) // (D + dpp)) + 1
+            self.traffic = {
+                "levels": [levels(margins["heights_mm"][b["id"]]) for b in blocks],
+                "lane": -(-int(D + dpp) // g),
+                "stub": -(-int(P["lmin"] * g + margins["c_rho"] * D) // g),
+            }
         self.n = len(blocks)
         self.d, self.lmin, self.k = P["delta"], P["lmin"], P["kappa"]
         # 姿态索引：(内部排法, 旋转) → pose 下标
@@ -216,6 +237,32 @@ def skeleton(pr, st):
     lo = [[(-e[0] if inside else 0) for e in ext], [(-e[2] if inside else 0) for e in ext]]
     if pr.margins:                                          # 外圈出管留空也在占地矩形内
         lo = [[max(lo[0][i], mg[i][0]) for i in range(n)], [max(lo[1][i], mg[i][2]) for i in range(n)]]
+    pos = _longest(pr, st, cons, lo)
+    if pos is None:
+        return None
+    detour = 0
+    if pr.traffic:
+        extra, detour = traffic_demand(pr, ps, pos, cons)
+        if extra:
+            lane = pr.traffic["lane"]
+            cons = [(i, j, a, g + lane * extra.get((i, j, a), 0)) for i, j, a, g in cons]
+            pos = _longest(pr, st, cons, lo)
+            if pos is None:
+                return None
+    right = [(e[1] if inside else p["W"]) for e, p in zip(ext, ps)]
+    top = [(e[3] if inside else p["H"]) for e, p in zip(ext, ps)]
+    if pr.margins:
+        right = [max(r_, p["W"] + m_[1]) for r_, p, m_ in zip(right, ps, mg)]
+        top = [max(t_, p["H"] + m_[3]) for t_, p, m_ in zip(top, ps, mg)]
+    Wx = max(pos[0][i] + right[i] for i in range(n))
+    Hy = max(pos[1][i] + top[i] for i in range(n))
+    W, H = max(Wx, -(-Hy // pr.k)), max(Hy, -(-Wx // pr.k))
+    return {"poses": poses, "ext": ext, "cons": cons, "W": W, "H": H, "pos": pos, "right": right, "top": top,
+            "lo": lo, "detour": detour}
+
+
+def _longest(pr, st, cons, lo):
+    n = pr.n
     pos = [[0] * n, [0] * n]
     preds = [[[] for _ in range(n)], [[] for _ in range(n)]]
     for i, j, a, g in cons:
@@ -232,16 +279,101 @@ def skeleton(pr, st):
                     return None
                 v = f[a]
             pos[a][j] = v
-    right = [(e[1] if inside else p["W"]) for e, p in zip(ext, ps)]
-    top = [(e[3] if inside else p["H"]) for e, p in zip(ext, ps)]
-    if pr.margins:
-        right = [max(r_, p["W"] + m_[1]) for r_, p, m_ in zip(right, ps, mg)]
-        top = [max(t_, p["H"] + m_[3]) for t_, p, m_ in zip(top, ps, mg)]
-    Wx = max(pos[0][i] + right[i] for i in range(n))
-    Hy = max(pos[1][i] + top[i] for i in range(n))
-    W, H = max(Wx, -(-Hy // pr.k)), max(Hy, -(-Wx // pr.k))
-    return {"poses": poses, "ext": ext, "cons": cons, "W": W, "H": H, "pos": pos, "right": right, "top": top,
-            "lo": lo}
+    return pos
+
+
+def traffic_demand(pr, ps, pos, cons):
+    """缝隙穿行需求（启发式估计）。
+    每个管网取各端口“出管转弯点”（端口 + (ℓ_min+ρ)·u），按曼哈顿最小生成树连接；
+    每段连接试两种 L 形走法。沿轴 a 的一段管（另一轴坐标 c）：
+      - 压到设备 b：b 上方还有空余层 → 从上方越过，占用一层；
+        没有 → 从 b 较近的一侧绕行，绕行长度计 2×距离，并给该侧与 b 相邻的设备之间的缝隙加 1 根管；
+      - 在设备 b 与其相邻设备 k 之间的缝隙里平行穿过：两者上方都没有空余层时，给这条缝隙加 1 根管；
+        否则改从上方走，占用空余层较多者的一层。
+    走法选择：绕行最短、其次缝隙需求最少。管网按输入顺序依次占用层数。
+    返回 ({(i, j, 轴): 管数}, 绕行总长（网格单位）)。"""
+    n, tf = pr.n, pr.traffic
+    free = list(tf["levels"])
+    size = [(p["W"], p["H"]) for p in ps]
+    lo_ = [(pos[0][i], pos[1][i]) for i in range(n)]
+    hi_ = [(pos[0][i] + size[i][0], pos[1][i] + size[i][1]) for i in range(n)]
+    before = [[[] for _ in range(n)], [[] for _ in range(n)]]
+    after = [[[] for _ in range(n)], [[] for _ in range(n)]]
+    for i, j, a, _g in cons:
+        before[a][j].append(i)
+        after[a][i].append(j)
+
+    def ov(b, k, a):                                        # 沿轴 a 的投影是否重叠
+        return lo_[b][a] < hi_[k][a] and lo_[k][a] < hi_[b][a]
+
+    def leg(a, c, l, r, use):
+        """沿轴 a、另一轴坐标 c、范围 [l, r] 的管段 → (需求列表, 绕行长度)；use 记录本走法占用的层。"""
+        o = 1 - a
+        dem, det = [], 0
+        for b in range(n):
+            if r <= lo_[b][a] or l >= hi_[b][a]:
+                continue
+            if lo_[b][o] < c < hi_[b][o]:                   # 压到设备 b
+                if free[b] - use.get(b, 0) > 0:
+                    use[b] = use.get(b, 0) + 1
+                    continue
+                down, up = c - lo_[b][o], hi_[b][o] - c
+                if down <= up:
+                    det += 2 * down
+                    ks = [k for k in before[o][b] if ov(b, k, a)]
+                    if ks:
+                        dem.append((max(ks, key=lambda k: hi_[k][o]), b, o))
+                else:
+                    det += 2 * up
+                    ks = [k for k in after[o][b] if ov(b, k, a)]
+                    if ks:
+                        dem.append((b, min(ks, key=lambda k: lo_[k][o]), o))
+            elif c >= hi_[b][o]:                            # 在 b 与相邻设备 k 之间的缝隙里平行穿过
+                ks = [k for k in after[o][b] if ov(b, k, a)]
+                if not ks:
+                    continue
+                k = min(ks, key=lambda k: lo_[k][o])
+                if not (c <= lo_[k][o] and l < hi_[k][a] and r > lo_[k][a]):
+                    continue
+                fb, fk = free[b] - use.get(b, 0), free[k] - use.get(k, 0)
+                if fb <= 0 and fk <= 0:
+                    dem.append((b, k, o))
+                else:
+                    x = b if fb >= fk else k
+                    use[x] = use.get(x, 0) + 1
+        return dem, det
+
+    stub = tf["stub"]
+    extra, detour = {}, 0
+    for net in pr.nets:
+        pts = []
+        for i, pn in net["terms"]:
+            x, y, ux, uy, _z = ps[i]["ports"][pn]
+            pts.append((lo_[i][0] + x + ux * stub, lo_[i][1] + y + uy * stub))
+        # 曼哈顿最小生成树（Prim）
+        inside, conns = {0}, []
+        while len(inside) < len(pts):
+            best = min(((abs(pts[u][0] - pts[v][0]) + abs(pts[u][1] - pts[v][1]), u, v)
+                        for u in inside for v in range(len(pts)) if v not in inside))
+            conns.append((best[1], best[2]))
+            inside.add(best[2])
+        for u, v in conns:
+            (xa, ya), (xb, yb) = pts[u], pts[v]
+            opts = []
+            for legs in (((0, ya, min(xa, xb), max(xa, xb)), (1, xb, min(ya, yb), max(ya, yb))),
+                         ((1, xa, min(ya, yb), max(ya, yb)), (0, yb, min(xa, xb), max(xa, xb)))):
+                dem, det, use = [], 0, {}
+                for lg in legs:
+                    d_, t_ = leg(*lg, use)
+                    dem += d_; det += t_
+                opts.append((det, len(dem), dem, use))
+            det, _, dem, use = min(opts, key=lambda o_: (o_[0], o_[1]))
+            for bb, cnt in use.items():
+                free[bb] -= cnt
+            detour += det
+            for key in dem:
+                extra[key] = extra.get(key, 0) + 1
+    return extra, detour
 
 
 def quick_lb(pr, sk, st):
@@ -262,7 +394,7 @@ def quick_lb(pr, sk, st):
                 B += c
             elif not st["straight"][e]:
                 B += 2
-    return wA * sk["W"] * sk["H"] / P["A0"] + wL * L / P["L0"] + wB * B / P["B0"]
+    return (wA * sk["W"] * sk["H"] / P["A0"] + wL * (L + sk["detour"]) / P["L0"] + wB * B / P["B0"])
 
 
 def solve_lp(pr, sk, st):
@@ -390,7 +522,8 @@ def evaluate(pr, st, threshold=math.inf):
     except AssertionError:
         pr.stats["invalid"] += 1
         return math.inf, None
-    return v["J_full_weights"], sol
+    # 启用穿行容量时，搜索目标另加估计的绕行长度（校验器的 J 不含此项）
+    return v["J_full_weights"] + pr.w["length"] * sk["detour"] / pr.P["L0"], sol
 
 
 # ============================================================ 状态与邻域
@@ -500,7 +633,8 @@ def anneal(args):
 def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None, margins=None):
     """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。
     access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。
-    margins = {"D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"} 时启用按侧出管留空（见 side_margins_factory）。"""
+    margins = {"D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"} 时启用按侧出管留空（见 side_margins_factory）；
+      再加 "traffic": True, "heights_mm": {块 id: 高度}, "z_max_mm", "K" 时启用缝隙穿行容量（见 traffic_demand）。"""
     t_start = time.time()
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"])
