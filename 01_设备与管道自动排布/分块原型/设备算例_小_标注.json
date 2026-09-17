@@ -9,7 +9,27 @@
   "weights": {
    "area": 1.0,
    "length": 1.0,
-   "bends": 0.3
+   "bends": 0.3,
+   "height_changes": 0.3
+  },
+  "routing": {
+   "D_default_mm": 200,
+   "c_rho": 1.5,
+   "delta_ep_mm": 100,
+   "delta_pp_mm": 100,
+   "K": 3,
+   "eps_z_mm": 1,
+   "z_max_mm": 4500,
+   "service_zone_height_mm": 2000,
+   "pitch_mm": 300,
+   "margin_mm": 1500,
+   "max_iters": 30,
+   "pres_fac_init": 0.5,
+   "pres_fac_mult": 1.6,
+   "hist_fac": 0.5,
+   "max_expansions": 500000,
+   "astar_weight": 1.5,
+   "route_workers": 12
   },
   "blocking": {
    "auto_module_policy": "accept",
@@ -43,6 +63,7 @@
  },
  "device_types": {
   "冷水主机": {
+   "height": 2000,
    "size": [
     3000,
     1600
@@ -109,6 +130,7 @@
    }
   },
   "冷冻泵": {
+   "height": 1000,
    "size": [
     1000,
     800
@@ -153,6 +175,7 @@
    }
   },
   "冷却泵": {
+   "height": 1000,
    "size": [
     1000,
     800
@@ -197,6 +220,7 @@
    }
   },
   "冷却塔": {
+   "height": 4000,
    "size": [
     5000,
     4000
@@ -234,6 +258,7 @@
    }
   },
   "分水器": {
+   "height": 1500,
    "size": [
     3500,
     800
@@ -333,6 +358,7 @@
    }
   },
   "集水器": {
+   "height": 1500,
    "size": [
     3500,
     800
@@ -436,6 +462,7 @@
    }
   },
   "板换": {
+   "height": 2000,
    "size": [
     3000,
     2000
@@ -502,6 +529,7 @@
    }
   },
   "定压补水": {
+   "height": 1500,
    "size": [
     1500,
     1200
@@ -546,6 +574,7 @@
    }
   },
   "水处理": {
+   "height": 1500,
    "size": [
     2000,
     1500
@@ -590,6 +619,7 @@
    }
   },
   "软化水箱": {
+   "height": 2000,
    "size": [
     2000,
     2000
@@ -616,6 +646,7 @@
    }
   },
   "建筑立管": {
+   "height": 4500,
    "size": [
     1000,
     1000

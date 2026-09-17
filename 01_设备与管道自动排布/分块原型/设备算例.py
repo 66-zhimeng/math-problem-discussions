@@ -24,52 +24,69 @@ def port(x, y, dx, dy, z):
 ROT4 = [0, 90, 180, 270]
 
 TYPES = {
-    "冷水主机": {"size": [3000, 1600], "rotations": ROT4, "service_zones": [[0, -1000, 3000, 1000]],
+    "冷水主机": {"height": 2000, "size": [3000, 1600], "rotations": ROT4, "service_zones": [[0, -1000, 3000, 1000]],
              "ports": {"CHW_in": port(0, 400, -1, 0, 800), "CHW_out": port(0, 1200, -1, 0, 800),
                        "CW_in": port(3000, 400, 1, 0, 800), "CW_out": port(3000, 1200, 1, 0, 800)}},
-    "冷冻泵": {"size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 600]],
+    "冷冻泵": {"height": 1000, "size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 600]],
             "ports": {"in": port(0, 400, -1, 0, 500), "out": port(1000, 400, 1, 0, 500)}},
-    "冷却泵": {"size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 600]],
+    "冷却泵": {"height": 1000, "size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 600]],
             "ports": {"in": port(0, 400, -1, 0, 500), "out": port(1000, 400, 1, 0, 500)}},
-    "冷却塔": {"size": [5000, 4000], "rotations": ROT4, "service_zones": [],
+    "冷却塔": {"height": 4000, "size": [5000, 4000], "rotations": ROT4, "service_zones": [],
             "ports": {"out": port(2500, 0, 0, -1, 500), "in": port(2500, 4000, 0, 1, 500)}},
-    "分水器": {"size": [3500, 800], "rotations": ROT4, "service_zones": [[0, 800, 3500, 800]],
+    "分水器": {"height": 1500, "size": [3500, 800], "rotations": ROT4, "service_zones": [[0, 800, 3500, 800]],
             "ports": {**{f"in_{k}": port(400 + 500 * (k - 1), 0, 0, -1, 1000) for k in range(1, 6)},
                       "out_bldg": port(3500, 400, 1, 0, 1000), "bypass": port(0, 400, -1, 0, 1000)}},
-    "集水器": {"size": [3500, 800], "rotations": ROT4, "service_zones": [],
+    "集水器": {"height": 1500, "size": [3500, 800], "rotations": ROT4, "service_zones": [],
             "ports": {**{f"out_{k}": port(400 + 500 * (k - 1), 0, 0, -1, 1000) for k in range(1, 6)},
                       "in_bldg": port(3500, 400, 1, 0, 1000), "bypass": port(0, 400, -1, 0, 1000),
                       "makeup": port(1700, 800, 0, 1, 1000)}},
-    "板换": {"size": [3000, 2000], "rotations": ROT4, "service_zones": [[0, -1000, 3000, 1000]],
+    "板换": {"height": 2000, "size": [3000, 2000], "rotations": ROT4, "service_zones": [[0, -1000, 3000, 1000]],
            "ports": {"p1": port(0, 500, -1, 0, 800), "p2": port(0, 1500, -1, 0, 800),
                      "p3": port(3000, 500, 1, 0, 800), "p4": port(3000, 1500, 1, 0, 800)}},
-    "定压补水": {"size": [1500, 1200], "rotations": ROT4, "service_zones": [[0, -800, 1500, 800]],
+    "定压补水": {"height": 1500, "size": [1500, 1200], "rotations": ROT4, "service_zones": [[0, -800, 1500, 800]],
              "ports": {"in": port(0, 600, -1, 0, 600), "out": port(1500, 600, 1, 0, 600)}},
-    "水处理": {"size": [2000, 1500], "rotations": ROT4, "service_zones": [[0, -800, 2000, 800]],
+    "水处理": {"height": 1500, "size": [2000, 1500], "rotations": ROT4, "service_zones": [[0, -800, 2000, 800]],
             "ports": {"in": port(0, 700, -1, 0, 600), "out": port(2000, 700, 1, 0, 600)}},
-    "软化水箱": {"size": [2000, 2000], "rotations": ROT4, "service_zones": [],
+    "软化水箱": {"height": 2000, "size": [2000, 2000], "rotations": ROT4, "service_zones": [],
              "ports": {"out": port(2000, 1000, 1, 0, 300)}},
-    "建筑立管": {"size": [1000, 1000], "rotations": [0], "service_zones": [],
+    "建筑立管": {"height": 4500, "size": [1000, 1000], "rotations": [0], "service_zones": [],
              "ports": {"supply_in": port(500, 1000, 0, 1, 1000), "return_out": port(1000, 500, 1, 0, 1000)}},
     # 区域
-    "区域分水器": {"size": [4000, 800], "rotations": ROT4, "service_zones": [],
+    "区域分水器": {"height": 1500, "size": [4000, 800], "rotations": ROT4, "service_zones": [],
               "ports": {"main_in": port(0, 400, -1, 0, 1000), "arr": port(4000, 400, 1, 0, 1000),
                         **{f"o_{k}": port(1000 * k, 0, 0, -1, 1000) for k in range(1, 3)}}},
-    "区域集水器": {"size": [4000, 800], "rotations": ROT4, "service_zones": [],
+    "区域集水器": {"height": 1500, "size": [4000, 800], "rotations": ROT4, "service_zones": [],
               "ports": {"main_out": port(0, 400, -1, 0, 1000), "arr": port(4000, 400, 1, 0, 1000),
                         **{f"i_{k}": port(1000 * k, 0, 0, -1, 1000) for k in range(1, 3)}}},
-    "区域换热器": {"size": [2000, 1200], "rotations": ROT4, "service_zones": [[0, -800, 2000, 800]],
+    "区域换热器": {"height": 1800, "size": [2000, 1200], "rotations": ROT4, "service_zones": [[0, -800, 2000, 800]],
               "ports": {"in": port(0, 600, -1, 0, 800), "out": port(2000, 600, 1, 0, 800)}},
-    "区域循环泵": {"size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 500]],
+    "区域循环泵": {"height": 1000, "size": [1000, 800], "rotations": ROT4, "service_zones": [[0, 800, 1000, 500]],
               "ports": {"in": port(0, 400, -1, 0, 500), "out": port(1000, 400, 1, 0, 500)}},
-    "空调箱": {"size": [1500, 1000], "rotations": ROT4, "service_zones": [[0, -700, 1500, 700]],
+    "空调箱": {"height": 1800, "size": [1500, 1000], "rotations": ROT4, "service_zones": [[0, -700, 1500, 700]],
             "ports": {"in": port(0, 500, -1, 0, 1200), "out": port(1500, 500, 1, 0, 1200)}},
 }
 
 PARAMS = {
     "grid_mm": 100, "delta_ee_mm": 800, "l_min_mm": 300, "kappa": 2,
     "service_zones_inside_footprint": False,
-    "weights": {"area": 1.0, "length": 1.0, "bends": 0.3},
+    "weights": {"area": 1.0, "length": 1.0, "bends": 0.3, "height_changes": 0.3},
+    "routing": {                                 # 布管参数（主文档 12.3、12.4、12.6）；数值为合成算例自拟，待用户确认
+        "D_default_mm": 200,                     # 默认管径（本算例所有管网、端口同径，不产生变径段）
+        "c_rho": 1.5,                            # 弯曲半径 ρ = c_ρ·D
+        "delta_ep_mm": 100,                      # 设备–管净距
+        "delta_pp_mm": 100,                      # 管–管净距
+        "K": 3,                                  # 每条连接高度变化次数上限
+        "eps_z_mm": 1,                           # 高度容差
+        "z_max_mm": 4500,                        # 管顶最高标高（层高）
+        "service_zone_height_mm": 2000,          # 检修区高度（检修区内不得走管）
+        "pitch_mm": 300,                         # 布管轨道线基础间距
+        "margin_mm": 1500,                       # 布管区域在设备外接矩形外的扩展
+        "max_iters": 30,                         # 协商布线最多轮数
+        "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5,   # 协商代价系数
+        "max_expansions": 500000,                # 单次 A* 最多扩展状态数
+        "astar_weight": 1.5,                     # 启发式放大系数（1 = 单管最优；>1 更快但不保证最优）
+        "route_workers": 12,                     # 每轮内并行布管的进程数（1 = 串行）
+    },
     "blocking": {
         "auto_module_policy": "accept",          # accept：自动候选直接使用；report_only：只报告，不合并
         "min_copies": 2,                         # 至少重复几次才算模块候选

@@ -37,8 +37,9 @@ import placement_cpsat as base
 
 # ============================================================ 预处理
 class Problem:
-    def __init__(self, blocks, nets, P, weights):
+    def __init__(self, blocks, nets, P, weights, access=None):
         self.blocks, self.nets, self.P, self.w = blocks, nets, P, weights
+        self.access = access_rects_factory(P, access) if access else None
         self.n = len(blocks)
         self.d, self.lmin, self.k = P["delta"], P["lmin"], P["kappa"]
         # 姿态索引：(内部排法, 旋转) → pose 下标
@@ -72,6 +73,33 @@ class Problem:
         return self.blocks[i]["poses"][self.pose_of[i][(v, r)]], self.pose_of[i][(v, r)]
 
 
+def access_rects_factory(P, access):
+    """端口接入区（主文档 12.3 的必要条件）：管道离开端口须先直行 ≥ ℓ_min。
+    返回函数 pose → (raw_rects, pipe_rects)，局部坐标 (x0, y0, x1, y1)，网格单位：
+      raw_rects  管段盒按 δ_ep 膨胀，不得与其他块重叠
+      pipe_rects 管段盒本身（宽 D），不得与其他块的检修区重叠"""
+    grid = P["grid"]
+    if access["D_mm"] % (2 * grid) or access["delta_ep_mm"] % grid:
+        raise ValueError("端口接入区：D/2 与 δ_ep 须为网格整数倍")
+    hw, dep, L = access["D_mm"] // 2 // grid, access["delta_ep_mm"] // grid, P["lmin"]
+    cache = {}
+
+    def rects(p):
+        key = id(p)
+        if key not in cache:
+            raw, pipe = [], []
+            for x, y, ux, uy, _z in p["ports"].values():
+                for depth, side, out in ((L + dep, hw + dep, raw), (L, hw, pipe)):
+                    ax, ay = x + ux * depth, y + uy * depth
+                    if ux:
+                        out.append((min(x, ax), y - side, max(x, ax), y + side))
+                    else:
+                        out.append((x - side, min(y, ay), x + side, max(y, ay)))
+            cache[key] = (raw, pipe)
+        return cache[key]
+    return rects
+
+
 def extents(p, zones_inside):
     """块在局部坐标中需要的范围：(左, 右, 下, 上)，以及检修区伸出量。"""
     zl = min([0] + [zx for zx, _, _, _ in p["zones"]])
@@ -82,6 +110,14 @@ def extents(p, zones_inside):
 
 
 # ============================================================ 评估
+def _bounds(zones):
+    """(x, y, w, h) 列表的包围范围 (左, 右, 下, 上)；空列表返回 None。"""
+    if not zones:
+        return None
+    return (min(z[0] for z in zones), max(z[0] + z[2] for z in zones),
+            min(z[1] for z in zones), max(z[1] + z[3] for z in zones))
+
+
 def relations(gp, gm, n):
     pp = [0] * n; pm = [0] * n
     for k, b in enumerate(gp):
@@ -99,16 +135,36 @@ def skeleton(pr, st):
     ext = [extents(p, pr.P["zones_inside"]) for p in ps]
     inside = pr.P["zones_inside"]
     pp, pm = relations(st["gp"], st["gm"], n)
+    if pr.access:
+        acc = [pr.access(p) for p in ps]
+        # 与其他块比较的范围：检修区 ∪ 端口接入区（膨胀 δ_ep）
+        ext_raw = [(min(e[0], *[r[0] for r in a[0]]), max(e[1], *[r[2] for r in a[0]]),
+                    min(e[2], *[r[1] for r in a[0]]), max(e[3], *[r[3] for r in a[0]])) if a[0] else e
+                   for e, a in zip(ext, acc)]
+        zb = [_bounds(p["zones"]) for p in ps]                          # 检修区本身的范围
+        ab = [_bounds([(r[0], r[1], r[2] - r[0], r[3] - r[1]) for r in a[1]]) for a in acc]
+    else:
+        ext_raw = ext
     cons = []
     for i in range(n):
         for j in range(n):
             if i == j or pm[i] > pm[j]:
                 continue
             if pp[i] < pp[j]:                               # i 在 j 左
-                g = max(ps[i]["W"] + pr.d, ext[i][1], ps[i]["W"] - ext[j][0])
+                g = max(ps[i]["W"] + pr.d, ext_raw[i][1], ps[i]["W"] - ext_raw[j][0])
+                if pr.access:                               # 接入区不压检修区（两个方向）
+                    if ab[i] and zb[j]:
+                        g = max(g, ab[i][1] - zb[j][0])
+                    if zb[i] and ab[j]:
+                        g = max(g, zb[i][1] - ab[j][0])
                 cons.append((i, j, 0, g))
             else:                                           # i 在 j 下
-                g = max(ps[i]["H"] + pr.d, ext[i][3], ps[i]["H"] - ext[j][2])
+                g = max(ps[i]["H"] + pr.d, ext_raw[i][3], ps[i]["H"] - ext_raw[j][2])
+                if pr.access:
+                    if ab[i] and zb[j]:
+                        g = max(g, ab[i][3] - zb[j][2])
+                    if zb[i] and ab[j]:
+                        g = max(g, zb[i][3] - ab[j][2])
                 cons.append((i, j, 1, g))
     lo = [[(-e[0] if inside else 0) for e in ext], [(-e[2] if inside else 0) for e in ext]]
     pos = [[0] * n, [0] * n]
@@ -347,9 +403,9 @@ def decode(pr, arr):
 
 # ============================================================ 模拟退火（单进程）
 def anneal(args):
-    (path, weights, budget, t_start, seed, cycle, T0, T1, shared) = args
+    (path, weights, budget, t_start, seed, cycle, T0, T1, access, shared) = args
     blocks, nets, P = base.load(path)
-    pr = Problem(blocks, nets, P, weights or P["w"])
+    pr = Problem(blocks, nets, P, weights or P["w"], access)
     pr.stats = dict.fromkeys(("evals", "infeasible_sp", "pruned", "infeasible_lp", "lp", "invalid", "fractional"), 0)
     rng = random.Random(seed)
     gJ, gArr, lock = shared
@@ -389,8 +445,9 @@ def anneal(args):
     return {"seed": seed, "best_J": best[0], "solution": best[2], "trace": trace, "stats": pr.stats}
 
 
-def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None):
-    """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。"""
+def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None):
+    """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。
+    access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。"""
     t_start = time.time()
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"])
@@ -399,7 +456,7 @@ def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=N
     mgr_lock = ctx.Lock()
     gJ = ctx.Value("d", math.inf, lock=False)
     gArr = ctx.Array("i", size, lock=False)
-    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, (gJ, gArr, mgr_lock))
+    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, (gJ, gArr, mgr_lock))
             for k in range(procs)]
     if procs == 1:
         outs = [anneal(jobs[0])]
