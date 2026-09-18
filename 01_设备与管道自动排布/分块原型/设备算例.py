@@ -81,9 +81,9 @@ PARAMS = {
         "service_zone_height_mm": 2000,          # 检修区高度（检修区内不得走管）
         "pitch_mm": 300,                         # 布管轨道线基础间距
         "margin_mm": 1500,                       # 布管区域在设备外接矩形外的扩展
-        "max_iters": 30,                         # 协商布线最多轮数
-        "stall_iters": 5,                        # 协商连续多少轮无改进（未布通数、冲突边数）即停止，转入清理
-        "cleanup_max_expansions": 300000,        # 清理：其他管网作硬障碍、单独重布冲突管网时的扩展上限（成功的重布实测 ≤ 14 万）
+        "max_iters": 60,                         # 协商布线最多轮数
+        "stall_iters": 12,                        # 协商连续多少轮无改进（未布通数、冲突边数）即停止，转入清理
+        "cleanup_max_expansions": 2000000,       # 清理：其他管网作硬障碍、单独重布冲突管网时的扩展上限
         "cleanup_trigger_nets": 4,               # 协商中途冲突管网不多于此数时先试清理
         "freeze_after_exhausted": 2,             # 管网连续几次搜到扩展上限后，协商中不再重搜（留给清理）
         "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5,   # 协商代价系数

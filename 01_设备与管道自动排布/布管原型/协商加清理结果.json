@@ -10,40 +10,22 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 65.9,
-   "iterations": 11,
-   "cleanup_s": 1.9,
+   "route_s": 13.0,
+   "iterations": 8,
+   "cleanup_s": 0.6,
    "cleanup": [
     {
-     "clash": "冷冻泵出2 与 冷却供水：管–管净距不足",
+     "clash": "供楼 与 冷却回水：管–管净距不足",
      "result": "已消除",
      "attempts": [
       {
        "reroute": [
-        "冷冻泵出2"
+        "供楼"
        ],
        "steps": [
         {
-         "net": "冷冻泵出2",
-         "result": "找到（扩展 85784）"
-        }
-       ],
-       "clashes_after": 2
-      }
-     ]
-    },
-    {
-     "clash": "冷却供水 与 冷却回水：管–管净距不足",
-     "result": "已消除",
-     "attempts": [
-      {
-       "reroute": [
-        "冷却供水"
-       ],
-       "steps": [
-        {
-         "net": "冷却供水",
-         "result": "找到（扩展 53014）"
+         "net": "供楼",
+         "result": "找到（扩展 6581）"
         }
        ],
        "clashes_after": 1
@@ -61,7 +43,7 @@
        "steps": [
         {
          "net": "冷却泵出2",
-         "result": "找到（扩展 21742）"
+         "result": "找到（扩展 14456）"
         }
        ],
        "clashes_after": 0
@@ -74,27 +56,24 @@
    "violations": [],
    "all_ok": true,
    "metrics": {
-    "W_m": 18.4,
-    "H_m": 16.9,
-    "area_m2": 311.0,
-    "L_m": 407.1,
-    "bends": 157,
-    "height_changes": 53,
-    "J": 6.4135
+    "W_m": 18.1,
+    "H_m": 15.7,
+    "area_m2": 284.2,
+    "L_m": 394.3,
+    "bends": 158,
+    "height_changes": 56,
+    "J": 6.2051
    }
   },
   "conflict_history": [
-   600,
-   313,
-   275,
-   173,
-   172,
-   125,
-   94,
-   54,
-   50,
-   45,
-   34
+   443,
+   325,
+   239,
+   249,
+   257,
+   111,
+   71,
+   16
   ]
  },
  {
@@ -108,9 +87,9 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 58.4,
+   "route_s": 15.4,
    "iterations": 8,
-   "cleanup_s": 6.6,
+   "cleanup_s": 0.6,
    "cleanup": [
     {
      "clash": "冷却供水 与 冷却回水：管–管净距不足",
@@ -123,25 +102,7 @@
        "steps": [
         {
          "net": "冷却供水",
-         "result": "找到（扩展 260361）"
-        }
-       ],
-       "clashes_after": 2
-      }
-     ]
-    },
-    {
-     "clash": "回楼 与 冷却回水：管–管净距不足",
-     "result": "已消除",
-     "attempts": [
-      {
-       "reroute": [
-        "回楼"
-       ],
-       "steps": [
-        {
-         "net": "回楼",
-         "result": "找到（扩展 53128）"
+         "result": "找到（扩展 156685）"
         }
        ],
        "clashes_after": 1
@@ -149,28 +110,17 @@
      ]
     },
     {
-     "clash": "旁通 与 冷却回水：管–管净距不足",
+     "clash": "冷却泵出3 与 冷却回水：管–管净距不足",
      "result": "已消除",
      "attempts": [
       {
        "reroute": [
-        "旁通"
+        "冷却泵出3"
        ],
        "steps": [
         {
-         "net": "旁通",
-         "result": "超过扩展上限，不能下结论（搜索未找到路径（或超过扩展上限）；扩展 300001）"
-        }
-       ]
-      },
-      {
-       "reroute": [
-        "冷却回水"
-       ],
-       "steps": [
-        {
-         "net": "冷却回水",
-         "result": "找到（扩展 158411）"
+         "net": "冷却泵出3",
+         "result": "找到（扩展 23623）"
         }
        ],
        "clashes_after": 0
@@ -186,21 +136,21 @@
     "W_m": 22.7,
     "H_m": 13.9,
     "area_m2": 315.5,
-    "L_m": 370.7,
+    "L_m": 362.3,
     "bends": 152,
-    "height_changes": 53,
-    "J": 6.2603
+    "height_changes": 54,
+    "J": 6.2424
    }
   },
   "conflict_history": [
-   306,
-   207,
+   374,
+   201,
    173,
-   168,
-   104,
-   89,
-   48,
-   38
+   133,
+   113,
+   71,
+   44,
+   29
   ]
  },
  {
@@ -214,10 +164,28 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 65.4,
+   "route_s": 20.9,
    "iterations": 8,
-   "cleanup_s": 0.2,
+   "cleanup_s": 0.9,
    "cleanup": [
+    {
+     "clash": "冷却回水 与 冷却供水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却回水"
+       ],
+       "steps": [
+        {
+         "net": "冷却回水",
+         "result": "找到（扩展 296242）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
     {
      "clash": "旁通 与 供楼：管–管净距不足",
      "result": "已消除",
@@ -229,7 +197,7 @@
        "steps": [
         {
          "net": "旁通",
-         "result": "找到（扩展 2998）"
+         "result": "找到（扩展 89147）"
         }
        ],
        "clashes_after": 0
@@ -242,24 +210,24 @@
    "violations": [],
    "all_ok": true,
    "metrics": {
-    "W_m": 16.0,
-    "H_m": 19.4,
-    "area_m2": 310.4,
-    "L_m": 463.0,
-    "bends": 173,
+    "W_m": 16.3,
+    "H_m": 18.7,
+    "area_m2": 304.8,
+    "L_m": 477.8,
+    "bends": 180,
     "height_changes": 59,
-    "J": 6.8715
+    "J": 6.964
    }
   },
   "conflict_history": [
-   649,
-   430,
-   246,
-   263,
-   192,
-   89,
-   56,
-   19
+   715,
+   431,
+   312,
+   243,
+   222,
+   124,
+   60,
+   49
   ]
  }
 ]

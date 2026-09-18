@@ -37,6 +37,10 @@ from itertools import count
 
 import numpy as np
 
+import astar_fast as af
+
+import astar_fast as af
+
 DIRS = [(0, 1), (0, -1), (1, 1), (1, -1), (2, 1), (2, -1)]      # (轴, 符号)
 DIR_OF = {(1, 0, 0): 0, (-1, 0, 0): 1, (0, 1, 0): 2, (0, -1, 0): 3, (0, 0, 1): 4, (0, 0, -1): 5}
 REQUIRED = ["D_default_mm", "c_rho", "delta_ep_mm", "delta_pp_mm", "K", "eps_z_mm", "z_max_mm",
@@ -114,8 +118,8 @@ class Grid:
         eblocked = [np.zeros(self.n, dtype=bool) for _ in range(3)]      # 边 (i→i+1) 沿各轴
         for b in sc.boxes:
             self._mark(b, blocked, eblocked)
-        self.blocked = blocked.ravel().tolist()
-        self.eblocked = [e.ravel().tolist() for e in eblocked]
+        self.blocked = blocked.ravel().astype(np.uint8)
+        self.eblocked = [e.ravel().astype(np.uint8) for e in eblocked]
         self.stride = (ny_ * nz_, nz_, 1)
 
     def _open_range(self, a, lo, hi):
@@ -202,21 +206,100 @@ def port_exemptions(G, sc, terms):
     return nodes, edges
 
 
-def tree_heuristic(G, segs, cL):
-    """全部网格节点到树上最近直管段的曼哈顿距离 × cL（按节点编号展平的列表）。
-    每段是轴对齐线段，距离 = 各轴到区间 [lo, hi] 的间隙之和，三轴可分离，用 numpy 广播一次算完。"""
+def tree_heuristic_arr(G, segs, cL, base=None):
+    """全部网格节点到树上最近直管段的曼哈顿距离 × cL（按节点编号展平的数组）。
+    每段是轴对齐线段，距离 = 各轴到区间 [lo, hi] 的间隙之和，三轴可分离，用 numpy 广播一次算完。
+    base 给出已算好的距离场（乘过 cL）时只按新增段更新（三通拆段不改变几何，可增量）。"""
     C = [np.asarray(G.c[a], dtype=float) for a in range(3)]
-    best = None
+    best = None if base is None else base.reshape(G.n) / cL
     for p, q, _kp, _kq in segs:
         g = [np.maximum(0.0, np.maximum(min(p[a], q[a]) - C[a], C[a] - max(p[a], q[a]))) for a in range(3)]
         d = g[0][:, None, None] + g[1][None, :, None] + g[2][None, None, :]
         best = d if best is None else np.minimum(best, d)
-    return (best.ravel() * cL).tolist()
+    return best.ravel() * cL
+
+
+def tree_heuristic(G, segs, cL):
+    """同 tree_heuristic_arr，返回 Python 列表（astar_py 用）。"""
+    return tree_heuristic_arr(G, segs, cL).tolist()
 
 
 def astar(G, sc, start, target, ctx):
-    """start = (dev, port)；target = ("port", (dev, port)) 或 ("tree", tree)。
-    返回 (折线点列表, 结束信息) 或 None。"""
+    """编译实现（astar_fast.search）。规则与 astar_py 相同，测试中逐例比对。
+    start = (dev, port)；target = ("port", (dev, port)) 或 ("tree", tree)。返回 (折线点列表, 结束信息) 或 None。"""
+    cL = sc.w["length"] / sc.scale["L0"]
+    cB = sc.w["bends"] / sc.scale["B0"]
+    cC = sc.w["height_changes"] / sc.scale["C0"]
+    halo, hist = ctx["halo"], ctx["hist"]
+    ha = halo if isinstance(halo, np.ndarray) else np.zeros(G.size * 3, dtype=np.int32)
+    hi_ = hist if isinstance(hist, np.ndarray) else np.zeros(G.size * 3, dtype=np.float32)
+    ex_nodes = np.array(sorted(ctx["ex_nodes"]), dtype=np.int64)
+    ex_edges = np.array(sorted(n * 3 + a for n, a in ctx["ex_edges"]), dtype=np.int64)
+    sx, sy, sz, sux, suy, suz = sc.port(*start)
+    s0 = G.node((sx, sy, sz))
+    d0 = DIR_OF[(sux, suy, suz)]
+    empty_i = np.zeros(0, dtype=np.int64)
+    empty_f = np.zeros(0, dtype=np.float64)
+    if target[0] == "port":
+        tx, ty, tz, tux, tuy, tuz = sc.port(*target[1])
+        mode, t, t_dir = 0, G.node((tx, ty, tz)), DIR_OF[(-tux, -tuy, -tuz)]
+        tpt = np.array([tx, ty, tz], dtype=np.float64)
+        hl = empty_f
+        tnode, ttype, tsa, tdA, tdB, tkA, tkB, tcor = (empty_i, empty_i, empty_i, empty_f, empty_f,
+                                                       empty_i, empty_i, empty_i)
+        goal_info = ("port", target[1])
+    else:
+        tree = target[1]
+        mode, t, t_dir = 1, 0, 0
+        tpt = np.zeros(3)
+        hl = np.asarray(ctx.get("tree_h_arr") if ctx.get("tree_h_arr") is not None
+                        else tree_heuristic_arr(G, tree["segs"], cL))
+        tnode, ttype, tsa, tdA, tdB, tkA, tkB, tcor = tree_arrays(tree["nodes"])
+        goal_info = ("tee", None)
+    out = af.search(G.carr[0], G.carr[1], G.carr[2], G.n[0], G.n[1], G.n[2], G.blocked,
+                    G.eblocked[0], G.eblocked[1], G.eblocked[2], ha, hi_, float(ctx["pres"]),
+                    ex_nodes, ex_edges, float(sc.rho), float(sc.lmin), int(sc.rp["K"]),
+                    cL, cB, cC, float(sc.rp["astar_weight"]), int(sc.rp["max_expansions"]),
+                    int(s0), int(d0), mode, int(t), int(t_dir), tpt, hl,
+                    tnode, ttype, tsa, tdA, tdB, tkA, tkB, tcor)
+    nodes, dirs, par, gid, exp, exhausted = out
+    ctx["stats"]["expansions"] += int(exp)
+    if gid < 0:
+        if exhausted:
+            ctx["stats"]["exhausted"] += 1
+        return None
+    return _trace_arrays(G, nodes, dirs, par, int(gid)), goal_info
+
+
+def tree_arrays(nodes):
+    """树上可接三通的位置 → 数组（按节点号排序）。类型：0 直管段内部、1 弯头、2 不可接。"""
+    ks = sorted(nodes)
+    tnode = np.array(ks, dtype=np.int64)
+    ttype = np.zeros(len(ks), dtype=np.int64)
+    tsa = np.zeros(len(ks), dtype=np.int64)
+    tdA = np.zeros(len(ks), dtype=np.float64)
+    tdB = np.zeros(len(ks), dtype=np.float64)
+    tkA = np.zeros(len(ks), dtype=np.int64)
+    tkB = np.zeros(len(ks), dtype=np.int64)
+    tcor = np.zeros(len(ks), dtype=np.int64)
+    for i, k in enumerate(ks):
+        info = nodes[k]
+        if info[0] == "mid":
+            _k, seg_axis, dA, kA, dB, kB = info
+            ttype[i] = 0; tsa[i] = seg_axis; tdA[i] = dA; tdB[i] = dB
+            tkA[i] = 0 if kA == "port" else 1
+            tkB[i] = 0 if kB == "port" else 1
+        elif info[0] == "corner":
+            ttype[i] = 1
+            tcor[i] = sum(1 << nd for nd in range(6) if DIRS[nd] in info[1])
+        else:
+            ttype[i] = 2
+    return tnode, ttype, tsa, tdA, tdB, tkA, tkB, tcor
+
+
+def astar_py(G, sc, start, target, ctx):
+    """纯 Python 参考实现（测试中与 astar 比对；规则以本函数与文档为准）。
+    start = (dev, port)；target = ("port", (dev, port)) 或 ("tree", tree)。返回 (折线点列表, 结束信息) 或 None。"""
     rho, lmin, K = sc.rho, sc.lmin, sc.rp["K"]
     cap = 2 * rho + lmin
     cL = sc.w["length"] / sc.scale["L0"]
@@ -226,10 +309,6 @@ def astar(G, sc, start, target, ctx):
     ex_nodes, ex_edges = ctx["ex_nodes"], ctx["ex_edges"]
     blocked, eblocked = G.blocked, G.eblocked
     hw = sc.rp["astar_weight"]                                      # > 1：加权 A*，更快但不保证单管最优
-    corr = ctx.get("corr")
-    if corr is not None:
-        cmap, cny, cnz, cpen = G.corr_map, G.corr_ny, G.corr_nz, ctx["corr_penalty"]
-
     sx, sy, sz, sux, suy, suz = sc.port(*start)
     s = G.node((sx, sy, sz))
     d0 = DIR_OF[(sux, suy, suz)]
@@ -260,6 +339,7 @@ def astar(G, sc, start, target, ctx):
         tree = target[1]
         tree_nodes = tree["nodes"]
         hl = ctx.get("tree_h") or tree_heuristic(G, tree["segs"], cL)
+        hl = list(hl)
 
         def h(p, d, n):
             """到树上最近直管段的曼哈顿距离（可采纳）；按节点查表，表由 tree_heuristic 一次算出。"""
@@ -329,12 +409,7 @@ def astar(G, sc, start, target, ctx):
             if a != 2:
                 nhh = 1
             ei = lower * 3 + a                                         # 边下标：共享占用 / 历史代价表
-            step_cost = cL * ln * (1 + hist[ei]) * (1 + pres * halo[ei])
-            if corr is not None:                                       # 走廊引导：走出粗网格走廊的边加价
-                ci, cj, ck = G.ijk(nb)
-                if (cmap[0][ci] * cny + cmap[1][cj]) * cnz + cmap[2][ck] not in corr:
-                    step_cost *= cpen
-            ng += step_cost
+            ng += cL * ln * (1 + hist[ei]) * (1 + pres * halo[ei])
             goal_info = None
             if target[0] == "port":
                 if nb == t:
@@ -360,6 +435,21 @@ def astar(G, sc, start, target, ctx):
             push(nb, nd, nlp, nvr, nhh, nrun, ng, sid, goal_info)
     ctx["stats"]["expansions"] += exp
     return None
+
+
+def _trace_arrays(G, nodes, dirs, par, sid):
+    """编译实现返回的状态数组 → 折线点。"""
+    seq = []
+    while sid >= 0:
+        seq.append((int(nodes[sid]), int(dirs[sid])))
+        sid = int(par[sid])
+    seq.reverse()
+    pts = [G.pt(seq[0][0])]
+    for k in range(1, len(seq)):
+        if seq[k][1] != seq[k - 1][1]:
+            pts.append(G.pt(seq[k - 1][0]))                        # 在上一节点转弯
+    pts.append(G.pt(seq[-1][0]))
+    return _dedupe(pts)
 
 
 def _trace(G, states, sid):
@@ -487,7 +577,6 @@ def tree_segments(branches, stats=None):
 def halo_codes(G, sc, branches):
     """占用晕：与管道中心线（轴对齐盒）各轴距离都 < r_pp 的全部边，返回边编码 节点×3+轴 的有序数组。
     条件在三个轴上可分离：垂直于边的轴看节点坐标，沿边的轴看边区间，各得一个布尔掩码，取笛卡尔积。"""
-    import numpy as np
     r = sc.r_pp - 1e-9
     C = G.carr
     ny, nz = G.n[1], G.n[2]
@@ -569,15 +658,19 @@ def route_net(G, sc, net, ctx):
         return None, "搜索未找到路径（或超过扩展上限）"
     branches = [{"start": a, "points": r[0], "end": ("port", b)}]
     rest = [t for t in terms if t not in (a, b)]
+    cL = sc.w["length"] / sc.scale["L0"]
+    hl = None
     while rest:
         tree = build_tree(G, branches, sc.rho, sc.lmin)
         if tree["valid"] == 0:
             return None, "已布管道上没有可接三通的位置"
         # 下一个接入的端点：到已布树最近的那个（查表，与 A* 用的是同一张表；比按包围盒距离排更准）
-        hl = tree_heuristic(G, tree["segs"], sc.w["length"] / sc.scale["L0"])
+        # 距离场只看几何：新增支路的折线段即可（三通拆段不改变几何）
+        new_segs = tree["segs"] if hl is None else [(p_, q_, None, None) for p_, q_ in segments_of(branches[-1]["points"])]
+        hl = tree_heuristic_arr(G, new_segs, cL, hl)
         rest.sort(key=lambda t: hl[G.node(P[t])])
         t = rest.pop(0)
-        r = astar(G, sc, t, ("tree", tree), {**ctx, "tree_h": hl})
+        r = astar(G, sc, t, ("tree", tree), {**ctx, "tree_h_arr": hl})
         if r is None:
             return None, f"支路 {t[0]}.{t[1]} 未接上（或超过扩展上限）"
         branches.append({"start": t, "points": r[0], "end": ("tee", None)})
@@ -588,25 +681,13 @@ def route_net(G, sc, net, ctx):
 _W = {}
 
 
-def attach_corridor_map(G, spec):
-    """精细网格各轴坐标 → 粗网格格点下标（z 取最近层）。"""
-    import numpy as np
-    cx = [min(spec["nx"] - 1, max(0, int((x - spec["x0"]) // spec["c"]))) for x in G.c[0]]
-    cy = [min(spec["ny"] - 1, max(0, int((y - spec["y0"]) // spec["c"]))) for y in G.c[1]]
-    zs = np.array(spec["zs"])
-    cz = [int(np.argmin(np.abs(zs - z))) for z in G.c[2]]
-    G.corr_map, G.corr_ny, G.corr_nz = (cx, cy, cz), spec["ny"], spec["nz"]
-
-
-def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name, corr_spec=None):
+def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name):
     from multiprocessing import shared_memory
     sc = Scene(devices, nets, rp, weights, scale)
     _W["sc"], _W["G"] = sc, Grid(sc)
-    if corr_spec is not None:
-        attach_corridor_map(_W["G"], corr_spec)
     _W["shm"] = (shared_memory.SharedMemory(name=halo_name), shared_memory.SharedMemory(name=hist_name))
-    _W["halo"] = _W["shm"][0].buf.cast("i")
-    _W["hist"] = _W["shm"][1].buf.cast("f")
+    _W["halo"] = np.frombuffer(_W["shm"][0].buf, dtype=np.int32)
+    _W["hist"] = np.frombuffer(_W["shm"][1].buf, dtype=np.float32)
 
 
 def _worker_ready(_):
@@ -622,20 +703,18 @@ class _Zero:
         return 0
 
 
-def _route_one(G, sc, halo, hist, e, pres, never_routed, corr=None, corr_penalty=None):
+def _route_one(G, sc, halo, hist, e, pres, never_routed):
     """带拥堵代价搜索（A* 中实时读取共享占用表）；失败且该管网从未布通过时，再做一次无拥堵搜索。
     info["free_fail"] = 无拥堵搜索也失败（或端口被堵）：该布局下布不通，之后不再重试。"""
     t0 = time.time()
     stats = {"expansions": 0, "exhausted": 0}
-    cctx = {"corr": corr, "corr_penalty": corr_penalty}
-    br, reason = route_net(G, sc, sc.nets[e], {"halo": halo, "hist": hist, "pres": pres, "stats": stats, **cctx})
+    br, reason = route_net(G, sc, sc.nets[e], {"halo": halo, "hist": hist, "pres": pres, "stats": stats})
     fallback = free_fail = False
     if br is None and reason.startswith("端口正前方"):
         free_fail = True
     elif br is None and never_routed:
         fallback = True
-        br, reason = route_net(G, sc, sc.nets[e], {"halo": _Zero(), "hist": _Zero(), "pres": 0.0, "stats": stats,
-                                                   "corr": None})
+        br, reason = route_net(G, sc, sc.nets[e], {"halo": _Zero(), "hist": _Zero(), "pres": 0.0, "stats": stats})
         free_fail = br is None
     info = {"net": sc.nets[e]["id"], "time_s": round(time.time() - t0, 2), "fallback": fallback,
             "free_fail": free_fail, **stats}
@@ -645,7 +724,7 @@ def _route_one(G, sc, halo, hist, e, pres, never_routed, corr=None, corr_penalty
             [n * 3 + ax for n, ax in path_edges(G, br)], info)
 
 
-def negotiate(sc, log=print, corridors=None):
+def negotiate(sc, log=print):
     """有交流的并行协商布线（PathFinder 变体 + 乐观并发）。
     共享状态：每条边的占用计数（各管网“晕”的叠加）与历史拥堵代价，放在共享内存里；
       只有主进程写，工作进程在 A* 中实时读——一根管一提交，之后的搜索立即看到。
@@ -655,8 +734,7 @@ def negotiate(sc, log=print, corridors=None):
     每轮：第 1 轮布全部管网，之后只重布有冲突或未布通的管网；轮末冲突边累积历史代价。
     带拥堵代价搜索失败时保留上一轮路径；无拥堵也布不通的管网记为该布局下不可布，不再重试。
     route_workers = 1 时串行（无并发冲突，逻辑相同）。
-    corridors = {"spec": 粗网格规格, "cells": {管网 id: 走廊格点集合}, "penalty": 走出走廊的边代价倍数}
-      时启用走廊引导（软约束；见 coarse_route.coarse_route / dilate）。"""
+"""
     G = Grid(sc)
     rp = sc.rp
     workers = rp["route_workers"]
@@ -670,20 +748,14 @@ def negotiate(sc, log=print, corridors=None):
                 shared_memory.SharedMemory(create=True, size=size * 4))
         for sh in shms:
             sh.buf[:size * 4] = bytes(size * 4)
-        halo, hist = shms[0].buf.cast("i"), shms[1].buf.cast("f")
+        halo = np.frombuffer(shms[0].buf, dtype=np.int32)
+        hist = np.frombuffer(shms[1].buf, dtype=np.float32)
         ex = ProcessPoolExecutor(workers, mp_context=mp.get_context("spawn"), initializer=_worker_init,
-                                 initargs=(sc.dev, sc.nets, rp, sc.w, sc.scale, shms[0].name, shms[1].name,
-                                           corridors["spec"] if corridors else None))
+                                 initargs=(sc.dev, sc.nets, rp, sc.w, sc.scale, shms[0].name, shms[1].name))
         list(ex.map(_worker_ready, range(workers * 4)))                 # 预先启动全部工作进程
     else:
-        from array import array
-        halo, hist = array("i", bytes(size * 4)), array("f", bytes(size * 4))
+        halo, hist = np.zeros(size, dtype=np.int32), np.zeros(size, dtype=np.float32)
     max_requeue = 2
-    ccells, cpen = {}, None
-    if corridors:
-        attach_corridor_map(G, corridors["spec"])
-        ccells = {e: frozenset(corridors["cells"][n["id"]]) for e, n in enumerate(sc.nets) if n["id"] in corridors["cells"]}
-        cpen = corridors["penalty"]
     routes, halos, pedges, why, hard = {}, {}, {}, {}, {}
     ever = set()
     pres = rp["pres_fac_init"]
@@ -730,15 +802,14 @@ def negotiate(sc, log=print, corridors=None):
             if ex is None:
                 for e in queue:
                     old = rip(e)
-                    finish(_route_one(G, sc, halo, hist, e, pres, e not in ever, ccells.get(e), cpen),
-                           old, times, counters)
+                    finish(_route_one(G, sc, halo, hist, e, pres, e not in ever), old, times, counters)
             else:
                 inflight, requeues = {}, {}
                 while queue or inflight:
                     while queue and len(inflight) < workers:
                         e = queue.pop(0)
                         old = rip(e) if e not in requeues else requeues[e][1]
-                        fut = ex.submit(_worker_route, (e, pres, e not in ever, ccells.get(e), cpen))
+                        fut = ex.submit(_worker_route, (e, pres, e not in ever))
                         inflight[fut] = (e, old, len(commits))
                     counters["max_parallel"] = max(counters["max_parallel"], len(inflight))
                     done, _ = wait(inflight, return_when=FIRST_COMPLETED)
@@ -800,7 +871,7 @@ def negotiate(sc, log=print, corridors=None):
     finally:
         if ex is not None:
             ex.shutdown(wait=True, cancel_futures=True)
-            halo.release(); hist.release()
+            del halo, hist
             for sh in shms:
                 sh.close(); sh.unlink()
     if done_clean is not None:

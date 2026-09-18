@@ -1,5 +1,8 @@
 """布管原型测试（手工小场景）。运行：.venv/Scripts/python -m pytest -q（在本目录）"""
 import copy
+import random
+
+import numpy as np
 
 import pytest
 
@@ -147,6 +150,33 @@ def test_cleanup_reroutes_clashing_net_with_others_fixed():
     viol, _ = rt.check_routes(sc, routes)
     assert viol == [] and records[0]["result"] == "已消除"
     assert routes["n2"] == bad["n2"]                                   # 只重布了 n1
+
+
+def test_compiled_astar_matches_python():
+    """编译实现与纯 Python 参考实现：同样的扩展数与同样的折线（含拥堵代价、含接三通）。"""
+    dev = {"A": box(0, 0, 1000, 1500, ports={"p": (1000, 300, 500, 1, 0, 0), "p2": (1000, 1100, 500, 1, 0, 0)}),
+           "B": box(5000, 0, 1000, 1500, ports={"q": (5000, 300, 500, -1, 0, 0), "q2": (5000, 1100, 500, -1, 0, 0)}),
+           "C": box(2500, 3000, 1000, 1000, ports={"r": (3000, 3000, 500, 0, -1, 0)})}
+    nets = [{"id": "n1", "terms": [("A", "p"), ("B", "q"), ("C", "r")]},
+            {"id": "n2", "terms": [("A", "p2"), ("B", "q2")]}]
+    sc = scene(dev, nets, K=3)
+    G = rt.Grid(sc)
+    rng = random.Random(0)
+    halo = np.array([1 if rng.random() < 0.05 else 0 for _ in range(G.size * 3)], dtype=np.int32)
+    hist = np.array([rng.random() * 0.2 for _ in range(G.size * 3)], dtype=np.float32)
+    for pres in (0.0, 1.0):
+        ctx = {"halo": halo, "hist": hist, "pres": pres}
+        for net in sc.nets:
+            s1 = {"expansions": 0, "exhausted": 0}
+            s2 = {"expansions": 0, "exhausted": 0}
+            fast, _ = rt.route_net(G, sc, net, {**ctx, "stats": s1})
+            saved, rt.astar = rt.astar, rt.astar_py
+            try:
+                slow, _ = rt.route_net(G, sc, net, {**ctx, "halo": halo.tolist(), "hist": hist.tolist(), "stats": s2})
+            finally:
+                rt.astar = saved
+            assert s1["expansions"] == s2["expansions"]
+            assert [b["points"] for b in fast] == [b["points"] for b in slow]
 
 
 def test_parallel_negotiation_matches_rules():
