@@ -1,0 +1,8 @@
+# 设备与管道自动排布：运行原型与测试所需
+numpy>=2.0
+scipy>=1.14
+numba>=0.61          # 单管 A* 的编译实现（astar_fast.py）
+ortools>=9.10        # CP-SAT 摆放求解器与独立校验器
+networkx>=3.3        # 分块：聚簇
+matplotlib>=3.8      # 出图
+pytest>=8.0
