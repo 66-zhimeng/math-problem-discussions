@@ -57,11 +57,56 @@ def _sift_down(hf, hs, size):
 
 
 @njit(cache=True)
+def _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, clear):
+    """沿父指针还原折线，检查不相邻管段的中心线包围盒间隙是否 < clear（= 管外径 + 净距）。"""
+    pts = np.empty((0, 3))
+    corners = []
+    cur = sid
+    prev_dir = -1
+    while cur >= 0:
+        d = st_dir[cur]
+        if prev_dir == -1 or d != prev_dir:
+            corners.append(st_node[cur])
+        prev_dir = d
+        cur = st_par[cur]
+    # 起点（父指针链的最后一个）也要作为折线端点
+    cur = sid
+    last = cur
+    while cur >= 0:
+        last = cur
+        cur = st_par[cur]
+    if corners[-1] != st_node[last]:
+        corners.append(st_node[last])
+    m = len(corners)
+    if m < 4:
+        return False
+    P = np.empty((m, 3))
+    for i in range(m):
+        n = corners[i]
+        P[i, 0] = cx[n // (n1 * n2)]
+        P[i, 1] = cy[(n // n2) % n1]
+        P[i, 2] = cz[n % n2]
+    for i in range(m - 1):
+        for j in range(i + 2, m - 1):
+            gap = -1e18
+            for a in range(3):
+                lo_i = min(P[i, a], P[i + 1, a]); hi_i = max(P[i, a], P[i + 1, a])
+                lo_j = min(P[j, a], P[j + 1, a]); hi_j = max(P[j, a], P[j + 1, a])
+                g = max(lo_j - hi_i, lo_i - hi_j)
+                if g > gap:
+                    gap = g
+            if gap < clear - 1e-6:
+                return True
+    return False
+
+
+@njit(cache=True)
 def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
-           ex_nodes, ex_edges, rho, lmin, K, cL, cB, cC, hw, max_exp,
-           s, d0, mode, t, t_dir, tpt, hl, tnode, ttype, tseg_axis, tdA, tdB, tkA, tkB, tcorner):
+           ex_nodes, ex_edges, rho, lmin, K, zc_max, cL, cB, cC, hw, max_exp,
+           s, d0, mode, t, t_dir, tpt, hl, tnode, ttype, tseg_axis, tdA, tdB, tkA, tkB, tcorner,
+           lp0, t_extra, self_clear, run0):
     """返回 (状态节点, 状态方向, 父状态, 目标状态号, 扩展数, 是否到上限)；目标状态号 < 0 表示没找到。"""
-    cap = 2.0 * rho + lmin
+    cap = max(2.0 * rho + lmin, rho + t_extra + lmin)            # 直管计数封顶：须能满足目标端的要求
     stride = np.array([n1 * n2, n2, 1], dtype=np.int64)
     nn = np.array([n0, n1, n2], dtype=np.int64)
     ta = DIR_AXIS[t_dir]
@@ -98,11 +143,11 @@ def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
 
     # ---- 初始状态
     hh0 = 1 if DIR_AXIS[d0] != 2 else 0
-    key = (((s * 6 + d0) * 2 + 1) * (K + 1) + 0) * 2 + hh0
+    key = (((s * 6 + d0) * 2 + lp0) * (K + 1) + 0) * 2 + hh0
     head[key] = nl
-    ln_run[nl] = 0.0; ln_g[nl] = 0.0; ln_next[nl] = -1; ln_dead[nl] = 0; nl += 1
-    st_node[ns] = s; st_dir[ns] = d0; st_lp[ns] = 1; st_vr[ns] = 0; st_hh[ns] = hh0
-    st_run[ns] = 0.0; st_g[ns] = 0.0; st_par[ns] = -1; st_goal[ns] = 0; ns += 1
+    ln_run[nl] = run0; ln_g[nl] = 0.0; ln_next[nl] = -1; ln_dead[nl] = 0; nl += 1
+    st_node[ns] = s; st_dir[ns] = d0; st_lp[ns] = lp0; st_vr[ns] = 0; st_hh[ns] = hh0
+    st_run[ns] = run0; st_g[ns] = 0.0; st_par[ns] = -1; st_goal[ns] = 0; ns += 1
     if mode == 0:
         p0 = np.array([cx[s // stride[0]], cy[(s // n2) % n1], cz[s % n2]])
         hv = cL * (abs(p0[0] - tpt[0]) + abs(p0[1] - tpt[1]) + abs(p0[2] - tpt[2]))
@@ -129,6 +174,8 @@ def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
         hf[0] = hf[nh]; hs[0] = hs[nh]
         _sift_down(hf, hs, nh)
         if st_goal[sid] > 0:
+            if self_clear > 0 and _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, self_clear):
+                continue                                           # 路径自己挨得太近（U 形 / 环形回绕）：不接受，继续搜
             goal_sid = sid
             break
         exp += 1
@@ -162,6 +209,8 @@ def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
                 continue
             if blocked[nb] == 1 and not _find(ex_nodes, nb):
                 continue
+            if a == 2 and cz[m] > zc_max + 1e-9:                    # 本管中心线高度上限
+                continue
             ng = g
             nlp = lp; nvr = vr; nhh = hh
             if turning:
@@ -184,7 +233,7 @@ def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
             goal = 0
             if mode == 0:
                 if nb == t:
-                    if nd == t_dir and nrun >= (0.0 if nlp == 1 else rho) + lmin - 1e-9:
+                    if nd == t_dir and nrun >= (0.0 if nlp == 1 else rho) + t_extra + lmin - 1e-9:
                         goal = 1
                     else:
                         continue

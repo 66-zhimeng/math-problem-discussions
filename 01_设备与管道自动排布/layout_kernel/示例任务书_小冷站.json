@@ -39,7 +39,8 @@
    "coarse_vertical_penalty_mm": 1000,
    "guide_every_s": 5,
    "guide_ema": 0.5,
-   "guide_w_max": 3
+   "guide_w_max": 3,
+   "port_side_lines": true
   },
   "blocking": {
    "auto_module_policy": "report_only",

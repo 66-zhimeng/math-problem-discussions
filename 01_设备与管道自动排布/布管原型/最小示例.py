@@ -31,6 +31,7 @@ ROUTING = {
     "cleanup_trigger_nets": 4,      # 协商中途冲突管网不多于此数时先试清理
     "cleanup_max_expansions": 2000000,  # 清理时单次 A* 的扩展上限
     "freeze_after_exhausted": 2,    # 连续几次搜到上限后，协商中不再重搜该管网
+    "port_side_lines": True,        # 端口坐标两侧加密网格线（便于贴近端口走管；场景很大时关掉以控制网格规模）
 }
 WEIGHTS = {"area": 1.0, "length": 1.0, "bends": 0.3, "height_changes": 0.3}   # 目标各项权重
 SCALE = {"A0": 1e7, "L0": 1e4, "B0": 25, "C0": 25,   # 归一化尺度：占地 mm²、管长 mm、弯头数、高度变化数

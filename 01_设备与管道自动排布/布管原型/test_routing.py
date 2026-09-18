@@ -12,7 +12,7 @@ RP = {"D_default_mm": 200, "c_rho": 1.5, "delta_ep_mm": 100, "delta_pp_mm": 100,
       "z_max_mm": 3000, "service_zone_height_mm": 2000, "pitch_mm": 300, "margin_mm": 1500, "max_iters": 10,
       "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5, "max_expansions": 300000, "astar_weight": 1.0, "route_workers": 1,
       "stall_iters": 3, "cleanup_max_expansions": 300000, "cleanup_trigger_nets": 2,
-      "freeze_after_exhausted": 2}
+      "freeze_after_exhausted": 2, "port_side_lines": True}
 W = {"area": 1.0, "length": 1.0, "bends": 0.3, "height_changes": 0.3}
 SCALE = {"A0": 1e7, "L0": 1e4, "B0": 1, "C0": 1, "kappa": 2, "l_min_mm": 300}
 
@@ -177,6 +177,32 @@ def test_compiled_astar_matches_python():
                 rt.astar = saved
             assert s1["expansions"] == s2["expansions"]
             assert [b["points"] for b in fast] == [b["points"] for b in slow]
+
+
+def test_fixed_route_is_hard_obstacle_and_checked():
+    """固定管路（锁定管 / 范围外的管）作为硬障碍：新管绕开它，校验器也把它算进管—管净距。"""
+    dev = two_facing(gap=4000)
+    nets = [{"id": "n1", "terms": [("A", "p"), ("B", "q")]}]
+    wall = {"锁定管": {"points": [(2500, -3000, 500), (2500, 4000, 500)], "D_mm": 200}}
+    sc = rt.Scene(dev, nets, {**RP, "K": 3}, W, SCALE, wall)
+    routes, _hist = route_one(sc)
+    viol, _ = rt.check_routes(sc, routes)
+    assert viol == [] and len(routes["n1"][0]["points"]) > 2       # 不能直穿，必须绕开
+
+
+def test_per_net_diameter_and_port_inside_box():
+    """每根管自己的管径与两端直颈；端口在设备盒内（法向朝外）时，盒内那段不算转弯前直管。"""
+    dev = {"A": box(0, 0, 1000, 1000, ports={"p": (900, 500, 500, 1, 0, 0)}),      # 端口在盒内 100 mm
+           "B": box(3000, 1500, 1000, 1000, ports={"q": (3000, 2000, 500, -1, 0, 0)})}
+    nets = [{"id": "n1", "terms": [("A", "p"), ("B", "q")], "D_mm": 300, "rho_mm": 300,
+             "port_straight_mm": {"p": 700, "q": 400}}]
+    sc = scene(dev, nets, K=3)
+    routes, _hist = route_one(sc)
+    viol, _ = rt.check_routes(sc, routes)
+    pts = routes["n1"][0]["points"]
+    assert viol == []
+    assert pts[1][0] - pts[0][0] >= 700 + 100 - 1e-6                # 端口段：所需直管 + 盒内 100 mm
+    assert pts[-1][0] - pts[-2][0] >= 400 - 1e-6
 
 
 def test_parallel_negotiation_matches_rules():

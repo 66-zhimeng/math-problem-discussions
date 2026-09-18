@@ -28,6 +28,7 @@
    "cleanup_max_expansions": 2000000,
    "cleanup_trigger_nets": 4,
    "freeze_after_exhausted": 2,
+   "port_side_lines": true,
    "pres_fac_init": 0.5,
    "pres_fac_mult": 1.6,
    "hist_fac": 0.5,
