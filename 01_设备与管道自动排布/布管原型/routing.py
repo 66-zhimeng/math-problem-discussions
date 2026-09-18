@@ -1198,6 +1198,8 @@ def check_routes(sc, routes):
                                 clash_segments(sc, {"points": pts, "trim": f.get("trim", (False, False))})]))
     for i in range(len(all_boxes)):
         for j in range(i + 1, len(all_boxes)):
+            if all_boxes[i][0] in sc.fixed_routes and all_boxes[j][0] in sc.fixed_routes:
+                continue                                               # 两根都是给定的固定管路：不是本次求解的结果，不判
             for bi in all_boxes[i][1]:
                 for bj in all_boxes[j][1]:
                     if _gap(bi, bj) < sc.rp["delta_pp_mm"] - 1e-6:

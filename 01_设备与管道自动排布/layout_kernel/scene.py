@@ -20,13 +20,16 @@ settings（全部必填）：
   管间净距仍按每根管的实际外径（比对方的代理管更保守）。
 返回：{"ok", "violations", "metrics", "routes": [{id, code, points}]（米制、Y 向上，含两端端口）, "timing"}
 """
-import math
+import sys
 import time
+from pathlib import Path
 
-from . import build
-
-rt = build.rt
+_R = str(Path(__file__).resolve().parent.parent / "布管原型")
+if _R not in sys.path:
+    sys.path.insert(0, _R)
+import routing as rt  # noqa: E402  只依赖布管模块（numpy + numba），不加载摆放与分块
 SETTINGS_REQUIRED = ["routing", "weights", "scale", "low_zc_max_mm", "oblique_stub_mm", "pipe_rules"]
+SERIAL_NETS = 8                                                 # 每个并行进程至少分到的管数
 RULES_REQUIRED = ["trim_ratio", "radius_margin_mm", "port_margin_mm", "safety", "rule_D_mm", "rule_R_mm"]
 
 
@@ -148,6 +151,8 @@ def build_scene(inp, settings, fixed_ids=()):
             net["zc_max_mm"] = settings["low_zc_max_mm"]
         nets.append(net)
         meta[r["id"]] = {"code": r.get("code"), "from": r["from"]["key"], "to": r["to"]["key"]}
+    # 并行进程各自要建一遍网格：管少时并行不划算，按每进程至少 SERIAL_NETS 根管分配
+    rp["route_workers"] = max(1, min(rp["route_workers"], len(nets) // SERIAL_NETS))
     sc = rt.Scene(devices, nets, rp, settings["weights"], settings["scale"], fixed)
     return sc, {"stubs": stubs, "port_w": port_w, "meta": meta}
 
