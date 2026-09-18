@@ -1,0 +1,993 @@
+{
+ "说明": "示例任务书：小冷站（23 台设备、25 个管网）。契约见 layout_kernel/契约.md。",
+ "params": {
+  "grid_mm": 100,
+  "delta_ee_mm": 800,
+  "l_min_mm": 300,
+  "kappa": 2,
+  "service_zones_inside_footprint": false,
+  "weights": {
+   "area": 1.0,
+   "length": 1.0,
+   "bends": 0.3,
+   "height_changes": 0.3
+  },
+  "routing": {
+   "D_default_mm": 200,
+   "c_rho": 1.5,
+   "delta_ep_mm": 100,
+   "delta_pp_mm": 100,
+   "K": 3,
+   "eps_z_mm": 1,
+   "z_max_mm": 4500,
+   "service_zone_height_mm": 2000,
+   "pitch_mm": 300,
+   "margin_mm": 1500,
+   "max_iters": 60,
+   "stall_iters": 12,
+   "cleanup_max_expansions": 2000000,
+   "cleanup_trigger_nets": 4,
+   "freeze_after_exhausted": 2,
+   "pres_fac_init": 0.5,
+   "pres_fac_mult": 1.6,
+   "hist_fac": 0.5,
+   "max_expansions": 500000,
+   "astar_weight": 1.5,
+   "route_workers": 12,
+   "coarse_cell_mm": 300,
+   "coarse_iters": 15,
+   "coarse_vertical_penalty_mm": 1000,
+   "guide_every_s": 5,
+   "guide_ema": 0.5,
+   "guide_w_max": 3
+  },
+  "blocking": {
+   "auto_module_policy": "accept",
+   "min_copies": 2,
+   "min_members": 2,
+   "module_rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "module_aspect_bands": [
+    [
+     1,
+     1.5
+    ],
+    [
+     1.5,
+     3
+    ],
+    [
+     3,
+     30
+    ]
+   ],
+   "module_solve_s": 3,
+   "cluster_max_units": 25,
+   "cluster_resolution": 1.0,
+   "seed": 0
+  }
+ },
+ "device_types": {
+  "冷水主机": {
+   "height": 2000,
+   "size": [
+    3000,
+    1600
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     -1000,
+     3000,
+     1000
+    ]
+   ],
+   "ports": {
+    "CHW_in": {
+     "pos": [
+      0,
+      400
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 800
+    },
+    "CHW_out": {
+     "pos": [
+      0,
+      1200
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 800
+    },
+    "CW_in": {
+     "pos": [
+      3000,
+      400
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 800
+    },
+    "CW_out": {
+     "pos": [
+      3000,
+      1200
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 800
+    }
+   }
+  },
+  "冷冻泵": {
+   "height": 1000,
+   "size": [
+    1000,
+    800
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     800,
+     1000,
+     600
+    ]
+   ],
+   "ports": {
+    "in": {
+     "pos": [
+      0,
+      400
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 500
+    },
+    "out": {
+     "pos": [
+      1000,
+      400
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 500
+    }
+   }
+  },
+  "冷却泵": {
+   "height": 1000,
+   "size": [
+    1000,
+    800
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     800,
+     1000,
+     600
+    ]
+   ],
+   "ports": {
+    "in": {
+     "pos": [
+      0,
+      400
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 500
+    },
+    "out": {
+     "pos": [
+      1000,
+      400
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 500
+    }
+   }
+  },
+  "冷却塔": {
+   "height": 4000,
+   "size": [
+    5000,
+    4000
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [],
+   "ports": {
+    "out": {
+     "pos": [
+      2500,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 500
+    },
+    "in": {
+     "pos": [
+      2500,
+      4000
+     ],
+     "dir": [
+      0,
+      1
+     ],
+     "z": 500
+    }
+   }
+  },
+  "分水器": {
+   "height": 1500,
+   "size": [
+    3500,
+    800
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     800,
+     3500,
+     800
+    ]
+   ],
+   "ports": {
+    "in_1": {
+     "pos": [
+      400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "in_2": {
+     "pos": [
+      900,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "in_3": {
+     "pos": [
+      1400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "in_4": {
+     "pos": [
+      1900,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "in_5": {
+     "pos": [
+      2400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "out_bldg": {
+     "pos": [
+      3500,
+      400
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 1000
+    },
+    "bypass": {
+     "pos": [
+      0,
+      400
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 1000
+    }
+   }
+  },
+  "集水器": {
+   "height": 1500,
+   "size": [
+    3500,
+    800
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [],
+   "ports": {
+    "out_1": {
+     "pos": [
+      400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "out_2": {
+     "pos": [
+      900,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "out_3": {
+     "pos": [
+      1400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "out_4": {
+     "pos": [
+      1900,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "out_5": {
+     "pos": [
+      2400,
+      0
+     ],
+     "dir": [
+      0,
+      -1
+     ],
+     "z": 1000
+    },
+    "in_bldg": {
+     "pos": [
+      3500,
+      400
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 1000
+    },
+    "bypass": {
+     "pos": [
+      0,
+      400
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 1000
+    },
+    "makeup": {
+     "pos": [
+      1700,
+      800
+     ],
+     "dir": [
+      0,
+      1
+     ],
+     "z": 1000
+    }
+   }
+  },
+  "板换": {
+   "height": 2000,
+   "size": [
+    3000,
+    2000
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     -1000,
+     3000,
+     1000
+    ]
+   ],
+   "ports": {
+    "p1": {
+     "pos": [
+      0,
+      500
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 800
+    },
+    "p2": {
+     "pos": [
+      0,
+      1500
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 800
+    },
+    "p3": {
+     "pos": [
+      3000,
+      500
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 800
+    },
+    "p4": {
+     "pos": [
+      3000,
+      1500
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 800
+    }
+   }
+  },
+  "定压补水": {
+   "height": 1500,
+   "size": [
+    1500,
+    1200
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     -800,
+     1500,
+     800
+    ]
+   ],
+   "ports": {
+    "in": {
+     "pos": [
+      0,
+      600
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 600
+    },
+    "out": {
+     "pos": [
+      1500,
+      600
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 600
+    }
+   }
+  },
+  "水处理": {
+   "height": 1500,
+   "size": [
+    2000,
+    1500
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [
+    [
+     0,
+     -800,
+     2000,
+     800
+    ]
+   ],
+   "ports": {
+    "in": {
+     "pos": [
+      0,
+      700
+     ],
+     "dir": [
+      -1,
+      0
+     ],
+     "z": 600
+    },
+    "out": {
+     "pos": [
+      2000,
+      700
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 600
+    }
+   }
+  },
+  "软化水箱": {
+   "height": 2000,
+   "size": [
+    2000,
+    2000
+   ],
+   "rotations": [
+    0,
+    90,
+    180,
+    270
+   ],
+   "service_zones": [],
+   "ports": {
+    "out": {
+     "pos": [
+      2000,
+      1000
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 300
+    }
+   }
+  },
+  "建筑立管": {
+   "height": 4500,
+   "size": [
+    1000,
+    1000
+   ],
+   "rotations": [
+    0
+   ],
+   "service_zones": [],
+   "ports": {
+    "supply_in": {
+     "pos": [
+      500,
+      1000
+     ],
+     "dir": [
+      0,
+      1
+     ],
+     "z": 1000
+    },
+    "return_out": {
+     "pos": [
+      1000,
+      500
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "z": 1000
+    }
+   }
+  }
+ },
+ "devices": [
+  {
+   "id": "CH1_主机",
+   "type": "冷水主机"
+  },
+  {
+   "id": "CH1_冷冻泵",
+   "type": "冷冻泵"
+  },
+  {
+   "id": "CH1_冷却泵",
+   "type": "冷却泵"
+  },
+  {
+   "id": "CH2_主机",
+   "type": "冷水主机"
+  },
+  {
+   "id": "CH2_冷冻泵",
+   "type": "冷冻泵"
+  },
+  {
+   "id": "CH2_冷却泵",
+   "type": "冷却泵"
+  },
+  {
+   "id": "CH3_主机",
+   "type": "冷水主机"
+  },
+  {
+   "id": "CH3_冷冻泵",
+   "type": "冷冻泵"
+  },
+  {
+   "id": "CH3_冷却泵",
+   "type": "冷却泵"
+  },
+  {
+   "id": "CH4_主机",
+   "type": "冷水主机"
+  },
+  {
+   "id": "CH4_冷冻泵",
+   "type": "冷冻泵"
+  },
+  {
+   "id": "CH4_冷却泵",
+   "type": "冷却泵"
+  },
+  {
+   "id": "CT1",
+   "type": "冷却塔"
+  },
+  {
+   "id": "CT2",
+   "type": "冷却塔"
+  },
+  {
+   "id": "CT3",
+   "type": "冷却塔"
+  },
+  {
+   "id": "CT4",
+   "type": "冷却塔"
+  },
+  {
+   "id": "FS",
+   "type": "分水器"
+  },
+  {
+   "id": "JS",
+   "type": "集水器"
+  },
+  {
+   "id": "HX",
+   "type": "板换"
+  },
+  {
+   "id": "MU",
+   "type": "定压补水"
+  },
+  {
+   "id": "WT",
+   "type": "水处理"
+  },
+  {
+   "id": "TK",
+   "type": "软化水箱"
+  },
+  {
+   "id": "RS",
+   "type": "建筑立管",
+   "fixed": [
+    0,
+    0
+   ]
+  }
+ ],
+ "nets": [
+  {
+   "id": "冷冻回水1",
+   "terminals": [
+    "JS.out_1",
+    "CH1_冷冻泵.in"
+   ]
+  },
+  {
+   "id": "冷冻泵出1",
+   "terminals": [
+    "CH1_冷冻泵.out",
+    "CH1_主机.CHW_in"
+   ]
+  },
+  {
+   "id": "冷冻供水1",
+   "terminals": [
+    "CH1_主机.CHW_out",
+    "FS.in_1"
+   ]
+  },
+  {
+   "id": "冷却泵出1",
+   "terminals": [
+    "CH1_冷却泵.out",
+    "CH1_主机.CW_in"
+   ]
+  },
+  {
+   "id": "冷冻回水2",
+   "terminals": [
+    "JS.out_2",
+    "CH2_冷冻泵.in"
+   ]
+  },
+  {
+   "id": "冷冻泵出2",
+   "terminals": [
+    "CH2_冷冻泵.out",
+    "CH2_主机.CHW_in"
+   ]
+  },
+  {
+   "id": "冷冻供水2",
+   "terminals": [
+    "CH2_主机.CHW_out",
+    "FS.in_2"
+   ]
+  },
+  {
+   "id": "冷却泵出2",
+   "terminals": [
+    "CH2_冷却泵.out",
+    "CH2_主机.CW_in"
+   ]
+  },
+  {
+   "id": "冷冻回水3",
+   "terminals": [
+    "JS.out_3",
+    "CH3_冷冻泵.in"
+   ]
+  },
+  {
+   "id": "冷冻泵出3",
+   "terminals": [
+    "CH3_冷冻泵.out",
+    "CH3_主机.CHW_in"
+   ]
+  },
+  {
+   "id": "冷冻供水3",
+   "terminals": [
+    "CH3_主机.CHW_out",
+    "FS.in_3"
+   ]
+  },
+  {
+   "id": "冷却泵出3",
+   "terminals": [
+    "CH3_冷却泵.out",
+    "CH3_主机.CW_in"
+   ]
+  },
+  {
+   "id": "冷冻回水4",
+   "terminals": [
+    "JS.out_4",
+    "CH4_冷冻泵.in"
+   ]
+  },
+  {
+   "id": "冷冻泵出4",
+   "terminals": [
+    "CH4_冷冻泵.out",
+    "CH4_主机.CHW_in"
+   ]
+  },
+  {
+   "id": "冷冻供水4",
+   "terminals": [
+    "CH4_主机.CHW_out",
+    "FS.in_4"
+   ]
+  },
+  {
+   "id": "冷却泵出4",
+   "terminals": [
+    "CH4_冷却泵.out",
+    "CH4_主机.CW_in"
+   ]
+  },
+  {
+   "id": "冷却供水",
+   "terminals": [
+    "CT1.out",
+    "CT2.out",
+    "CT3.out",
+    "CT4.out",
+    "CH1_冷却泵.in",
+    "CH2_冷却泵.in",
+    "CH3_冷却泵.in",
+    "CH4_冷却泵.in",
+    "HX.p3",
+    "WT.in"
+   ]
+  },
+  {
+   "id": "冷却回水",
+   "terminals": [
+    "CH1_主机.CW_out",
+    "CH2_主机.CW_out",
+    "CH3_主机.CW_out",
+    "CH4_主机.CW_out",
+    "CT1.in",
+    "CT2.in",
+    "CT3.in",
+    "CT4.in",
+    "HX.p4",
+    "WT.out"
+   ]
+  },
+  {
+   "id": "板换供水",
+   "terminals": [
+    "HX.p1",
+    "FS.in_5"
+   ]
+  },
+  {
+   "id": "板换回水",
+   "terminals": [
+    "JS.out_5",
+    "HX.p2"
+   ]
+  },
+  {
+   "id": "旁通",
+   "terminals": [
+    "FS.bypass",
+    "JS.bypass"
+   ]
+  },
+  {
+   "id": "软水",
+   "terminals": [
+    "TK.out",
+    "MU.in"
+   ]
+  },
+  {
+   "id": "补水",
+   "terminals": [
+    "MU.out",
+    "JS.makeup"
+   ]
+  },
+  {
+   "id": "供楼",
+   "terminals": [
+    "FS.out_bldg",
+    "RS.supply_in"
+   ]
+  },
+  {
+   "id": "回楼",
+   "terminals": [
+    "RS.return_out",
+    "JS.in_bldg"
+   ]
+  }
+ ],
+ "keepout": [],
+ "task": {
+  "mode": "place_and_route",
+  "time_budget_s": 60,
+  "candidates": 3,
+  "seed": 0,
+  "workers": 12
+ }
+}

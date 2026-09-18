@@ -27,64 +27,11 @@ PLACE_S = 30
 
 
 # ============================================================ 摆放 → 设备坐标
-def expand(inst, modules, bdata, blocks, sol):
-    """块级解 → 每台设备的 (x, y, 旋转) （网格单位）。"""
-    grid = inst["P"]["grid_mm"]
-    members_of = {ins["id"]: ins["members"] for m in modules for ins in m["instances"]}
-    tpl_of = {b["id"]: b.get("template") for b in bdata["blocks"]}
-    out = {}
-    for b, s in zip(blocks, sol):
-        pose = b["poses"][s["pose"]]
-        R = pose["rot"]
-        if tpl_of[b["id"]] is None:
-            out[b["id"]] = (s["x"], s["y"], R)
-            continue
-        var = bdata["templates"][tpl_of[b["id"]]]["variants"][pose["variant"]]
-        w, h = base.g(var["size"][0], grid), base.g(var["size"][1], grid)
-        for role, dev in members_of[b["id"]].items():
-            spec = var["members"][role]
-            t = inst["types"][inst["devs"][dev]["type"]]
-            mp = base.make_pose(t, spec["rot"], grid, "默认")
-            px, py = base.g(spec["pos"][0], grid), base.g(spec["pos"][1], grid)
-            ax, ay = base.rot_point(px, py, w, h, R)
-            bx, by = base.rot_point(px + mp["W"], py + mp["H"], w, h, R)
-            out[dev] = (s["x"] + min(ax, bx), s["y"] + min(ay, by), (spec["rot"] + R) % 360)
-    return out
+# 转换逻辑在内核里（layout_kernel/build.py），这里只做转发，供本目录的实验脚本沿用 ex.expand 等写法
+sys.path.insert(0, str(HERE.parent))
+from layout_kernel import build as _kb  # noqa: E402
 
-
-def device_level(inst, placed):
-    """设备级块算例（每台设备一个块、一个姿态）+ 解，用于下界与几何。"""
-    blocks_json, sol = [], []
-    for did, d in inst["devs"].items():
-        t = inst["types"][d["type"]]
-        x, y, r = placed[did]
-        blocks_json.append({"id": did, "name": did, "rotations": [r],
-                            "variants": {"默认": {k: t[k] for k in ("size", "ports", "service_zones")}}})
-        sol.append({"x": x, "y": y, "pose": 0})
-    data = {"params": {k: inst["P"][k] for k in bk.REQUIRED_PARAMS},
-            "blocks": blocks_json,
-            "nets": [{"id": n["id"], "terminals": [f"{d}.{p}" for d, p in n["terms"]]} for n in inst["nets"]]}
-    blocks, nets, P = base.load_data(data)
-    return blocks, nets, P, sol
-
-
-def scene(inst, blocks, nets, P, sol):
-    grid = P["grid"]
-    devices = {}
-    for b, s in zip(blocks, sol):
-        p = b["poses"][0]
-        t = inst["types"][inst["devs"][b["id"]]["type"]]
-        x0, y0 = s["x"] * grid, s["y"] * grid
-        devices[b["id"]] = {
-            "box": (x0, y0, 0, x0 + p["W"] * grid, y0 + p["H"] * grid, t["height"]),
-            "zones": [(x0 + zx * grid, y0 + zy * grid, x0 + (zx + zw) * grid, y0 + (zy + zh) * grid)
-                      for zx, zy, zw, zh in p["zones"]],
-            "ports": {pn: (x0 + v[0] * grid, y0 + v[1] * grid, v[4] * grid, v[2], v[3], 0)
-                      for pn, v in p["ports"].items()}}
-    nets_r = [{"id": e["id"], "terms": [(blocks[i]["id"], pn) for i, pn in e["terms"]]} for e in nets]
-    scale = {"A0": P["A0"] * grid ** 2, "L0": P["L0"] * grid, "B0": P["B0"], "C0": len(nets),
-             "kappa": P["kappa"], "l_min_mm": P["lmin"] * grid}
-    return rt.Scene(devices, nets_r, inst["P"]["routing"], inst["P"]["weights"], scale)
+expand, device_level, scene = _kb.expand, _kb.device_level, _kb.scene
 
 
 # ============================================================ 画图

@@ -30,7 +30,37 @@ python -m venv .venv
 
 ## 3. 快速开始
 
-### 3.1 只布管（设备位置已知）
+### 3.0 统一接口（推荐）
+
+外部调用只走 `layout_kernel`：一份任务书 JSON 进，一份方案 JSON 出。字段见 **[layout_kernel/契约.md](layout_kernel/契约.md)**。
+
+```python
+from layout_kernel import solve
+
+if __name__ == "__main__":                 # place_and_route 用多进程，必须加这一行
+    result = solve("layout_kernel/示例任务书_小冷站.json")
+    print(result["ok"], result["metrics"])          # 是否无违规、占地/管长/弯头/J
+    print(result["devices"]["CH1_主机"])            # 每台设备的位置与端口坐标
+    print(result["routes"]["冷却供水"])             # 每根管的折线（mm）
+```
+
+命令行：
+
+```bash
+cd 01_设备与管道自动排布
+../.venv/Scripts/python -m layout_kernel layout_kernel/示例任务书_小冷站.json -o 方案.json
+```
+
+任务书里 `task.mode` 二选一：
+
+- `place_and_route`：给拓扑和设备清单，求设备位置 + 管道。搜索 `candidates` 个候选摆放，**对每个候选完整布管**，按独立校验器算出的真实 J 选最好的。
+- `route_only`：设备位置已给定（每台设备的 `placed`），只布管。
+
+还可以在任务书里给：`params.weights`（各项权重）、设备的 `fixed`（钉死位置）、`keepout`（管道禁区）。
+
+下面两节是更贴近内部的用法，调试时用。
+
+### 3.1 只布管（设备位置已知，直接用布管模块）
 
 ```bash
 cd 01_设备与管道自动排布/布管原型
@@ -71,8 +101,9 @@ cd ../布管原型
 ### 3.3 测试
 
 ```bash
-cd 01_设备与管道自动排布/布管原型 && ../../.venv/Scripts/python -m pytest -q     # 19 个
-cd ../分块原型 && ../../.venv/Scripts/python -m pytest -q                        # 12 个
+cd 01_设备与管道自动排布 && ../.venv/Scripts/python -m pytest layout_kernel -q    # 16 个（接口与契约）
+cd 布管原型 && ../../.venv/Scripts/python -m pytest -q                           # 19 个（布管）
+cd ../分块原型 && ../../.venv/Scripts/python -m pytest -q                        # 12 个（分块）
 ```
 
 ## 4. 输入数据
@@ -99,6 +130,7 @@ cd ../分块原型 && ../../.venv/Scripts/python -m pytest -q                   
 |---|---|
 | [`摆放原型/`](摆放原型/README.md) | 块级摆放。`placement_sp.py`（序列对 + LP + 并行退火）、`placement_cpsat.py`（CP-SAT 求解器与**独立校验器** `validate`） |
 | [`分块原型/`](分块原型/README.md) | 设备 → 块：模块识别、模块内部排法、聚簇；`设备算例.py` 生成算例 |
+| [`layout_kernel/`](layout_kernel/契约.md) | **对外接口**：契约校验（`contract.py`）、统一入口（`api.py`）、模块间的唯一粘合层（`build.py`）、命令行（`__main__.py`）、示例任务书与测试 |
 | [`布管原型/`](布管原型/README.md) | 布管。`routing.py`（网格、A*、三通、协商、清理、校验器）、`astar_fast.py`（A* 的 numba 实现）、`coarse_route.py`（粗网格快速布管）、`最小示例.py` |
 | [`对比实验/`](对比实验/实验报告.md) | 摆放求解器对比：SA、MILP、Z3、CP-SAT 及混合 |
 | [`自动排布数学模型-审查修订版.md`](自动排布数学模型-审查修订版.md) | 数学定义与目标函数，第 12 节为准 |
@@ -123,7 +155,7 @@ J = w_A · 占地/A₀ + w_L · 管长/L₀ + w_B · 弯头/B₀ + w_C · 高度
 2. 粗网格布管（约 1 s）可以在摆放阶段判断某个方案能不能布下；
 3. 布管结果反过来影响摆放的尝试，做过五次，**都没有改进**：穿行容量估计、走廊引导、按粗网格长度调管网权重、接入顺序、主干 + 分支估计。原因一致——估计公式只反映管长的一部分，而目标里管长、占地、弯头互相牵制，改一项就被另一项抵消。详见各原型 README 与交接文档。
 
-**接下来要做的**：单管 A* 改成编译实现后，完整布管只要 13–21 s，已经比一次摆放搜索（60 s）便宜。所以可以直接对多个候选摆放各布一次管，按**真实的 J** 选，而不再拟合估计公式。这是真正的联合求解，尚未实现。
+**现在的做法**：单管 A* 改成编译实现后，完整布管只要 13–21 s，比一次摆放搜索（60 s）便宜。所以 `layout_kernel` 直接对多个候选摆放各布一次管，按**真实的 J**（独立校验器算出来的）选，不再拟合估计公式。这是耦合的第一步；把布管结果反馈进摆放搜索内部仍未实现。
 
 ## 7. 已知限制
 
