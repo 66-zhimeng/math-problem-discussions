@@ -25,7 +25,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 def main():
     budget = float(sys.argv[1]) if len(sys.argv) > 1 else 60.0
-    seeds = range(int(sys.argv[2]) if len(sys.argv) > 2 else 3)
+    sd = (sys.argv[2] if len(sys.argv) > 2 else "3")                        # "n" = 0..n-1，"a-b" = a..b
+    seeds = range(int(sd.split("-")[0]), int(sd.split("-")[1]) + 1) if "-" in sd else range(int(sd))
     d = json.loads((bk.HERE / "设备算例_小.json").read_text(encoding="utf-8"))
     d["params"]["blocking"]["auto_module_policy"] = "report_only"          # 设备级：不合并模块
     inst = bk.load_devices(d)
@@ -39,10 +40,11 @@ def main():
     heights = {did: inst["types"][dv["type"]]["height"] for did, dv in inst["devs"].items()}
     traffic = {**margins, "traffic": True, "heights_mm": heights, "z_max_mm": rp["z_max_mm"], "K": rp["K"]}
     allm = {"A": ("A接入区", {"access": access}), "B": ("B出管留空", {"margins": margins}),
-            "C": ("C出管留空+穿行", {"margins": traffic})}
+            "C": ("C出管留空+穿行", {"margins": traffic}),
+            "E": ("E出管留空+主干分支", {"margins": margins, "trunk": True})}
     pick = sys.argv[3] if len(sys.argv) > 3 else "AB"
     methods = dict(allm[c] for c in pick)
-    out_json = HERE / ("联合验证结果.json" if pick == "AB" else f"联合验证结果_{pick}.json")
+    out_json = HERE / ("联合验证结果.json" if pick == "AB" else f"联合验证结果_{pick}{'_' + sd if '-' in sd else ''}.json")
     results = []
     for seed in seeds:
         for name, kw in methods.items():

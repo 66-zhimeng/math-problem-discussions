@@ -1,0 +1,816 @@
+[
+ {
+  "method": "E出管留空+主干分支",
+  "seed": 0,
+  "placement_s": 60.0,
+  "route_s": 78.9,
+  "iterations": 9,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 0,
+  "other_violations": [],
+  "final_conflict_edges": 0,
+  "all_ok": true,
+  "device_area_m2": 270.1,
+  "J_lb": 3.4002,
+  "routed_metrics": {
+   "W_m": 19.3,
+   "H_m": 16.6,
+   "area_m2": 320.4,
+   "L_m": 372.9,
+   "bends": 162,
+   "height_changes": 57,
+   "J": 6.4743
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 10,
+    "max_parallel": 12,
+    "conflict_edges": 485,
+    "conflicted_nets": 22,
+    "time_s": 7.3,
+    "search_time_sum_s": 24.7,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 22,
+    "kept_old": 1,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 367,
+    "conflicted_nets": 21,
+    "time_s": 10.1,
+    "search_time_sum_s": 23.5,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 21,
+    "kept_old": 1,
+    "requeued": 9,
+    "max_parallel": 12,
+    "conflict_edges": 308,
+    "conflicted_nets": 20,
+    "time_s": 9.2,
+    "search_time_sum_s": 23.4,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 20,
+    "kept_old": 1,
+    "requeued": 7,
+    "max_parallel": 12,
+    "conflict_edges": 276,
+    "conflicted_nets": 17,
+    "time_s": 11.4,
+    "search_time_sum_s": 24.4,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 17,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 182,
+    "conflicted_nets": 17,
+    "time_s": 9.7,
+    "search_time_sum_s": 19.3,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 17,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 146,
+    "conflicted_nets": 13,
+    "time_s": 10.3,
+    "search_time_sum_s": 24.0,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 13,
+    "kept_old": 2,
+    "requeued": 6,
+    "max_parallel": 12,
+    "conflict_edges": 118,
+    "conflicted_nets": 13,
+    "time_s": 5.9,
+    "search_time_sum_s": 17.7,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 13,
+    "kept_old": 0,
+    "requeued": 6,
+    "max_parallel": 12,
+    "conflict_edges": 38,
+    "conflicted_nets": 5,
+    "time_s": 7.7,
+    "search_time_sum_s": 12.7,
+    "failed": {}
+   },
+   {
+    "iter": 9,
+    "rerouted": 5,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 5,
+    "conflict_edges": 0,
+    "conflicted_nets": 0,
+    "time_s": 5.9,
+    "search_time_sum_s": 5.6,
+    "failed": {},
+    "cleanup": {
+     "records": [],
+     "time_s": 0.0
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    95,
+    4,
+    0
+   ],
+   "CH1_冷冻泵": [
+    18,
+    8,
+    270
+   ],
+   "CH1_冷却泵": [
+    138,
+    28,
+    270
+   ],
+   "CH2_主机": [
+    55,
+    56,
+    180
+   ],
+   "CH2_冷冻泵": [
+    0,
+    60,
+    90
+   ],
+   "CH2_冷却泵": [
+    122,
+    44,
+    90
+   ],
+   "CH3_主机": [
+    65,
+    82,
+    0
+   ],
+   "CH3_冷冻泵": [
+    10,
+    82,
+    0
+   ],
+   "CH3_冷却泵": [
+    175,
+    104,
+    180
+   ],
+   "CH4_主机": [
+    96,
+    31,
+    90
+   ],
+   "CH4_冷冻泵": [
+    36,
+    82,
+    0
+   ],
+   "CH4_冷却泵": [
+    106,
+    80,
+    270
+   ],
+   "CT1": [
+    1,
+    104,
+    0
+   ],
+   "CT2": [
+    145,
+    46,
+    90
+   ],
+   "CT3": [
+    117,
+    106,
+    0
+   ],
+   "CT4": [
+    59,
+    106,
+    0
+   ],
+   "FS": [
+    52,
+    28,
+    180
+   ],
+   "JS": [
+    28,
+    34,
+    270
+   ],
+   "HX": [
+    43,
+    0,
+    0
+   ],
+   "MU": [
+    164,
+    23,
+    90
+   ],
+   "WT": [
+    122,
+    70,
+    270
+   ],
+   "TK": [
+    136,
+    0,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "E出管留空+主干分支",
+  "seed": 1,
+  "placement_s": 60.0,
+  "route_s": 71.7,
+  "iterations": 8,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 0,
+  "other_violations": [],
+  "final_conflict_edges": 26,
+  "all_ok": true,
+  "device_area_m2": 259.7,
+  "J_lb": 3.4586,
+  "routed_metrics": {
+   "W_m": 16.3,
+   "H_m": 18.7,
+   "area_m2": 304.8,
+   "L_m": 421.0,
+   "bends": 165,
+   "height_changes": 52,
+   "J": 6.4984
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 13,
+    "max_parallel": 12,
+    "conflict_edges": 416,
+    "conflicted_nets": 19,
+    "time_s": 10.0,
+    "search_time_sum_s": 19.3,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 19,
+    "kept_old": 0,
+    "requeued": 13,
+    "max_parallel": 12,
+    "conflict_edges": 382,
+    "conflicted_nets": 18,
+    "time_s": 7.5,
+    "search_time_sum_s": 19.2,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 18,
+    "kept_old": 0,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 278,
+    "conflicted_nets": 18,
+    "time_s": 10.4,
+    "search_time_sum_s": 22.9,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 18,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 164,
+    "conflicted_nets": 14,
+    "time_s": 11.6,
+    "search_time_sum_s": 28.6,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 14,
+    "kept_old": 0,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 103,
+    "conflicted_nets": 14,
+    "time_s": 8.9,
+    "search_time_sum_s": 27.1,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 14,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 12,
+    "conflict_edges": 117,
+    "conflicted_nets": 11,
+    "time_s": 9.9,
+    "search_time_sum_s": 26.9,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 11,
+    "kept_old": 1,
+    "requeued": 8,
+    "max_parallel": 11,
+    "conflict_edges": 50,
+    "conflicted_nets": 7,
+    "time_s": 8.1,
+    "search_time_sum_s": 18.3,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 7,
+    "kept_old": 0,
+    "requeued": 2,
+    "max_parallel": 6,
+    "conflict_edges": 26,
+    "conflicted_nets": 3,
+    "time_s": 2.0,
+    "search_time_sum_s": 4.0,
+    "failed": {},
+    "cleanup_try": {
+     "nets": 3,
+     "ok": true,
+     "time_s": 1.9
+    },
+    "cleanup": {
+     "records": [
+      {
+       "clash": "冷冻回水3 与 冷冻泵出1：管–管净距不足",
+       "result": "已消除",
+       "attempts": [
+        {
+         "reroute": [
+          "冷冻回水3"
+         ],
+         "steps": [
+          {
+           "net": "冷冻回水3",
+           "result": "找到（扩展 172201）"
+          }
+         ],
+         "clashes_after": 0
+        }
+       ]
+      },
+      {
+       "clash": "冷冻回水3 与 板换回水：管–管净距不足",
+       "result": "已顺带消除"
+      }
+     ],
+     "time_s": 1.9
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    132,
+    115,
+    90
+   ],
+   "CH1_冷冻泵": [
+    64,
+    90,
+    0
+   ],
+   "CH1_冷却泵": [
+    58,
+    148,
+    0
+   ],
+   "CH2_主机": [
+    118,
+    60,
+    0
+   ],
+   "CH2_冷冻泵": [
+    85,
+    46,
+    180
+   ],
+   "CH2_冷却泵": [
+    38,
+    58,
+    180
+   ],
+   "CH3_主机": [
+    87,
+    156,
+    180
+   ],
+   "CH3_冷冻泵": [
+    90,
+    90,
+    0
+   ],
+   "CH3_冷却泵": [
+    58,
+    164,
+    0
+   ],
+   "CH4_主机": [
+    78,
+    115,
+    90
+   ],
+   "CH4_冷冻泵": [
+    62,
+    112,
+    90
+   ],
+   "CH4_冷却泵": [
+    60,
+    132,
+    0
+   ],
+   "CT1": [
+    0,
+    132,
+    0
+   ],
+   "CT2": [
+    29,
+    0,
+    270
+   ],
+   "CT3": [
+    111,
+    0,
+    90
+   ],
+   "CT4": [
+    8,
+    74,
+    90
+   ],
+   "FS": [
+    104,
+    112,
+    90
+   ],
+   "JS": [
+    64,
+    62,
+    180
+   ],
+   "HX": [
+    1,
+    33,
+    270
+   ],
+   "MU": [
+    136,
+    84,
+    0
+   ],
+   "WT": [
+    77,
+    12,
+    90
+   ],
+   "TK": [
+    108,
+    84,
+    270
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ },
+ {
+  "method": "E出管留空+主干分支",
+  "seed": 2,
+  "placement_s": 60.0,
+  "route_s": 99.1,
+  "iterations": 8,
+  "routed": 25,
+  "nets": 25,
+  "failed": {},
+  "clash_pairs": 0,
+  "other_violations": [],
+  "final_conflict_edges": 35,
+  "all_ok": true,
+  "device_area_m2": 268.6,
+  "J_lb": 3.3841,
+  "routed_metrics": {
+   "W_m": 17.8,
+   "H_m": 18.5,
+   "area_m2": 329.3,
+   "L_m": 376.5,
+   "bends": 160,
+   "height_changes": 57,
+   "J": 6.5333
+  },
+  "history": [
+   {
+    "iter": 1,
+    "rerouted": 25,
+    "kept_old": 0,
+    "requeued": 15,
+    "max_parallel": 12,
+    "conflict_edges": 409,
+    "conflicted_nets": 24,
+    "time_s": 13.5,
+    "search_time_sum_s": 20.4,
+    "failed": {}
+   },
+   {
+    "iter": 2,
+    "rerouted": 24,
+    "kept_old": 0,
+    "requeued": 13,
+    "max_parallel": 12,
+    "conflict_edges": 313,
+    "conflicted_nets": 21,
+    "time_s": 14.7,
+    "search_time_sum_s": 24.5,
+    "failed": {}
+   },
+   {
+    "iter": 3,
+    "rerouted": 21,
+    "kept_old": 0,
+    "requeued": 11,
+    "max_parallel": 12,
+    "conflict_edges": 215,
+    "conflicted_nets": 15,
+    "time_s": 11.0,
+    "search_time_sum_s": 25.7,
+    "failed": {}
+   },
+   {
+    "iter": 4,
+    "rerouted": 15,
+    "kept_old": 0,
+    "requeued": 5,
+    "max_parallel": 12,
+    "conflict_edges": 130,
+    "conflicted_nets": 10,
+    "time_s": 12.5,
+    "search_time_sum_s": 22.8,
+    "failed": {}
+   },
+   {
+    "iter": 5,
+    "rerouted": 10,
+    "kept_old": 1,
+    "requeued": 3,
+    "max_parallel": 10,
+    "conflict_edges": 147,
+    "conflicted_nets": 11,
+    "time_s": 13.0,
+    "search_time_sum_s": 20.0,
+    "failed": {}
+   },
+   {
+    "iter": 6,
+    "rerouted": 11,
+    "kept_old": 2,
+    "requeued": 2,
+    "max_parallel": 11,
+    "conflict_edges": 126,
+    "conflicted_nets": 9,
+    "time_s": 12.6,
+    "search_time_sum_s": 22.9,
+    "failed": {}
+   },
+   {
+    "iter": 7,
+    "rerouted": 9,
+    "kept_old": 1,
+    "requeued": 2,
+    "max_parallel": 8,
+    "conflict_edges": 57,
+    "conflicted_nets": 8,
+    "time_s": 11.1,
+    "search_time_sum_s": 14.8,
+    "failed": {}
+   },
+   {
+    "iter": 8,
+    "rerouted": 8,
+    "kept_old": 0,
+    "requeued": 3,
+    "max_parallel": 7,
+    "conflict_edges": 35,
+    "conflicted_nets": 4,
+    "time_s": 8.7,
+    "search_time_sum_s": 7.1,
+    "failed": {},
+    "cleanup_try": {
+     "nets": 4,
+     "ok": true,
+     "time_s": 0.8
+    },
+    "cleanup": {
+     "records": [
+      {
+       "clash": "供楼 与 冷冻供水4：管–管净距不足",
+       "result": "已消除",
+       "attempts": [
+        {
+         "reroute": [
+          "供楼"
+         ],
+         "steps": [
+          {
+           "net": "供楼",
+           "result": "找到（扩展 21071）"
+          }
+         ],
+         "clashes_after": 1
+        }
+       ]
+      },
+      {
+       "clash": "冷却泵出1 与 冷却回水：管–管净距不足",
+       "result": "已消除",
+       "attempts": [
+        {
+         "reroute": [
+          "冷却泵出1"
+         ],
+         "steps": [
+          {
+           "net": "冷却泵出1",
+           "result": "找到（扩展 23782）"
+          }
+         ],
+         "clashes_after": 0
+        }
+       ]
+      }
+     ],
+     "time_s": 0.8
+    }
+   }
+  ],
+  "placement": {
+   "CH1_主机": [
+    0,
+    81,
+    270
+   ],
+   "CH1_冷冻泵": [
+    26,
+    19,
+    180
+   ],
+   "CH1_冷却泵": [
+    94,
+    68,
+    270
+   ],
+   "CH2_主机": [
+    138,
+    61,
+    90
+   ],
+   "CH2_冷冻泵": [
+    122,
+    59,
+    90
+   ],
+   "CH2_冷却泵": [
+    116,
+    78,
+    0
+   ],
+   "CH3_主机": [
+    68,
+    76,
+    90
+   ],
+   "CH3_冷冻泵": [
+    76,
+    51,
+    0
+   ],
+   "CH3_冷却泵": [
+    94,
+    96,
+    90
+   ],
+   "CH4_主机": [
+    1,
+    29,
+    270
+   ],
+   "CH4_冷冻泵": [
+    26,
+    35,
+    180
+   ],
+   "CH4_冷却泵": [
+    80,
+    29,
+    270
+   ],
+   "CT1": [
+    106,
+    130,
+    180
+   ],
+   "CT2": [
+    0,
+    130,
+    180
+   ],
+   "CT3": [
+    116,
+    0,
+    270
+   ],
+   "CT4": [
+    58,
+    117,
+    90
+   ],
+   "FS": [
+    25,
+    59,
+    180
+   ],
+   "JS": [
+    64,
+    8,
+    270
+   ],
+   "HX": [
+    27,
+    87,
+    180
+   ],
+   "MU": [
+    96,
+    28,
+    270
+   ],
+   "WT": [
+    110,
+    94,
+    0
+   ],
+   "TK": [
+    138,
+    102,
+    0
+   ],
+   "RS": [
+    0,
+    0,
+    0
+   ]
+  }
+ }
+]

@@ -12,7 +12,8 @@
        面积在 (W*, H*) 处的切平面 + 管长下界（与校验器 v2 定义相同的线性化）。
      两端点管网：姿态对能直连（同高、正对）且直连标记为真 → 加“轴线对齐、间距 ≥ ℓ_min”，
        长度 = 曼哈顿距离；否则长度 ≥ max(曼哈顿距离, 2ℓ_min + 伸出点曼哈顿距离)。
-     多端点管网：伸出点坐标跨度（max − min）。
+     多端点管网：默认为伸出点坐标跨度（max − min）；trunk=True 时改用“主干 + 分支”估计
+    （主干沿一条直线，长度 = 主干轴跨度 + Σ 各端点到主干的垂距；恒 ≥ 跨度估计，仍是有效下界）。
   4. 以 placement_cpsat.validate(..., lb="v2") 计算最终 J；所有比较以校验器为准。
 
 检修区处理（交接文档 4.3 第 2 条方式 (a)）：
@@ -43,8 +44,9 @@ import placement_cpsat as base
 
 # ============================================================ 预处理
 class Problem:
-    def __init__(self, blocks, nets, P, weights, access=None, margins=None):
+    def __init__(self, blocks, nets, P, weights, access=None, margins=None, trunk=False):
         self.blocks, self.nets, self.P, self.w = blocks, nets, P, weights
+        self.trunk = trunk
         self.access = access_rects_factory(P, access) if access else None
         self.margins = side_margins_factory(P, margins) if margins else None
         self.traffic = None
@@ -383,6 +385,31 @@ def traffic_demand(pr, ps, pos, cons):
     return extra, detour
 
 
+def trunk_axis(sk, terms):
+    """主干轴：端口法向多数沿 X 时主干沿 Y，反之沿 X（法向平分时取 Y）。"""
+    nx = sum(1 for i, pn in terms if sk["poses"][i][0]["ports"][pn][2])
+    return 1 if nx * 2 >= len(terms) else 0
+
+
+def trunk_extra(pr, sk, sol):
+    """“主干 + 分支”估计 − 跨度估计（网格单位，≥ 0）：搜索目标里多算的那部分。"""
+    out = 0.0
+    lmin = pr.lmin
+    for net in pr.nets:
+        t = net["terms"]
+        if len(t) < 3:
+            continue
+        a = 1 - trunk_axis(sk, t)
+        vs = []
+        for i, pn in t:
+            pt = sk["poses"][i][0]["ports"][pn]
+            vs.append((sol[i]["x"] if a == 0 else sol[i]["y"]) + pt[a] + lmin * pt[2 + a])
+        vs.sort()
+        med = vs[len(vs) // 2]
+        out += sum(abs(v - med) for v in vs) - (vs[-1] - vs[0])
+    return out
+
+
 def quick_lb(pr, sk, st):
     """不解 LP 的 J 下界：面积(W*,H*) + 管长常数 + 确定的弯头数。"""
     wA, wL, wB = pr.w["area"], pr.w["length"], pr.w["bends"]
@@ -467,7 +494,21 @@ def solve_lp(pr, sk, st):
         t = net["terms"]
         cLe = cL * pr.net_w[e]
         if len(t) >= 3:
-            for a, var in ((0, X), (1, Y)):
+            axes = (0, 1)
+            if pr.trunk:
+                ta = trunk_axis(sk, t)                      # 主干轴：与多数端口法向垂直
+                tv = new_var(0.0, (None, None))             # 主干在垂直轴上的坐标
+                for i, pn in t:                             # 各端点到主干的垂距
+                    pt = sk["poses"][i][0]["ports"][pn]
+                    a = 1 - ta
+                    off = pt[a] + lmin * pt[2 + a]
+                    d = new_var(cLe, (0, None))
+                    var = X if a == 0 else Y
+                    le([(1, var(i)), (-1, tv), (-1, d)], -off)
+                    le([(-1, var(i)), (1, tv), (-1, d)], off)
+                axes = (ta,)
+            for a in axes:                                  # 跨度（trunk 时只算主干轴）
+                var = X if a == 0 else Y
                 hi = new_var(cLe, (None, None)); lo = new_var(-cLe, (None, None))
                 for i, pn in t:
                     pt = sk["poses"][i][0]["ports"][pn]
@@ -532,6 +573,8 @@ def evaluate(pr, st, threshold=math.inf):
         return math.inf, None
     # 启用穿行容量时，搜索目标另加估计的绕行长度；布管引导时另加各管网权重超出 1 的部分（校验器的 J 不含这两项）
     extra = sum((w - 1.0) * x["L_lb_m"] for w, x in zip(pr.net_w, v["per_net"])) * 1000 / pr.P["grid"]
+    if pr.trunk:
+        extra += trunk_extra(pr, sk, sol)
     return v["J_full_weights"] + pr.w["length"] * (sk["detour"] + extra) / pr.P["L0"], sol
 
 
@@ -619,9 +662,9 @@ def decode(pr, arr):
 
 # ============================================================ 模拟退火（单进程）
 def anneal(args):
-    (path, weights, budget, t_start, seed, cycle, T0, T1, access, margins, guide, shared) = args
+    (path, weights, budget, t_start, seed, cycle, T0, T1, access, margins, guide, trunk, shared) = args
     blocks, nets, P = base.load(path)
-    pr = Problem(blocks, nets, P, weights or P["w"], access, margins)
+    pr = Problem(blocks, nets, P, weights or P["w"], access, margins, trunk)
     if guide is not None:
         miss = [k for k in GUIDE_REQUIRED if k not in guide]
         if miss:
@@ -698,13 +741,14 @@ def anneal(args):
 
 
 def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=None, access=None, margins=None,
-        guide=None):
+        guide=None, trunk=False):
     """并行退火；返回全局最好解与合并后的“时间—最好 J”曲线。
     access = {"D_mm", "delta_ep_mm"} 时启用端口接入区约束（默认不启用，与第 9 节实验一致）。
     margins = {"D_mm", "delta_pp_mm", "delta_ep_mm", "c_rho"} 时启用按侧出管留空（见 side_margins_factory）；
       再加 "traffic": True, "heights_mm": {块 id: 高度}, "z_max_mm", "K" 时启用缝隙穿行容量（见 traffic_demand）。
     guide = {"fn": 解 → {"ok", "L_m", "L_net_m"}（须可跨进程序列化）, "every_s", "ema", "w_max"} 时启用布管引导，
-      返回的 J 为 J_route（见模块说明）。"""
+      返回的 J 为 J_route（见模块说明）。
+    trunk=True 时多端点管网按“主干 + 分支”估计管长（见模块说明）。"""
     t_start = time.time()
     blocks, nets, P = base.load(path)
     pr = Problem(blocks, nets, P, weights or P["w"])
@@ -713,7 +757,7 @@ def run(path, budget, procs=12, seed=0, cycle=10.0, T0=0.05, T1=0.001, weights=N
     mgr_lock = ctx.Lock()
     gJ = ctx.Value("d", math.inf, lock=False)
     gArr = ctx.Array("i", size, lock=False)
-    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, margins, guide,
+    jobs = [(path, weights, budget, t_start, seed * 1000 + k, cycle, T0, T1, access, margins, guide, trunk,
              (gJ, gArr, mgr_lock))
             for k in range(procs)]
     if procs == 1:
