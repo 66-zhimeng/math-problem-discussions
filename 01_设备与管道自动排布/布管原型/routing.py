@@ -259,7 +259,7 @@ def astar(G, sc, start, target, ctx):
     else:
         tree = target[1]
         tree_nodes = tree["nodes"]
-        hl = tree_heuristic(G, tree["segs"], cL)
+        hl = ctx.get("tree_h") or tree_heuristic(G, tree["segs"], cL)
 
         def h(p, d, n):
             """到树上最近直管段的曼哈顿距离（可采纳）；按节点查表，表由 tree_heuristic 一次算出。"""
@@ -573,10 +573,11 @@ def route_net(G, sc, net, ctx):
         tree = build_tree(G, branches, sc.rho, sc.lmin)
         if tree["valid"] == 0:
             return None, "已布管道上没有可接三通的位置"
-        bb = tree["bbox"]
-        rest.sort(key=lambda t: sum(max(0, bb[0][k] - P[t][k], P[t][k] - bb[1][k]) for k in range(3)))
+        # 下一个接入的端点：到已布树最近的那个（查表，与 A* 用的是同一张表；比按包围盒距离排更准）
+        hl = tree_heuristic(G, tree["segs"], sc.w["length"] / sc.scale["L0"])
+        rest.sort(key=lambda t: hl[G.node(P[t])])
         t = rest.pop(0)
-        r = astar(G, sc, t, ("tree", tree), ctx)
+        r = astar(G, sc, t, ("tree", tree), {**ctx, "tree_h": hl})
         if r is None:
             return None, f"支路 {t[0]}.{t[1]} 未接上（或超过扩展上限）"
         branches.append({"start": t, "points": r[0], "end": ("tee", None)})

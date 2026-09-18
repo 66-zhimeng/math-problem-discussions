@@ -10,9 +10,9 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 92.5,
-   "iterations": 21,
-   "cleanup_s": 2.4,
+   "route_s": 65.9,
+   "iterations": 11,
+   "cleanup_s": 1.9,
    "cleanup": [
     {
      "clash": "冷冻泵出2 与 冷却供水：管–管净距不足",
@@ -25,7 +25,25 @@
        "steps": [
         {
          "net": "冷冻泵出2",
-         "result": "找到（扩展 256858）"
+         "result": "找到（扩展 85784）"
+        }
+       ],
+       "clashes_after": 2
+      }
+     ]
+    },
+    {
+     "clash": "冷却供水 与 冷却回水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "冷却供水"
+       ],
+       "steps": [
+        {
+         "net": "冷却供水",
+         "result": "找到（扩展 53014）"
         }
        ],
        "clashes_after": 1
@@ -43,7 +61,7 @@
        "steps": [
         {
          "net": "冷却泵出2",
-         "result": "找到（扩展 23689）"
+         "result": "找到（扩展 21742）"
         }
        ],
        "clashes_after": 0
@@ -56,37 +74,27 @@
    "violations": [],
    "all_ok": true,
    "metrics": {
-    "W_m": 18.1,
+    "W_m": 18.4,
     "H_m": 16.9,
-    "area_m2": 305.9,
-    "L_m": 401.9,
-    "bends": 162,
-    "height_changes": 56,
-    "J": 6.4511
+    "area_m2": 311.0,
+    "L_m": 407.1,
+    "bends": 157,
+    "height_changes": 53,
+    "J": 6.4135
    }
   },
   "conflict_history": [
-   562,
-   274,
-   314,
-   187,
-   166,
-   165,
-   62,
-   33,
-   32,
-   34,
-   33,
-   34,
-   33,
-   22,
-   33,
-   34,
-   19,
-   19,
-   34,
-   37,
-   30
+   600,
+   313,
+   275,
+   173,
+   172,
+   125,
+   94,
+   54,
+   50,
+   45,
+   34
   ]
  },
  {
@@ -100,28 +108,10 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 66.1,
+   "route_s": 58.4,
    "iterations": 8,
-   "cleanup_s": 1.4,
+   "cleanup_s": 6.6,
    "cleanup": [
-    {
-     "clash": "冷冻泵出3 与 冷冻供水3：管–管净距不足",
-     "result": "已消除",
-     "attempts": [
-      {
-       "reroute": [
-        "冷冻泵出3"
-       ],
-       "steps": [
-        {
-         "net": "冷冻泵出3",
-         "result": "找到（扩展 42372）"
-        }
-       ],
-       "clashes_after": 1
-      }
-     ]
-    },
     {
      "clash": "冷却供水 与 冷却回水：管–管净距不足",
      "result": "已消除",
@@ -133,7 +123,54 @@
        "steps": [
         {
          "net": "冷却供水",
-         "result": "找到（扩展 86039）"
+         "result": "找到（扩展 260361）"
+        }
+       ],
+       "clashes_after": 2
+      }
+     ]
+    },
+    {
+     "clash": "回楼 与 冷却回水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "回楼"
+       ],
+       "steps": [
+        {
+         "net": "回楼",
+         "result": "找到（扩展 53128）"
+        }
+       ],
+       "clashes_after": 1
+      }
+     ]
+    },
+    {
+     "clash": "旁通 与 冷却回水：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "旁通"
+       ],
+       "steps": [
+        {
+         "net": "旁通",
+         "result": "超过扩展上限，不能下结论（搜索未找到路径（或超过扩展上限）；扩展 300001）"
+        }
+       ]
+      },
+      {
+       "reroute": [
+        "冷却回水"
+       ],
+       "steps": [
+        {
+         "net": "冷却回水",
+         "result": "找到（扩展 158411）"
         }
        ],
        "clashes_after": 0
@@ -149,21 +186,21 @@
     "W_m": 22.7,
     "H_m": 13.9,
     "area_m2": 315.5,
-    "L_m": 368.4,
-    "bends": 151,
-    "height_changes": 52,
-    "J": 6.2281
+    "L_m": 370.7,
+    "bends": 152,
+    "height_changes": 53,
+    "J": 6.2603
    }
   },
   "conflict_history": [
-   298,
-   250,
-   172,
-   250,
-   130,
-   66,
-   29,
-   15
+   306,
+   207,
+   173,
+   168,
+   104,
+   89,
+   48,
+   38
   ]
  },
  {
@@ -177,34 +214,52 @@
    "all_ok": false
   },
   "new": {
-   "route_s": 75.2,
-   "iterations": 9,
-   "cleanup_s": 0.0,
-   "cleanup": [],
+   "route_s": 65.4,
+   "iterations": 8,
+   "cleanup_s": 0.2,
+   "cleanup": [
+    {
+     "clash": "旁通 与 供楼：管–管净距不足",
+     "result": "已消除",
+     "attempts": [
+      {
+       "reroute": [
+        "旁通"
+       ],
+       "steps": [
+        {
+         "net": "旁通",
+         "result": "找到（扩展 2998）"
+        }
+       ],
+       "clashes_after": 0
+      }
+     ]
+    }
+   ],
    "routed": 25,
    "nets": 25,
    "violations": [],
    "all_ok": true,
    "metrics": {
-    "W_m": 16.3,
+    "W_m": 16.0,
     "H_m": 19.4,
-    "area_m2": 316.2,
-    "L_m": 471.7,
-    "bends": 174,
-    "height_changes": 56,
-    "J": 6.9242
+    "area_m2": 310.4,
+    "L_m": 463.0,
+    "bends": 173,
+    "height_changes": 59,
+    "J": 6.8715
    }
   },
   "conflict_history": [
-   696,
-   560,
-   346,
-   209,
-   164,
-   137,
-   73,
-   49,
-   0
+   649,
+   430,
+   246,
+   263,
+   192,
+   89,
+   56,
+   19
   ]
  }
 ]
