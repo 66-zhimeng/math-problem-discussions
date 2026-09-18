@@ -42,7 +42,7 @@
    "guide_w_max": 3
   },
   "blocking": {
-   "auto_module_policy": "accept",
+   "auto_module_policy": "report_only",
    "min_copies": 2,
    "min_members": 2,
    "module_rotations": [
