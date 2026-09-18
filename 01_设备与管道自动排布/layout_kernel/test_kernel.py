@@ -21,7 +21,7 @@ ROUTING = {"D_default_mm": 200, "c_rho": 1.5, "delta_ep_mm": 100, "delta_pp_mm":
            "z_max_mm": 4500, "service_zone_height_mm": 2000, "pitch_mm": 300, "margin_mm": 1500,
            "max_iters": 20, "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5,
            "max_expansions": 300000, "astar_weight": 1.5, "route_workers": 1, "stall_iters": 6,
-           "cleanup_trigger_nets": 4, "cleanup_max_expansions": 300000, "freeze_after_exhausted": 2, "port_side_lines": True}
+           "cleanup_trigger_nets": 4, "cleanup_max_expansions": 300000, "freeze_after_exhausted": 2, "port_side_lines": True, "self_skip_mm": 0}
 BLOCKING = {"auto_module_policy": "report_only", "min_copies": 2, "min_members": 2,
             "module_rotations": [0, 90, 180, 270], "module_aspect_bands": [[1, 1.5]],
             "module_solve_s": 1, "cluster_max_units": 25, "cluster_resolution": 1.0, "seed": 0}

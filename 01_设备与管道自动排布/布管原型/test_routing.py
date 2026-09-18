@@ -12,7 +12,7 @@ RP = {"D_default_mm": 200, "c_rho": 1.5, "delta_ep_mm": 100, "delta_pp_mm": 100,
       "z_max_mm": 3000, "service_zone_height_mm": 2000, "pitch_mm": 300, "margin_mm": 1500, "max_iters": 10,
       "pres_fac_init": 0.5, "pres_fac_mult": 1.6, "hist_fac": 0.5, "max_expansions": 300000, "astar_weight": 1.0, "route_workers": 1,
       "stall_iters": 3, "cleanup_max_expansions": 300000, "cleanup_trigger_nets": 2,
-      "freeze_after_exhausted": 2, "port_side_lines": True}
+      "freeze_after_exhausted": 2, "port_side_lines": True, "self_skip_mm": 0}
 W = {"area": 1.0, "length": 1.0, "bends": 0.3, "height_changes": 0.3}
 SCALE = {"A0": 1e7, "L0": 1e4, "B0": 1, "C0": 1, "kappa": 2, "l_min_mm": 300}
 

@@ -40,7 +40,8 @@
    "guide_every_s": 5,
    "guide_ema": 0.5,
    "guide_w_max": 3,
-   "port_side_lines": true
+   "port_side_lines": true,
+   "self_skip_mm": 0
   },
   "blocking": {
    "auto_module_policy": "report_only",

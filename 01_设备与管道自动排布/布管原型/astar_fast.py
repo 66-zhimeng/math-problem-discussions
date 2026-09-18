@@ -57,8 +57,8 @@ def _sift_down(hf, hs, size):
 
 
 @njit(cache=True)
-def _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, clear):
-    """沿父指针还原折线，检查不相邻管段的中心线包围盒间隙是否 < clear（= 管外径 + 净距）。"""
+def _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, clear, skip):
+    """沿父指针还原折线，检查同一根管上沿管长相隔 > skip 的两段，中心线包围盒间隙是否 < clear（= 管外径 + 净距）。"""
     pts = np.empty((0, 3))
     corners = []
     cur = sid
@@ -86,8 +86,16 @@ def _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, clear):
         P[i, 0] = cx[n // (n1 * n2)]
         P[i, 1] = cy[(n // n2) % n1]
         P[i, 2] = cz[n % n2]
+    seg = np.empty(m - 1)
     for i in range(m - 1):
-        for j in range(i + 2, m - 1):
+        seg[i] = abs(P[i + 1, 0] - P[i, 0]) + abs(P[i + 1, 1] - P[i, 1]) + abs(P[i + 1, 2] - P[i, 2])
+    for i in range(m - 1):
+        between = 0.0
+        for j in range(i + 1, m - 1):
+            if j > i + 1:
+                between += seg[j - 1]
+            if between <= skip:
+                continue
             gap = -1e18
             for a in range(3):
                 lo_i = min(P[i, a], P[i + 1, a]); hi_i = max(P[i, a], P[i + 1, a])
@@ -104,7 +112,7 @@ def _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, clear):
 def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
            ex_nodes, ex_edges, rho, lmin, K, zc_max, cL, cB, cC, hw, max_exp,
            s, d0, mode, t, t_dir, tpt, hl, tnode, ttype, tseg_axis, tdA, tdB, tkA, tkB, tcorner,
-           lp0, t_extra, self_clear, run0):
+           lp0, t_extra, self_clear, run0, self_skip):
     """返回 (状态节点, 状态方向, 父状态, 目标状态号, 扩展数, 是否到上限)；目标状态号 < 0 表示没找到。"""
     cap = max(2.0 * rho + lmin, rho + t_extra + lmin)            # 直管计数封顶：须能满足目标端的要求
     stride = np.array([n1 * n2, n2, 1], dtype=np.int64)
@@ -174,7 +182,7 @@ def search(cx, cy, cz, n0, n1, n2, blocked, eb0, eb1, eb2, halo, hist, pres,
         hf[0] = hf[nh]; hs[0] = hs[nh]
         _sift_down(hf, hs, nh)
         if st_goal[sid] > 0:
-            if self_clear > 0 and _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, self_clear):
+            if self_clear > 0 and _self_close(st_node, st_dir, st_par, sid, cx, cy, cz, n1, n2, self_clear, self_skip):
                 continue                                           # 路径自己挨得太近（U 形 / 环形回绕）：不接受，继续搜
             goal_sid = sid
             break

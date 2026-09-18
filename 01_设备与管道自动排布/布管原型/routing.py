@@ -46,7 +46,7 @@ DIR_OF = {(1, 0, 0): 0, (-1, 0, 0): 1, (0, 1, 0): 2, (0, -1, 0): 3, (0, 0, 1): 4
 REQUIRED = ["D_default_mm", "c_rho", "delta_ep_mm", "delta_pp_mm", "K", "eps_z_mm", "z_max_mm",
             "service_zone_height_mm", "pitch_mm", "margin_mm", "max_iters", "pres_fac_init", "pres_fac_mult",
             "hist_fac", "max_expansions", "astar_weight", "route_workers", "stall_iters", "cleanup_max_expansions",
-            "cleanup_trigger_nets", "freeze_after_exhausted", "port_side_lines"]
+            "cleanup_trigger_nets", "freeze_after_exhausted", "port_side_lines", "self_skip_mm"]
 
 
 def check_params(rp, weights):
@@ -67,10 +67,13 @@ class Scene:
     fixed_routes: {id: {"points": [[x,y,z], ...], "D_mm"}}：不参与布管的已有管道（锁定管、局部优化范围外的管、
       三通内部短管），作为硬障碍，并参与管—管净距校验。允许斜段（按包围盒保守处理）。"""
 
-    def __init__(self, devices, nets, rp, weights, scale, fixed_routes=None):
+    def __init__(self, devices, nets, rp, weights, scale, fixed_routes=None, spools=None):
         check_params(rp, weights)
         self.dev, self.nets, self.rp, self.w = devices, nets, rp, weights
         self.fixed_routes = fixed_routes or {}
+        # 节点内部短管（如三通内的接管）：[{"owner", "points", "D_mm"}]。对其他管是障碍；
+        # 接在该节点上的管豁免（校验时只豁免这根管的首段与末段，与网页 full-routing.js 的 fixedSpools 规则一致）
+        self.spools = spools or []
         # “管件式”端口：端口外已有管件（如斜支口伸出段末端的 45° 弯），出入时按弯头计直管长度
         self.fitting_ports = {(did, pn) for did, d in devices.items() for pn in d.get("fitting_ports", ())}
         self.lmin = scale["l_min_mm"]
@@ -149,6 +152,10 @@ class Grid:
                                f["D_mm"])
             for c in codes.tolist():
                 self.eblocked[c % 3][c // 3] = 1
+        self.spool_codes = {}                                          # 节点内部短管的占用晕，按所属节点分组
+        for sp in sc.spools:
+            codes = halo_codes(self, sc, [{"points": [tuple(q) for q in sp["points"]], "trim": (False, False)}], sp["D_mm"])
+            self.spool_codes[sp["owner"]] = np.union1d(self.spool_codes.get(sp["owner"], np.zeros(0, dtype=np.int64)), codes)
 
     def _open_range(self, a, lo, hi):
         """坐标严格落在 (lo, hi) 内的下标区间 [i0, i1)。"""
@@ -305,7 +312,7 @@ def astar(G, sc, start, target, ctx):
                     tnode, ttype, tsa, tdA, tdB, tkA, tkB, tcor,
                     0 if tuple(start) in sc.fitting_ports else 1,
                     _target_extra(sc, target, ctx),
-                    float(ctx.get("self_clear", 0.0)), _start_run(ctx, start))
+                    float(ctx.get("self_clear", 0.0)), _start_run(ctx, start), float(sc.rp["self_skip_mm"]))
     nodes, dirs, par, gid, exp, exhausted = out
     ctx["stats"]["expansions"] += int(exp)
     if gid < 0:
@@ -440,7 +447,7 @@ def astar_py(G, sc, start, target, ctx):
         n, d, lp, vr, hh, run, g, parent, goal = states[sid]
         if goal is not None:
             pts_ = _trace(G, states, sid)
-            if self_clear > 0 and _self_close_py(pts_, self_clear):
+            if self_clear > 0 and _self_close_py(pts_, self_clear, sc.rp["self_skip_mm"]):
                 continue                                           # 与编译实现相同：自己挨得太近的路径不接受
             ctx["stats"]["expansions"] += exp
             return pts_, goal
@@ -525,10 +532,14 @@ def _trace_arrays(G, nodes, dirs, par, sid):
     return _dedupe(pts)
 
 
-def _self_close_py(pts, clear):
+def _self_close_py(pts, clear, skip):
+    """同一根管上沿管长相隔 > skip 的两段，中心线包围盒间隙 < clear 时判为自身太近（与编译实现相同）。"""
     segs = list(zip(pts, pts[1:]))
+    lens = [sum(abs(q[k] - p[k]) for k in range(3)) for p, q in segs]
     for i in range(len(segs)):
         for j in range(i + 2, len(segs)):
+            if sum(lens[i + 1:j]) <= skip:
+                continue
             gap = max(max(min(segs[j][0][a], segs[j][1][a]) - max(segs[i][0][a], segs[i][1][a]),
                           min(segs[i][0][a], segs[i][1][a]) - max(segs[j][0][a], segs[j][1][a])) for a in range(3))
             if gap < clear - 1e-6:
@@ -747,7 +758,25 @@ def port_access_blocked(G, sc, terms, ex_nodes, ex_edges, lmin):
 
 
 def route_net(G, sc, net, ctx):
-    """返回 (支路列表, None) 或 (None, 失败原因)。"""
+    """返回 (支路列表, None) 或 (None, 失败原因)。其他节点的内部短管作为临时硬障碍（本管所接节点的除外）。"""
+    own = {dev for dev, _pn in net["terms"]}
+    codes = [c for owner, c in G.spool_codes.items() if owner not in own]
+    if not codes:
+        return _route_net(G, sc, net, ctx)
+    codes = np.unique(np.concatenate(codes))
+    saved = []
+    for a in range(3):
+        idx = codes[codes % 3 == a] // 3
+        saved.append((a, idx, G.eblocked[a][idx].copy()))
+        G.eblocked[a][idx] = 1
+    try:
+        return _route_net(G, sc, net, ctx)
+    finally:
+        for a, idx, old in saved:
+            G.eblocked[a][idx] = old
+
+
+def _route_net(G, sc, net, ctx):
     terms = net["terms"]
     npar = sc.net_param(net["id"])
     ex_nodes, ex_edges, inside = port_exemptions(G, sc, terms)
@@ -792,9 +821,9 @@ def route_net(G, sc, net, ctx):
 _W = {}
 
 
-def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name, fixed_routes):
+def _worker_init(devices, nets, rp, weights, scale, halo_name, hist_name, fixed_routes, spools):
     from multiprocessing import shared_memory
-    sc = Scene(devices, nets, rp, weights, scale, fixed_routes)
+    sc = Scene(devices, nets, rp, weights, scale, fixed_routes, spools)
     _W["sc"], _W["G"] = sc, Grid(sc)
     _W["shm"] = (shared_memory.SharedMemory(name=halo_name), shared_memory.SharedMemory(name=hist_name))
     _W["halo"] = np.frombuffer(_W["shm"][0].buf, dtype=np.int32)
@@ -863,7 +892,7 @@ def negotiate(sc, log=print):
         hist = np.frombuffer(shms[1].buf, dtype=np.float32)
         ex = ProcessPoolExecutor(workers, mp_context=mp.get_context("spawn"), initializer=_worker_init,
                                  initargs=(sc.dev, sc.nets, rp, sc.w, sc.scale, shms[0].name, shms[1].name,
-                                           sc.fixed_routes))
+                                           sc.fixed_routes, sc.spools))
         list(ex.map(_worker_ready, range(workers * 4)))                 # 预先启动全部工作进程
     else:
         halo, hist = np.zeros(size, dtype=np.int32), np.zeros(size, dtype=np.float32)
@@ -1128,9 +1157,12 @@ def check_routes(sc, routes):
                     in_v, dz, had_h = False, 0.0, True
             if nl > K:
                 viol.append(f"{nid} 支路 {bi}：高度变化 {nl} > K={K}")
-            sg = segments_of(pts)                                       # 自相交：不相邻管段之间也要留净距
+            sg = segments_of(pts)                                       # 自相交：沿管长相隔 > self_skip_mm 的两段也要留净距
+            sl = [sum(abs(q[k] - p[k]) for k in range(3)) for p, q in sg]
             for i in range(len(sg)):
                 for j in range(i + 2, len(sg)):
+                    if sum(sl[i + 1:j]) <= sc.rp["self_skip_mm"]:
+                        continue
                     if _gap(_box(*sg[i], D / 2), _box(*sg[j], D / 2)) < sc.rp["delta_pp_mm"] - 1e-6:
                         viol.append(f"{nid} 支路 {bi}：管段 {i} 与管段 {j} 自相交或净距不足")
             layers += nl
@@ -1192,6 +1224,19 @@ def check_routes(sc, routes):
                     viol.append(f"{nid}：管段 {p}→{q} 超出高度范围")
         all_boxes.append((nid, [_box(p, q, D / 2) for br in brs for p, q in clash_segments(sc, br)]))
         per_net[nid] = {"L_mm": L, "bends": bends, "height_changes": layers, "branches": len(brs)}
+    for nid, brs in routes.items():                                    # 节点内部短管：接在该节点上的管只豁免首段与末段
+        ends = {d for d, _p in net_of[nid]["terms"]}
+        D = sc.net_param(nid)["D"]
+        for sp in sc.spools:
+            sboxes = [_box(tuple(p), tuple(q), sp["D_mm"] / 2) for p, q in zip(sp["points"], sp["points"][1:])]
+            for br in brs:
+                sg = segments_of(br["points"])
+                for k, (p, q) in enumerate(sg):
+                    if sp["owner"] in ends and (k == 0 or k == len(sg) - 1):
+                        continue
+                    if any(_gap(_box(p, q, D / 2), b) < sc.rp["delta_pp_mm"] - 1e-6 for b in sboxes):
+                        viol.append(f"{nid}：管段 {p}→{q} 穿过 {sp['owner']} 的内部短管")
+                        break
     for fid, f in sc.fixed_routes.items():                             # 固定管路只参与净距，不计指标
         pts = [tuple(q) for q in f["points"]]
         all_boxes.append((fid, [_box(p, q, f["D_mm"] / 2) for p, q in
